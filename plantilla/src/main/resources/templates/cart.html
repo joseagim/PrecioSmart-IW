@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>PrecioSmart Carritos</title>
+
+</head>
+
+<body class="d-flex flex-column h-100 text-center">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container">
+            <h1 class="mt-5 mb-5">Carritos de la compra</h1>
+            <p class="text-start">Puedes crear carritos de la compra seleccionando los productos que tiene cada uno. La aplicación calcula el precio total en distintos supermercados para que puedas comparar y elegir dónde comprar.</p>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>

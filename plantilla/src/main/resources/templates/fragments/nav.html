@@ -26,6 +26,26 @@
                                 <a class="nav-link" th:if="${u.hasRole('ADMIN')}" th:href="@{/admin/}">Administrar</a>
                             </li>
 
+                             <li class="nav-item mx-3">
+                                <a class="nav-link"  th:href="@{/authors}">Autores</a>
+                            </li>
+
+                             <li class="nav-item mx-3">
+                                <a class="nav-link" th:href="@{/notifications}">Notificaciones</a>
+                            </li>
+
+                             <li class="nav-item mx-3">
+                                <a class="nav-link" th:href="@{/cart}">Carrito</a>
+                            </li>
+                            
+                             <li class="nav-item mx-3">
+                                <a class="nav-link" th:href="@{/search}">Busqueda</a>
+                            </li>
+
+                             <li class="nav-item mx-3">
+                                <a class="nav-link" th:href="@{/user}">Usuario</a>
+                            </li>
+
                             <li class="nav-item mx-2">
                                 <a class="nav-link" th:href="@{/user/{id}(id=${u.id})}">
                                     <img class="iwthumb rounded" th:src="@{/user/{id}/pic(id=${u.id})}">
@@ -47,6 +67,8 @@
                             <li class="nav-item mx-2">
                                 <a class="nav-link" th:href="@{/login}" href="/login">Login</a>
                             </li>
+
+                           
                             <!--/*
                                 Esto es un comentario "thymeleaf" - no se verá en el HTML
                                 El bloque de "debug" sólo está activado si application.properties tiene debug a "true"

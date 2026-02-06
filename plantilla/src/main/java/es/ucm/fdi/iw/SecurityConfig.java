@@ -51,25 +51,22 @@ public class SecurityConfig {
 			http.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/h2/**").permitAll()  // <-- no login for h2 console
 			);
-      http.headers(header->header.frameOptions(frameOptions->frameOptions.sameOrigin()));
+      		http.headers(header->header.frameOptions(frameOptions->frameOptions.sameOrigin()));
 		}
 
-    http
-			.csrf(csrf -> csrf
-				.ignoringRequestMatchers("/api/**")
-			)
-      .authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/css/**", "/js/**", "/img/**", "/", "/error").permitAll()
-				.requestMatchers("/api/**").permitAll()            // <-- public api access
-				.requestMatchers("/admin/**").hasRole("ADMIN")	   // <-- administration
-				.requestMatchers("/user/**").hasRole("USER")	     // <-- logged-in users
-				.anyRequest().authenticated()
-            )
-            .formLogin(formLogin -> formLogin
-                .loginPage("/login")
-                .permitAll()
-				.successHandler(loginSuccessHandler)  // <-- called when login Ok; can redirect
-            );
+		http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+		.authorizeHttpRequests(authorize -> authorize
+			.requestMatchers("/authors", "/cart", "/notifications", "/search", "/css/**", "/js/**", "/img/**", "/", "/error").permitAll()
+			.requestMatchers("/api/**").permitAll()            // <-- public api access
+			.requestMatchers("/admin/**").hasRole("ADMIN")	   // <-- administration
+			.requestMatchers("/user/**").hasRole("USER")	     // <-- logged-in users
+			.anyRequest().authenticated()
+		)
+		.formLogin(formLogin -> formLogin
+			.loginPage("/login")
+			.permitAll()
+			.successHandler(loginSuccessHandler)  // <-- called when login Ok; can redirect
+		);
 
         return http.build();
     }	
@@ -107,6 +104,7 @@ public class SecurityConfig {
 	 public AuthenticationManager authenticationManager(
 			UserDetailsService userDetailsService,
 			PasswordEncoder passwordEncoder) {
+				
 		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
 		authenticationProvider.setUserDetailsService(userDetailsService);
 		authenticationProvider.setPasswordEncoder(passwordEncoder);

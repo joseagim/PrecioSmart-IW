@@ -32,6 +32,32 @@ public class RootController {
         return "login";
     }
 
+    @GetMapping("/authors")
+    public String authors(Model model, HttpServletRequest request) {
+        return "authors";
+    }
+
+    @GetMapping("/cart")
+    public String cart(Model model, HttpServletRequest request) {
+        return "cart";
+    }
+
+    @GetMapping("/search")
+    public String search(Model model, HttpServletRequest request) {
+        return "search";
+    }
+
+    @GetMapping("/notifications")
+    public String notifications(Model model, HttpServletRequest request) {
+        return "notifications";
+    }
+
+    @GetMapping("/user")
+    public String user(Model model, HttpServletRequest request) {
+        return "user";
+    }
+
+
 	@GetMapping("/")
     public String index(Model model) {
         return "index";
