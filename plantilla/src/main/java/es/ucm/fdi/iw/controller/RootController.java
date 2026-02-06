@@ -50,13 +50,17 @@ public class RootController {
     @GetMapping("/notifications")
     public String notifications(Model model, HttpServletRequest request) {
         return "notifications";
+    }    
+    
+    @GetMapping("/faq")
+    public String faq(Model model, HttpServletRequest request) {
+        return "faq";
     }
 
     @GetMapping("/user")
     public String user(Model model, HttpServletRequest request) {
         return "user";
     }
-
 
 	@GetMapping("/")
     public String index(Model model) {
