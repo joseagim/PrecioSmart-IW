@@ -25,3 +25,19 @@ img.preview {
     height: 100px;
     border-radius: 10px;
 }
+
+.author-card {
+    transition: 0.2s;
+}
+
+.author-card:hover {
+    border-color: darkgrey;
+}
+
+.author-img {
+    transition: 0.2s;
+}
+
+.author-img:hover {
+    transform: scale(1.01);
+}
