@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>PrecioSmart</title>
+
+</head>
+
+<body class="d-flex flex-column h-100 text-center">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container">
+            <h1 class="mt-5 mb-5">PrecioSmart</h1>
+            <p class="text-start">PrecioSmart es una aplicación web orientada a ayudar a los consumidores a
+optimizar su gasto en supermercados mediante la comparación objetiva de precios y
+características de productos de alimentación y consumo habitual. La plataforma
+utiliza el código de barras (EAN) como identificador único de los productos y
+centraliza información de distintas cadenas de supermercados, ofreciendo una visión
+clara, transparente y orientada al ahorro.
+            </p>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>
