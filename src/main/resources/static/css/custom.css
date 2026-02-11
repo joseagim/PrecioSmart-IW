@@ -41,3 +41,10 @@ img.preview {
 .author-img:hover {
     transform: scale(1.01);
 }
+
+.login-box {
+    width: 100%;
+    max-width: 360px;
+    height: 100%;
+    max-height: 310px;
+}
