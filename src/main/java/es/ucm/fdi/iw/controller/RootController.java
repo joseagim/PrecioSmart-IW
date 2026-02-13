@@ -37,6 +37,11 @@ public class RootController {
         return "authors";
     }
 
+    @GetMapping("/register")
+    public String register(Model model, HttpServletRequest request) {
+        return "register";
+    }
+
     @GetMapping("/cart")
     public String cart(Model model, HttpServletRequest request) {
         return "cart";
