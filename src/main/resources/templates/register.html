@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>IW: Login</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container d-flex justify-content-center mt-5 vh-100">
+            <div class="register-box bg-white p-4 shadow-sm rounded">
+                <form class="form-signin" method="post" th:action="@{/register}">
+                    <h2 class="text-center">Register</h2>
+                    <div class="mb-3">
+                        <label for="username" class="visually-hidden">Username</label>
+                        <input type="text" id="username" name="username" class="form-control form-control-lg"
+                            placeholder="Username" required="required">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="visually-hidden">Email</label>
+                        <input type="email" id="email" name="email" class="form-control form-control-lg"
+                            placeholder="Email" required="required">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="visually-hidden">Password</label>
+                        <input type="password" id="password" name="password" class="form-control form-control-lg"
+                            placeholder="Password" required="required">
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="visually-hidden">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword"
+                            class="form-control form-control-lg" placeholder="Confirm Password" required="required">
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-lg btn-warning" type="submit">Register</button>
+                    </div>
+
+                </form>
+                <script>
+                  
+                    document.querySelector('.form-signin').onsubmit = function (event) {
+                        let pass = document.getElementById("password").value;
+                        let confirm = document.getElementById("confirmPassword").value;
+                        if (pass !== confirm) {
+                            event.preventDefault();
+                            alert("¡Las contraseñas no coinciden!");
+                          
+                        }
+                    };
+                </script>
+            </div>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>

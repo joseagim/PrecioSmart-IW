@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>PrecioSmart FAQ</title>
+
+</head>
+
+<body class="d-flex flex-column h-100 text-center">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container">
+            <h1 class="mt-5 mb-5">Preguntas frecuentes</h1>
+            <p class="text-start">Aparecerán varias preguntas que se puede llegar a hacer la gente sobre la aplicación. Algunas preguntas pueden ser:</p>
+            <ul class="text-start">
+                <li>
+                    <h3>Cómo puedo comparar productos?</h3>
+                    <p>Debes ir al apartado de búsqueda y escanear el código de barras o buscarlo manualmente. Después te aparecerán automáticamente productos similares y una opción para filtrarlos según varios criterios (precio, gramos, grasas, etc).</p>
+                </li>
+                <li>
+                    <h3>Cómo puedo crear un carrito?</h3>
+                    <p>En el apartado de carrito debes dar click al botón de crear e introducir los productos que quieras añadir. Después la aplicación calcula el precio total y realiza una comparación del precio entre varios supermercados.</p>
+                </li>
+            </ul>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>

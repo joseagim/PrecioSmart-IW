@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>IW: Welcome</title>
+
+</head>
+
+<body class="d-flex flex-column h-100 text-center">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container">
+            <h1 class="mt-5 mb-5">Búsqueda de productos</h1>
+
+            <div class="mb-4">
+                <label for="producto" class="form-label">Nombre de producto:</label>
+                <input type="text" id="producto" class="form-control d-inline-block w-auto"
+                    placeholder="Escribe el nombre...">
+                <button id="buscar" class="btn btn-primary">Buscar</button>
+            </div>
+
+            <div class="container">
+                <table class="table table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio/u</th>
+                            <th>Unidades</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpo-resultados">
+                    </tbody>
+                </table>
+            </div>
+
+            <template id="fila-producto-template">
+                <tr>
+                    <td class="td-nombre"></td>
+                    <td class="td-precio"></td>
+                    <td>
+                        <input type="number" value="1" min="1" class="form-control form-control-sm mx-auto"
+                            style="width: 60px;">
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-success btn-add">Añadir al carrito</button>
+                    </td>
+                </tr>
+            </template>
+
+
+            <script>
+                const inputProducto = document.getElementById('producto');
+                const botonBuscar = document.getElementById('buscar');
+                const cuerpoResultados = document.getElementById('cuerpo-resultados');
+
+                const plantilla = document.getElementById('fila-producto-template').content;
+
+                let productos = [
+                    { id: 1, name: 'Leche', price: 1.5 },
+                    { id: 2, name: 'Pan', price: 0.8 },
+                    { id: 3, name: 'Huevos', price: 2.0 },
+                    { id: 4, name: 'Queso', price: 3.5 },
+                ];
+
+                botonBuscar.addEventListener('click', () => {
+
+                    cuerpoResultados.innerHTML = "";
+
+                    const busqueda = inputProducto.value.trim().toLowerCase();
+                    const filtrados = productos.filter(p => p.name.toLowerCase().includes(busqueda));
+
+                    if (filtrados.length === 0 && busqueda.value !== "") {
+                        alert('Producto no encontrado');
+                        return;
+                    }
+                    else {
+                        filtrados.forEach(producto => {
+
+                            const clon = plantilla.cloneNode(true);
+
+
+                            clon.querySelector('.td-nombre').textContent = producto.name;
+                            clon.querySelector('.td-precio').textContent = `${producto.price.toFixed(2)} €`;
+
+
+                            clon.querySelector('.btn-add').onclick = () => {
+                                alert(`Añadiste ${producto.name} al carrito`);
+                            };
+
+                            cuerpoResultados.appendChild(clon);
+                        });
+                    }
+                });
+            </script>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>

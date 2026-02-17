@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>PrecioSmart Notificaciones</title>
+</head>
+
+<body class="d-flex flex-column h-100 text-center">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container">
+            <h1 class="mt-5 mb-5">Notificaciones</h1>
+            <p class="text-start">En esta ventana aparecerá un registro con las notificaciones que puede recibir el usuario:</p>
+            <ul class="text-start">
+                <li>Si enviaste una solicitud para añadir/eliminar un producto, aparecerá un log cuando un administrador acepte o rechace dicha solicitud.</li>
+                <li>En caso de que se actualice un producto que tengas en el carrito, saldrá un registro de que el producto ha sido modificado para que lo revises.</li>
+            </ul>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>
