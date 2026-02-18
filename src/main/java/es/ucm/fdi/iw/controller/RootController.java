@@ -53,7 +53,9 @@ public class RootController {
 
     @PostMapping("/register")
     public String posRegister(@RequestBody String entity) {
-       
+        //TODO: REGISTRAR USUARIO
+        //Crear clase DTO(UserRegisterDTO) o con @RequestParam para recoger los datos del formulario de registro
+        //Lógica para registrar al usuario en la base de datos
         return "login";
     }
     
