@@ -57,9 +57,11 @@ img.preview {
     max-height: 400px;
 }
 
+
 .contenedores-carrito {
     border-radius: 15px; 
     border: 1px solid #ffaa65; 
+
     background-color: #ffffff;
     padding: 25px;
     margin-top: 15px;
@@ -118,14 +120,29 @@ img.preview {
 }
 
 .card-naranja {
-    border: 1px solid #ffeaa7;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 15px;
+    border: 2px solid #f8bf20;
+    background-color: #ffffff;
+    overflow: hidden;
+}
+
+.card-naranja:hover {
+    transform: translateY(-10px);
+    /* Sube un poco al poner el ratón */
+    box-shadow: 0 10px 20px rgba(255, 159, 67, 0.2) !important;
+}
+
+.card-body .fs-1 {
+    display: block;
+    margin-bottom: 15px;
 }
 
 .img-producto {
     width: 100%;
     height: 180px;
     object-fit: contain;
-    background-color: #fffaf5; 
+    background-color: #fffaf5;
     padding: 10px;
 }
 
@@ -147,4 +164,54 @@ img.preview {
 .btn-scan:hover {
     background-color: #fffaf5;
     border-color: #ff9f43;
+}
+
+
+.navbar-naranja {
+    background-color: #f8a34d;
+}
+
+
+.navbar-naranja .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    transition: color 0.3s;
+}
+
+.navbar-naranja .nav-link:hover {
+    color: #ff7300 !important;
+}
+
+
+.navbar-naranja .btn-outline-secondary {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar-naranja .btn-outline-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: white;
+}
+
+
+.how-it-works-container {
+    background-color: #fffaf5;
+    border-radius: 25px;
+    border: 1px solid #ffeada;
+}
+
+/* Estilo de los círculos con números */
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #ff9f43, #ff6b1a);
+    /* Degradado naranja */
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 4px 10px rgba(255, 107, 26, 0.3);
+    border-radius: 50%;
 }
