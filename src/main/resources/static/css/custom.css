@@ -55,3 +55,15 @@ img.preview {
     height: 100%;
     max-height: 400px;
 }
+
+.contenedor-cart {
+    border-radius: 15px; 
+    border: 1px solid #ffaa65; 
+    background-color: #ffffff;
+    padding: 25px;
+}
+
+.card-activa {
+    background-color: #fd7e14 !important;
+    color: white !important;
+}

@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import es.ucm.fdi.iw.Carrito;
 import es.ucm.fdi.iw.Product;
 
 
@@ -62,19 +63,24 @@ public class RootController {
     @GetMapping("/cart")
     public String cart(Model model, HttpServletRequest request) {
         
-        List<Product> lista = Arrays.asList(
+        List<Carrito> carritos = Arrays.asList(
+            new Carrito("Primero"),
+            new Carrito("Carrito 2"),
+            new Carrito("Carrito 3")
+        );
+
+        List<Product> carrito = Arrays.asList(
             new Product("Leche", 1.5),
             new Product("Pan", 0.8),
             new Product("Huevos", 2.0),
             new Product("Manzanas", 1.2),
             new Product("Arroz", 1)
         );
-       double totalPrice = lista.stream()
-                               .mapToDouble(i -> i.getPrice() * i.getQuantity())
-                               .sum();
 
-        model.addAttribute("totalPrice", totalPrice);
-        model.addAttribute("cart", lista);
+        carritos.get(0).setProducts(carrito);
+
+        model.addAttribute("carritos", carritos);
+        model.addAttribute("cart", carritos.get(0));
         return "cart";
     }
 

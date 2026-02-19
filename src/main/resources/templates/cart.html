@@ -12,41 +12,154 @@
 
     <main class="flex-shrink-0">
         <div class="container">
-            <h1 class="mt-5 mb-5">Tu carrito de la compra</h1>
-            <p class="text-start">Puedes crear carritos de la compra seleccionando los productos que tiene cada uno. La
-                aplicación calcula el precio total en distintos supermercados para que puedas comparar y elegir dónde
-                comprar.</p>
-            <div th:if="${#lists.isEmpty(cart)}" class="alert alert-warning">
-                <p class="text-muted">Tu carrito está vacío.</p>
+            
+            <div class="contenedor-cart">
+                <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
+                    <div>
+                        <h1 class="text-start">
+                            Mis carritos
+                            <span th:text="|(${carritos.size()})|">(0)</span>
+                        </h1>
+                    </div>
+                    <div id="accionesCarrito" class="d-none">
+                        <button class="btn btn-warning">🆕 Nuevo carrito</button>
+                        <button class="btn btn-warning">🆗 Guardar carrito</button>
+                    </div>
+                </div>
+            
+                <p class="text-start">Selecciona un carrito para ver su contenido.</p>
+
+                <div class="d-flex flex-row flex-nowrap overflow-auto gap-3 pb-3" id="contenedorCarritos">
+                    <div th:each="carrito : ${carritos}" 
+                        class="card card-carrito" 
+                        th:data-name="${carrito.getName()}"
+                        onclick="seleccionarCarrito(this, this.getAttribute('data-name'))"
+                        style="min-width: 200px; cursor: pointer; border-radius: 15px; border: 2px solid #fd7e14; background-color: #fffaf5;">
+                        
+                        <div class="card-body text-start">
+                            <h5 class="card-title">
+                                <span th:text="${carrito.getName()}">Mi Carrito</span>
+                            </h5>
+                            <p class="card-text mb-1" th:text="|${carrito.getProducts().size()} productos|">0 productos</p>
+                            <small class="text-muted" th:text="${#temporals.format(carrito.getCreatedAt(), 'dd/MM/yyyy')}">01/1/2026</small>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <table th:unless="${#lists.isEmpty(cart)}" class="table table-striped mt-4">
-                <thead class="table-dark">
+            <div class="contenedor-cart">
+
+                <div id="alertaSeleccion">
+                    <p class="text-muted m-0">Selecciona un carrito arriba para ver los productos.</p>
+                </div>
+
+                <div id="seccionTabla" class="d-none">
+                    <table class="table table-hover align-middle mt-2 shadow-sm border">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Producto</th>
+                                <th>Unidades</th>
+                                <th>Precio/u</th>
+                                <th>Subtotal</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cuerpo-tabla">
+                            <!-- Aquí se inyectarán las filas -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="table-light">
+                                <td colspan="3" class="text-end text-uppercase fw-bold">Total estimado:</td>
+                                <td colspan="2"><strong id="precioTotal" class="fs-5 text-success">0.00€</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            
+
+                <!-- Template para las filas (Lógica simple de clonación) -->
+                <template id="fila-producto-template">
                     <tr>
-                        <th>Producto</th>
-                        <th>Unidades</th>
-                        <th>Precio/u</th>
-                        <th>Subtotal</th>
+                        <td class="td-nombre fw-bold text-start"></td>
+                        <td class="td-cantidad"></td>
+                        <td class="td-precio"></td>
+                        <td class="td-subtotal fw-bold"></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-secondary btn-delete">
+                                🗑️ Eliminar
+                            </button>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="item : ${cart}">
-                        <td th:text="${item.name}">Producto</td>
-                        <td th:text="${item.quantity}">1</td>
-                        <td th:text="${item.price} + '€'">0.00€</td>
-                        <td th:text="${item.quantity * item.price} + '€'">0.00€</td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr class="table-secondary">
-                        <td colspan="3" class="text-end"><strong>Total del Carrito:</strong></td>
-                        <td><strong th:text="${totalPrice} + '€'">0.00€</strong></td>
-                    </tr>
-                </tfoot>
-            </table>
+                </template>
+            </div>
 
+        <script th:inline="javascript">
+            // Obtenemos todos los carritos del modelo de Java
+            const listaDeCarritos = [[${carritos}]];
+            
+            // Referencias constantes al DOM
+            const cuerpoTabla = document.getElementById('cuerpo-tabla');
+            const plantilla = document.getElementById('fila-producto-template').content;
+            const seccionTabla = document.getElementById('seccionTabla');
+            const alertaSeleccion = document.getElementById('alertaSeleccion');
+            const accionesCarrito = document.getElementById('accionesCarrito');
+            const visualTotal = document.getElementById('precioTotal');
 
-        </div>
+            function seleccionarCarrito(elemento, nombreCarrito) {
+                // 1. Gestionar estilos de tarjetas (Quitar activa de otros, poner en el actual)
+                document.querySelectorAll('.card-carrito').forEach(card => card.classList.remove('card-activa'));
+                elemento.classList.add('card-activa');
+
+                // 2. Buscar datos del carrito
+                const miCarrito = listaDeCarritos.find(c => c.name === nombreCarrito);
+
+                if (miCarrito && miCarrito.products && miCarrito.products.length > 0) {
+                    actualizarInterfaz(miCarrito.products);
+                } else {
+                    mostrarVacio();
+                }
+            }
+
+            function actualizarInterfaz(productos) {
+                // Limpiar tabla
+                cuerpoTabla.innerHTML = "";
+                let granTotal = 0;
+
+                // Llenar tabla usando el Template
+                productos.forEach(p => {
+                    const clon = plantilla.cloneNode(true);
+                    const subtotal = (p.price * p.quantity);
+                    granTotal += subtotal;
+
+                    clon.querySelector('.td-nombre').textContent = p.name;
+                    clon.querySelector('.td-cantidad').textContent = p.quantity;
+                    clon.querySelector('.td-precio').textContent = p.price.toFixed(2) + "€";
+                    clon.querySelector('.td-subtotal').textContent = subtotal.toFixed(2) + "€";
+                    
+                    // Acción de prueba para el botón del template
+                    clon.querySelector('.btn-delete').onclick = () => {
+                        console.log("Eliminar: " + p.name);
+                    };
+
+                    cuerpoTabla.appendChild(clon);
+                });
+
+                // Actualizar total y visibilidad
+                visualTotal.textContent = granTotal.toFixed(2) + "€";
+                
+                seccionTabla.classList.remove('d-none');
+                accionesCarrito.classList.remove('d-none');
+                alertaSeleccion.classList.add('d-none');
+            }
+
+            function mostrarVacio() {
+                seccionTabla.classList.add('d-none');
+                accionesCarrito.classList.add('d-none');
+                alertaSeleccion.classList.remove('d-none');
+                alertaSeleccion.querySelector('p').textContent = "Este carrito está vacío actualmente.";
+            }
+        </script>
+
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
