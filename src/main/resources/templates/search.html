@@ -14,87 +14,91 @@
         <div class="container">
             <h1 class="mt-5 mb-5">Búsqueda de productos</h1>
 
-            <div class="mb-4">
-                <label for="producto" class="form-label">Nombre de producto:</label>
-                <input type="text" id="producto" class="form-control d-inline-block w-auto"
-                    placeholder="Escribe el nombre...">
-                <button id="buscar" class="btn btn-primary">Buscar</button>
+            <div class="search-container mb-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0" style="border-radius: 12px 0 0 12px;">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input type="text" id="producto" class="form-control border-start-0"
+                        placeholder="Busca por código EAN o nombre del producto..."
+                        style="padding: 12px; border-radius: 0;">
+                    <button id="buscar" class="btn btn-naranja" type="button" style="border-radius: 0 12px 12px 0;">
+                       🔍 Buscar
+                    </button>
+                </div>
+
+                <button class="btn btn-scan mt-3">
+                    <i class="bi bi-qr-code-scan me-2"></i>⛶ Escanear código de barras 
+                </button>
             </div>
 
-            <div class="container">
-                <table class="table table-striped">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Producto</th>
-                            <th>Precio/u</th>
-                            <th>Unidades</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cuerpo-resultados">
-                    </tbody>
-                </table>
+            <div id="cuerpo-resultados" class="row row-cols-1 row-cols-md-3 g-4 justify-content-center"></div>
+        </div>
+
+        <template id="plantilla_card">
+            <div class="col">
+                <div class="card h-100 card-naranja shadow-sm">
+                    <img src="" class="card-img-top img-producto" alt="Imagen de producto">
+                    <div class="card-body d-flex flex-column text-center">
+                        <h5 class="card-title text-naranja fw-bold"></h5>
+                        <ul class="list-group list-group-flush text-start mb-3">
+                            <li class="list-group-item tamano small"></li>
+                            <li class="list-group-item precio fw-bold"></li>
+                        </ul>
+                        <button class="btn btn-naranja mt-auto btn-comparar">Comparar</button>
+                    </div>
+                </div>
             </div>
+        </template>
 
-            <template id="fila-producto-template">
-                <tr>
-                    <td class="td-nombre"></td>
-                    <td class="td-precio"></td>
-                    <td>
-                        <input type="number" value="1" min="1" class="form-control form-control-sm mx-auto"
-                            style="width: 60px;">
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-success btn-add">Añadir al carrito</button>
-                    </td>
-                </tr>
-            </template>
+        <script>
+            const inputProducto = document.getElementById('producto');
+            const botonBuscar = document.getElementById('buscar');
+            const cuerpoResultados = document.getElementById('cuerpo-resultados');
+            const plantilla = document.getElementById('plantilla_card').content;
 
+            let productos = [
+                // Cambiamos la propiedad 'peso' por 'tamano'
+                { name: 'Leche Pascual', tamano: '1L', price: 1.5, img: '/img/products/lechePascual.png' },
+                { name: 'Leche Asturiana', tamano: '1L', price: 1.4, img: '/img/products/lecheAsturiana.png' },
+                { name: 'Leche Hacendado', tamano: '1L', price: 1.3, img: '/img/products/lecheHacendado.jpg' },
+                { name: 'Arroz SOS', tamano: '1kg', price: 1.2 },
+                { name: 'Azúcar', tamano: '1kg', price: 0.9 },
+                { name: 'Huevos', tamano: '12 uds', price: 2.0 },
+                { name: 'Queso', tamano: '250g', price: 3.5 },
+            ];
 
-            <script>
-                const inputProducto = document.getElementById('producto');
-                const botonBuscar = document.getElementById('buscar');
-                const cuerpoResultados = document.getElementById('cuerpo-resultados');
+            botonBuscar.addEventListener('click', () => {
+                cuerpoResultados.innerHTML = "";
+                const busqueda = inputProducto.value.trim().toLowerCase();
+                const filtrados = productos.filter(p => p.name.toLowerCase().includes(busqueda));
 
-                const plantilla = document.getElementById('fila-producto-template').content;
+                if (filtrados.length === 0 && busqueda !== "") {
+                    alert('Producto no encontrado');
+                    return;
+                }
 
-                let productos = [
-                    { id: 1, name: 'Leche', price: 1.5 },
-                    { id: 2, name: 'Pan', price: 0.8 },
-                    { id: 3, name: 'Huevos', price: 2.0 },
-                    { id: 4, name: 'Queso', price: 3.5 },
-                ];
+                filtrados.forEach(producto => {
+                    const clon = plantilla.cloneNode(true);
 
-                botonBuscar.addEventListener('click', () => {
+                    clon.querySelector('.card-title').textContent = producto.name;
 
-                    cuerpoResultados.innerHTML = "";
+                    const imagen = clon.querySelector('.img-producto');
+                    imagen.src = producto.img;
+                    imagen.alt = `Imagen de ${producto.name}`;
 
-                    const busqueda = inputProducto.value.trim().toLowerCase();
-                    const filtrados = productos.filter(p => p.name.toLowerCase().includes(busqueda));
+                    // Ahora buscamos .tamano y ponemos el texto "Tamaño"
+                    clon.querySelector('.tamano').textContent = "Tamaño: " + producto.tamano;
+                    clon.querySelector('.precio').textContent = `${producto.price.toFixed(2)} €`;
 
-                    if (filtrados.length === 0 && busqueda.value !== "") {
-                        alert('Producto no encontrado');
-                        return;
-                    }
-                    else {
-                        filtrados.forEach(producto => {
+                    clon.querySelector('.btn-comparar').onclick = () => {
+                        alert(`Comparando: ${producto.name}`);
+                    };
 
-                            const clon = plantilla.cloneNode(true);
-
-
-                            clon.querySelector('.td-nombre').textContent = producto.name;
-                            clon.querySelector('.td-precio').textContent = `${producto.price.toFixed(2)} €`;
-
-
-                            clon.querySelector('.btn-add').onclick = () => {
-                                alert(`Añadiste ${producto.name} al carrito`);
-                            };
-
-                            cuerpoResultados.appendChild(clon);
-                        });
-                    }
+                    cuerpoResultados.appendChild(clon);
                 });
-            </script>
+            });
+        </script>
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
