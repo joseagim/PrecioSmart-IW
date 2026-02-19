@@ -21,9 +21,9 @@
                             <span id="contadorCarritos">(0)</span>
                         </h1>
                     </div>
-                    <div id="accionesCarrito" class="d-none">
+                    <div>
                         <button class="btn btn-warning" onclick="borrarCarrito()">🔄️ Borrar carrito</button>
-                        <button class="btn btn-warning" onclick="nuevoCarrito()">🆕 Nuevo carrito</button>
+                        <button class="btn btn-warning" onclick="crearNuevoCarrito()">🆕 Nuevo carrito</button>
                     </div>
                 </div>
             
@@ -64,14 +64,16 @@
                             </tr>
                         </tfoot>
                     </table>
+                    <a th:href="@{/search}" class="btn btn-warning">🔎Buscar Productos</a>
                 </div>
             
                 <!-- Template para las tarjetas de carritos -->
                 <template id="tarjeta-carrito-template">
                     <div class="card card-carrito">
                         <div class="card-body text-start">
-                            <h5 class="card-title fw-bold">
+                            <h5 class="card-title fw-bold d-flex justify-content-between justify-content-center align-items-center">
                                 <span class="nombre-carrito-txt">Carrito</span>
+                                <button class="btn btn-sm btn-edit">✏️</button>
                             </h5>
                             <p class="card-text cant-productos-txt">0 Productos</p>
                             <p class="card-text fecha-carrito-txt">01/01/2026</p>
@@ -130,7 +132,6 @@
         // Referencias al DOM
         const contenedorCarritos = document.getElementById('contenedorCarritos');
         const contadorCarritos = document.getElementById('contadorCarritos');
-        const accionesCarrito = document.getElementById('accionesCarrito');
         const alertaSeleccion = document.getElementById('alertaSeleccion');
 
         const tablaProductos = document.getElementById('tablaProductos');
@@ -149,6 +150,11 @@
                 clon.querySelector('.cant-productos-txt').textContent = `${carrito.products.length} Producto(s)`;
                 clon.querySelector('.fecha-carrito-txt').textContent = `Creado: ${carrito.createdAt}`;
                 card.onclick = () => seleccionarCarrito(card, carrito.name);
+
+                clon.querySelector('.btn-edit').onclick = (e) => {
+                    e.stopPropagation(); // Evitar que se dispare el onclick de la tarjeta
+                    editarNombreCarrito(carrito.name);
+                };
 
                 contenedorCarritos.appendChild(clon);
             });
@@ -197,13 +203,11 @@
             precioTotal.textContent = sumaTotal.toFixed(2) + "€";
             
             tablaProductos.classList.remove('d-none');
-            accionesCarrito.classList.remove('d-none');
             alertaSeleccion.classList.add('d-none');
         }
 
         function mostrarVacio() {
             tablaProductos.classList.add('d-none');
-            accionesCarrito.classList.add('d-none');
             alertaSeleccion.classList.remove('d-none');
             alertaSeleccion.querySelector('p').textContent = "Este carrito está vacío actualmente.";
         }
@@ -226,10 +230,11 @@
 
         function crearNuevoCarrito() {
 
-            //TODO: ENTRADA DE USUARIO PARA NOMBRE DE CARRITO
-            nombre = nombre.trim();
+            let nombre = window.prompt("Introduce el nombre del nuevo carrito:");
 
-            if (nombre !== "") {
+            if (nombre !== "" && nombre !== null) {
+
+                nombre = nombre.trim();
 
                 if (listaCarritos.some(c => c.name.toLowerCase() === nombre.toLowerCase())) {
                     window.alert("Ya tienes un carrito con ese nombre. Por favor, elige uno distinto.");
@@ -280,6 +285,31 @@
                 carrito.products = [];
                 mostrarVacio();
                 inicializar();
+            }
+        }
+
+        function editarNombreCarrito(nombreAnterior) {
+
+            let nuevoNombre = window.prompt("Introduce el nuevo nombre del carrito:", nombreAnterior);
+
+            if (nuevoNombre !== null) {
+                nuevoNombre = nuevoNombre.trim();
+
+                if (nuevoNombre === "") {
+                    alert("El nombre no puede estar vacío.");
+                    return;
+                }
+
+                if (listaCarritos.some(c => c.name.toLowerCase() === nuevoNombre.toLowerCase() && c.name !== nombreAnterior)) {
+                    alert("Ya tienes un carrito con ese nombre.");
+                    return;
+                }
+
+                let carrito = listaCarritos.findIndex(c => c.name === nombreAnterior);
+                if (carrito !== -1) {
+                    listaCarritos[carrito].name = nuevoNombre;
+                    inicializar();
+                }
             }
         }
 
