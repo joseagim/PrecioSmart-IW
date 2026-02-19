@@ -9,18 +9,97 @@
 
 <body class="d-flex flex-column h-100 text-center">
     <header th:replace="~{fragments/nav.html :: nav}"></header>
-
     <main class="flex-shrink-0">
-        <div class="container">
-            <h1 class="mt-5 mb-5">PrecioSmart</h1>
-            <p class="text-start">PrecioSmart es una aplicación web orientada a ayudar a los consumidores a
-optimizar su gasto en supermercados mediante la comparación objetiva de precios y
-características de productos de alimentación y consumo habitual. La plataforma
-utiliza el código de barras (EAN) como identificador único de los productos y
-centraliza información de distintas cadenas de supermercados, ofreciendo una visión
-clara, transparente y orientada al ahorro.
-            </p>
-        </div>
+        <div class="container mt-5">
+            <div class="container mt-5 text-center">
+                <h1 class="display-3 fw-bold text-naranja mb-3">Compara precios.<br>Ahorra dinero.</h1>
+                <p class="lead mb-5 text-secondary">
+                    Encuentra los mejores precios en supermercados. <br>
+                    Escanea códigos de barras y compara al instante.
+                </p>
+
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <a th:href="@{/search}" class="btn btn-naranja btn-lg px-5 py-3 shadow-sm"
+                        style="border-radius: 12px;">
+                        <i class="bi bi-search me-2"></i> Ir al buscador de productos
+                    </a>
+                </div>
+
+                <div class="row row-cols-md-3 g-4 mt-5 justify-content-center">
+
+                    <div class="col">
+                        <div class="card h-100 shadow-sm  card-naranja">
+                            <div class="card-body">
+                                <div class="mb-3 fs-1">💰</div>
+                                <h5 class="card-title fw-bold text-naranja">Ahorro garantizado</h5>
+                                <p class="card-text text-secondary">Compara precios entre 5 supermercados y elige la
+                                    opción más económica para tu carrito.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="card h-100 shadow-sm card-naranja">
+                            <div class="card-body">
+                                <div class="mb-3 fs-1">📸</div>
+                                <h5 class="card-title fw-bold text-naranja">Escaneo rápido</h5>
+                                <p class="card-text text-secondary">Usa la cámara de tu móvil para escanear códigos de
+                                    barras y obtener precios al instante.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="card h-100 shadow-sm card-naranja">
+                            <div class="card-body">
+                                <div class="mb-3 fs-1">🛒</div>
+                                <h5 class="card-title fw-bold text-naranja">Carrito inteligente</h5>
+                                <p class="card-text text-secondary">Crea listas personalizadas con los productos que
+                                    necesitas y descubre dónde sale más barato hoy.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <div class="container my-5">
+                    <div class="how-it-works-container p-5 shadow-sm ">
+                        <h3 class="text-center fw-bold mb-5">¿Cómo funciona?</h3>
+
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-4">
+                                <div class="step-number mb-3">1</div>
+                                <h5 class="fw-bold">Busca o escanea</h5>
+                                <p class="text-secondary small">Introduce el código EAN o escanea el código de barras
+                                    del producto</p>
+                            </div>
+
+                            <div class="col-md-3 mb-4">
+                                <div class="step-number mb-3">2</div>
+                                <h5 class="fw-bold">Compara precios</h5>
+                                <p class="text-secondary small">Ve los precios en Mercadona, Carrefour, Alcampo, Lidl y
+                                    DIA</p>
+                            </div>
+
+                            <div class="col-md-3 mb-4">
+                                <div class="step-number mb-3">3</div>
+                                <h5 class="fw-bold">Añade al carrito</h5>
+                                <p class="text-secondary small">Crea múltiples carritos y organiza tu compra semanal o
+                                    mensual</p>
+                            </div>
+
+                            <div class="col-md-3 mb-4">
+                                <div class="step-number mb-3">4</div>
+                                <h5 class="fw-bold">¡Ahorra!</h5>
+                                <p class="text-secondary small">Compra en el supermercado con el precio total más bajo
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
