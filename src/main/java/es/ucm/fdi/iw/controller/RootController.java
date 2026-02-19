@@ -62,25 +62,6 @@ public class RootController {
     
     @GetMapping("/cart")
     public String cart(Model model, HttpServletRequest request) {
-        
-        List<Carrito> carritos = Arrays.asList(
-            new Carrito("Primero"),
-            new Carrito("Carrito 2"),
-            new Carrito("Carrito 3")
-        );
-
-        List<Product> carrito = Arrays.asList(
-            new Product("Leche", 1.5),
-            new Product("Pan", 0.8),
-            new Product("Huevos", 2.0),
-            new Product("Manzanas", 1.2),
-            new Product("Arroz", 1)
-        );
-
-        carritos.get(0).setProducts(carrito);
-
-        model.addAttribute("carritos", carritos);
-        model.addAttribute("cart", carritos.get(0));
         return "cart";
     }
 

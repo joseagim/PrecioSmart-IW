@@ -13,47 +13,35 @@
     <main class="flex-shrink-0">
         <div class="container">
             
-            <div class="contenedor-cart">
+            <div class="contenedores-carrito">
                 <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
                     <div>
                         <h1 class="text-start">
                             Mis carritos
-                            <span th:text="|(${carritos.size()})|">(0)</span>
+                            <span id="contadorCarritos">(0)</span>
                         </h1>
                     </div>
                     <div id="accionesCarrito" class="d-none">
-                        <button class="btn btn-warning">🆕 Nuevo carrito</button>
-                        <button class="btn btn-warning">🆗 Guardar carrito</button>
+                        <button class="btn btn-warning" onclick="borrarCarrito()">🔄️ Borrar carrito</button>
+                        <button class="btn btn-warning" onclick="nuevoCarrito()">🆕 Nuevo carrito</button>
                     </div>
                 </div>
             
-                <p class="text-start">Selecciona un carrito para ver su contenido.</p>
+                <p id="mensajeSeleccion" class="text-start">Selecciona un carrito para ver su contenido.</p>
 
                 <div class="d-flex flex-row flex-nowrap overflow-auto gap-3 pb-3" id="contenedorCarritos">
-                    <div th:each="carrito : ${carritos}" 
-                        class="card card-carrito" 
-                        th:data-name="${carrito.getName()}"
-                        onclick="seleccionarCarrito(this, this.getAttribute('data-name'))"
-                        style="min-width: 200px; cursor: pointer; border-radius: 15px; border: 2px solid #fd7e14; background-color: #fffaf5;">
-                        
-                        <div class="card-body text-start">
-                            <h5 class="card-title">
-                                <span th:text="${carrito.getName()}">Mi Carrito</span>
-                            </h5>
-                            <p class="card-text mb-1" th:text="|${carrito.getProducts().size()} productos|">0 productos</p>
-                            <small class="text-muted" th:text="${#temporals.format(carrito.getCreatedAt(), 'dd/MM/yyyy')}">01/1/2026</small>
-                        </div>
-                    </div>
+                    <!-- JS METE LOS CARRITOS -->
                 </div>
             </div>
 
-            <div class="contenedor-cart">
+            <div class="contenedores-carrito">
 
                 <div id="alertaSeleccion">
-                    <p class="text-muted m-0">Selecciona un carrito arriba para ver los productos.</p>
+                    <p class="text-muted mb-3">Selecciona un carrito para ver los productos.</p>
+                    <a th:href="@{/search}" class="btn btn-warning">🔎Buscar Productos</a>
                 </div>
 
-                <div id="seccionTabla" class="d-none">
+                <div id="tablaProductos" class="d-none">
                     <table class="table table-hover align-middle mt-2 shadow-sm border">
                         <thead class="table-dark">
                             <tr>
@@ -64,28 +52,44 @@
                                 <th>Acción</th>
                             </tr>
                         </thead>
-                        <tbody id="cuerpo-tabla">
+                        <tbody id="filas-tabla">
                             <!-- Aquí se inyectarán las filas -->
                         </tbody>
                         <tfoot>
                             <tr class="table-light">
                                 <td colspan="3" class="text-end text-uppercase fw-bold">Total estimado:</td>
-                                <td colspan="2"><strong id="precioTotal" class="fs-5 text-success">0.00€</strong></td>
+                                <td colspan="1"><strong id="precioTotalTabla" class="fs-5 text-success">0.00€</strong></td>
+                                <td colspan="1" id="vaciarCarro" class="text-uppercase fw-bold"><button class="btn btn-sm btn-outline-danger" onclick="vaciarCarrito()">🗑️Vaciar</button>
+                                </td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
             
+                <!-- Template para las tarjetas de carritos -->
+                <template id="tarjeta-carrito-template">
+                    <div class="card card-carrito">
+                        <div class="card-body text-start">
+                            <h5 class="card-title fw-bold">
+                                <span class="nombre-carrito-txt">Carrito</span>
+                            </h5>
+                            <p class="card-text cant-productos-txt">0 Productos</p>
+                            <p class="card-text fecha-carrito-txt">01/01/2026</p>
+                        </div>
+                    </div>
+                </template>
 
-                <!-- Template para las filas (Lógica simple de clonación) -->
+                <!-- Template para las filas de productos -->
                 <template id="fila-producto-template">
                     <tr>
-                        <td class="td-nombre fw-bold text-start"></td>
-                        <td class="td-cantidad"></td>
-                        <td class="td-precio"></td>
-                        <td class="td-subtotal fw-bold"></td>
+                        <td class="tProd-nombre fw-bold text-start"></td>
+                        <td class="tProd-cantidad"><div class="d-flex justify-content-center align-items-center">
+                            <button class="btn btn-control-cantidad btn-restar text-start">-  </button><span class="tProd-cantidad-num">1</span><button class="btn btn-control-cantidad btn-sumar text-end">  +</button>
+                        </div></td>
+                        <td class="tProd-precio"></td>
+                        <td class="tProd-subtotal fw-bold"></td>
                         <td>
-                            <button class="btn btn-sm btn-outline-secondary btn-delete">
+                            <button class="tProd-delete btn btn-sm btn-outline-danger">
                                 🗑️ Eliminar
                             </button>
                         </td>
@@ -93,76 +97,196 @@
                 </template>
             </div>
 
-        <script th:inline="javascript">
-            // Obtenemos todos los carritos del modelo de Java
-            const listaDeCarritos = [[${carritos}]];
+        <th:block th:replace="~{fragments/footer.html :: footer}" />
+
+    </main>
+
+    <script th:inline="javascript">
+        
+        const listaCarritos = [
+            {
+                name: "Primero",
+                createdAt: "19/02/2026",
+                products: [
+                    { name: "Leche", price: 1.50, quantity: 1 },
+                    { name: "Pan", price: 0.80, quantity: 1 },
+                    { name: "Huevos", price: 2.00, quantity: 1 },
+                    { name: "Manzanas", price: 1.20, quantity: 1 },
+                    { name: "Arroz", price: 1.00, quantity: 1 }
+                ]
+            },
+            {
+                name: "Carrito 2",
+                createdAt: "17/02/2026",
+                products: []
+            },
+            {
+                name: "Carrito 3",
+                createdAt: "19/02/2026",
+                products: []
+            }
+        ];
+        
+        // Referencias al DOM
+        const contenedorCarritos = document.getElementById('contenedorCarritos');
+        const contadorCarritos = document.getElementById('contadorCarritos');
+        const accionesCarrito = document.getElementById('accionesCarrito');
+        const alertaSeleccion = document.getElementById('alertaSeleccion');
+
+        const tablaProductos = document.getElementById('tablaProductos');
+        const filasTabla = document.getElementById('filas-tabla');
+        const precioTotal = document.getElementById('precioTotalTabla');
+        
+        function inicializar() {
+            contadorCarritos.textContent = `(${listaCarritos.length})`;
+            contenedorCarritos.innerHTML = "";
             
-            // Referencias constantes al DOM
-            const cuerpoTabla = document.getElementById('cuerpo-tabla');
-            const plantilla = document.getElementById('fila-producto-template').content;
-            const seccionTabla = document.getElementById('seccionTabla');
-            const alertaSeleccion = document.getElementById('alertaSeleccion');
-            const accionesCarrito = document.getElementById('accionesCarrito');
-            const visualTotal = document.getElementById('precioTotal');
+            listaCarritos.forEach(carrito => {
+                const clon = document.getElementById('tarjeta-carrito-template').content.cloneNode(true);
 
-            function seleccionarCarrito(elemento, nombreCarrito) {
-                // 1. Gestionar estilos de tarjetas (Quitar activa de otros, poner en el actual)
-                document.querySelectorAll('.card-carrito').forEach(card => card.classList.remove('card-activa'));
-                elemento.classList.add('card-activa');
+                const card = clon.querySelector('.card-carrito');
+                clon.querySelector('.nombre-carrito-txt').textContent = carrito.name;
+                clon.querySelector('.cant-productos-txt').textContent = `${carrito.products.length} Producto(s)`;
+                clon.querySelector('.fecha-carrito-txt').textContent = `Creado: ${carrito.createdAt}`;
+                card.onclick = () => seleccionarCarrito(card, carrito.name);
 
-                // 2. Buscar datos del carrito
-                const miCarrito = listaDeCarritos.find(c => c.name === nombreCarrito);
+                contenedorCarritos.appendChild(clon);
+            });
+        }
 
-                if (miCarrito && miCarrito.products && miCarrito.products.length > 0) {
-                    actualizarInterfaz(miCarrito.products);
+        function seleccionarCarrito(elemento, nombreCarrito) {
+            // 1. Gestionar estilos de tarjetas (Quitar activa de otros, poner en el actual)
+            document.querySelectorAll('.card-carrito').forEach(card => card.classList.remove('card-activa'));
+            elemento.classList.add('card-activa');
+            document.getElementById('mensajeSeleccion').classList.add('d-none');
+
+            // 2. Buscar datos del carrito
+            const miCarrito = listaCarritos.find(carrito => carrito.name === nombreCarrito);
+
+            if (miCarrito && miCarrito.products && miCarrito.products.length > 0) {
+                actualizarInterfaz(miCarrito, miCarrito.products);
+            } else {
+                mostrarVacio();
+            }
+        }
+
+        function actualizarInterfaz(carrito, productos) {
+            // Limpiar tabla
+            filasTabla.innerHTML = "";
+            let sumaTotal = 0;
+
+            // Llenar tabla usando el Template
+            productos.forEach(prod => {
+                const clon = document.getElementById('fila-producto-template').content.cloneNode(true);
+                const subtotal = (prod.price * prod.quantity);
+                sumaTotal += subtotal;
+
+                clon.querySelector('.tProd-nombre').textContent = prod.name;
+                clon.querySelector('.tProd-cantidad-num').textContent = prod.quantity;
+                clon.querySelector('.tProd-precio').textContent = prod.price.toFixed(2) + "€";
+                clon.querySelector('.tProd-subtotal').textContent = subtotal.toFixed(2) + "€";
+
+                clon.querySelector('.btn-sumar').onclick = () => modificarCantidad(prod.name, 1);
+                clon.querySelector('.btn-restar').onclick = () => modificarCantidad(prod.name, -1);
+                clon.querySelector('.tProd-delete').onclick = () => eliminarProducto(prod.name);
+
+                filasTabla.appendChild(clon);
+            });
+
+            // Actualizar total y visibilidad
+            precioTotal.textContent = sumaTotal.toFixed(2) + "€";
+            
+            tablaProductos.classList.remove('d-none');
+            accionesCarrito.classList.remove('d-none');
+            alertaSeleccion.classList.add('d-none');
+        }
+
+        function mostrarVacio() {
+            tablaProductos.classList.add('d-none');
+            accionesCarrito.classList.add('d-none');
+            alertaSeleccion.classList.remove('d-none');
+            alertaSeleccion.querySelector('p').textContent = "Este carrito está vacío actualmente.";
+        }
+
+        function modificarCantidad(nombreProducto, cantidad) {
+            const carritoActivo = document.querySelector('.card-activa .nombre-carrito-txt').textContent;
+            const carrito = listaCarritos.find(c => c.name === carritoActivo);
+            if (carrito !== undefined) {
+                const producto = carrito.products.find(p => p.name === nombreProducto);
+                if (producto !== undefined) {
+                    producto.quantity += cantidad;
+                    if (producto.quantity <= 0) {
+                        eliminarProducto(nombreProducto);
+                    } else {
+                        actualizarInterfaz(carrito, carrito.products);
+                    }
+                }
+            }
+        }
+
+        function crearNuevoCarrito() {
+
+            //TODO: ENTRADA DE USUARIO PARA NOMBRE DE CARRITO
+            nombre = nombre.trim();
+
+            if (nombre !== "") {
+
+                if (listaCarritos.some(c => c.name.toLowerCase() === nombre.toLowerCase())) {
+                    window.alert("Ya tienes un carrito con ese nombre. Por favor, elige uno distinto.");
+                    return;
+                }
+
+                const nuevoCarrito = {
+                    name: nombre,
+                    createdAt: new Date().toLocaleDateString('es-ES'),
+                    products: []
+                };
+
+                listaCarritos.push(nuevoCarrito);
+                inicializar();
+            }
+        }
+
+        function borrarCarrito() {
+            const carritoActivo = document.querySelector('.card-activa .nombre-carrito-txt').textContent;
+            const indice = listaCarritos.findIndex(c => c.name === carritoActivo);
+            if (indice !== -1) {
+                listaCarritos.splice(indice, 1);
+                mostrarVacio();
+                inicializar();
+            }
+        }
+
+        function eliminarProducto(nombreProducto) {
+            const carritoActivo = document.querySelector('.card-activa .nombre-carrito-txt').textContent;
+            const carrito = listaCarritos.find(c => c.name === carritoActivo);
+            if (carrito !== undefined) {
+                const indice = carrito.products.findIndex(p => p.name === nombreProducto);
+                if (indice !== -1) {
+                    carrito.products.splice(indice, 1);
+                }
+                if (carrito.products.length > 0) {
+                    actualizarInterfaz(carrito, carrito.products);
                 } else {
                     mostrarVacio();
                 }
             }
+        }
 
-            function actualizarInterfaz(productos) {
-                // Limpiar tabla
-                cuerpoTabla.innerHTML = "";
-                let granTotal = 0;
-
-                // Llenar tabla usando el Template
-                productos.forEach(p => {
-                    const clon = plantilla.cloneNode(true);
-                    const subtotal = (p.price * p.quantity);
-                    granTotal += subtotal;
-
-                    clon.querySelector('.td-nombre').textContent = p.name;
-                    clon.querySelector('.td-cantidad').textContent = p.quantity;
-                    clon.querySelector('.td-precio').textContent = p.price.toFixed(2) + "€";
-                    clon.querySelector('.td-subtotal').textContent = subtotal.toFixed(2) + "€";
-                    
-                    // Acción de prueba para el botón del template
-                    clon.querySelector('.btn-delete').onclick = () => {
-                        console.log("Eliminar: " + p.name);
-                    };
-
-                    cuerpoTabla.appendChild(clon);
-                });
-
-                // Actualizar total y visibilidad
-                visualTotal.textContent = granTotal.toFixed(2) + "€";
-                
-                seccionTabla.classList.remove('d-none');
-                accionesCarrito.classList.remove('d-none');
-                alertaSeleccion.classList.add('d-none');
+        function vaciarCarrito() {
+            const carritoActivo = document.querySelector('.card-activa .nombre-carrito-txt').textContent;
+            const carrito = listaCarritos.find(c => c.name === carritoActivo);
+            if (carrito !== undefined) {
+                carrito.products = [];
+                mostrarVacio();
+                inicializar();
             }
+        }
 
-            function mostrarVacio() {
-                seccionTabla.classList.add('d-none');
-                accionesCarrito.classList.add('d-none');
-                alertaSeleccion.classList.remove('d-none');
-                alertaSeleccion.querySelector('p').textContent = "Este carrito está vacío actualmente.";
-            }
-        </script>
+        window.onload = inicializar;
+    </script>
 
-    </main>
-
-    <th:block th:replace="~{fragments/footer.html :: footer}" />
+    
 </body>
 
 </html>
