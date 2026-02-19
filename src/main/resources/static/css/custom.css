@@ -57,11 +57,27 @@ img.preview {
     max-height: 400px;
 }
 
-.contenedor-cart {
-    border-radius: 15px;
-    border: 1px solid #ffaa65;
+
+.contenedores-carrito {
+    border-radius: 15px; 
+    border: 1px solid #ffaa65; 
+
     background-color: #ffffff;
     padding: 25px;
+    margin-top: 15px;
+}
+
+.card-carrito{
+    min-width: 200px; 
+    cursor: pointer; 
+    border-radius: 15px; 
+    border: 2px solid #fd7e14; 
+    background-color: #fff7ef;
+}
+
+.card-carrito:hover {
+    background-color: #fd7e14 !important;
+    color: white !important;
 }
 
 .card-activa {
@@ -69,7 +85,22 @@ img.preview {
     color: white !important;
 }
 
-/* Colores base: Naranja Suave (#ffb366) y Naranja Fuerte (#ff9f43) */
+.tProd-cantidad-num{
+    width: 35px;
+    border-radius: 15%;
+    border: 1px solid #fd7e14;
+    background: #ffffff;
+    color: #fd7e14;
+}
+
+.btn-edit:hover{
+    width: 35px;
+    border-radius: 25%;
+    border: 1px solid #000000;
+    background: #ffd5aa;
+}
+
+  /* Colores base: Naranja Suave (#ffb366) y Naranja Fuerte (#ff9f43) */
 
 .text-naranja {
     color: #ff9f43 !important;
