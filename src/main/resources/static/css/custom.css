@@ -60,8 +60,7 @@ img.preview {
 
 .contenedores-carrito {
     border-radius: 15px; 
-    border: 1px solid #ffaa65; 
-
+    border: 1px solid #ffaa65;
     background-color: #ffffff;
     padding: 25px;
     margin-top: 15px;
@@ -76,13 +75,52 @@ img.preview {
 }
 
 .card-carrito:hover {
-    background-color: #fd7e14 !important;
+    background-color: #ff9035 !important;
     color: white !important;
 }
 
 .card-activa {
-    background-color: #fd7e14 !important;
+    background-color: #ff9035 !important;
     color: white !important;
+}
+
+.table-carrito {
+  width: 100%;
+  margin-bottom: 1rem;
+  vertical-align: top;
+  border: 3px solid rgb(80, 80, 80);
+}
+
+.table-carrito th,
+.table-carrito td {
+  padding: 7px;
+  border-bottom: 1px solid rgb(171, 171, 171);
+}
+
+.thead-carrito {
+    background-color: #ff9035;
+    color: white
+}
+
+.tbody-carrito > tr:hover {
+    background-color: #ffddb9;
+    color: black
+}
+
+.tfoot-carrito {
+    background-color: #e8e8e8;
+}
+
+.tProd-delete{
+    border-radius: 15%;
+    border: 1px solid #dc3545;
+    background: #ffffff;
+    font-weight: bold;
+}
+.tProd-delete:hover{
+    background: #dc3545;
+    color: white;
+    font-weight: bold;
 }
 
 .tProd-cantidad-num{

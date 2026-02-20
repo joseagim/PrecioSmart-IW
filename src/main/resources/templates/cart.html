@@ -22,8 +22,8 @@
                         </h1>
                     </div>
                     <div>
-                        <button class="btn btn-warning" onclick="borrarCarrito()">🔄️ Borrar carrito</button>
-                        <button class="btn btn-warning" onclick="crearNuevoCarrito()">🆕 Nuevo carrito</button>
+                        <button class="btn btn-naranja" onclick="borrarCarrito()">🔄️ Borrar carrito</button>
+                        <button class="btn btn-naranja" onclick="crearNuevoCarrito()">🆕 Nuevo carrito</button>
                     </div>
                 </div>
             
@@ -38,12 +38,12 @@
 
                 <div id="alertaSeleccion">
                     <p class="text-muted mb-3">Selecciona un carrito para ver los productos.</p>
-                    <a th:href="@{/search}" class="btn btn-warning">🔎Buscar Productos</a>
+                    <a th:href="@{/search}" class="btn btn-naranja">🔎Buscar Productos</a>
                 </div>
 
                 <div id="tablaProductos" class="d-none">
-                    <table class="table table-hover align-middle mt-2 shadow-sm border">
-                        <thead class="table-dark">
+                    <table class="table-carrito align-middle mt-2 shadow-sm border">
+                        <thead class="thead-carrito">
                             <tr>
                                 <th>Producto</th>
                                 <th>Unidades</th>
@@ -52,19 +52,19 @@
                                 <th>Acción</th>
                             </tr>
                         </thead>
-                        <tbody id="filas-tabla">
+                        <tbody id="filas-tabla" class="tbody-carrito">
                             <!-- Aquí se inyectarán las filas -->
                         </tbody>
-                        <tfoot>
-                            <tr class="table-light">
+                        <tfoot class="tfoot-carrito">
+                            <tr>
                                 <td colspan="3" class="text-end text-uppercase fw-bold">Total estimado:</td>
                                 <td colspan="1"><strong id="precioTotalTabla" class="fs-5 text-success">0.00€</strong></td>
-                                <td colspan="1" id="vaciarCarro" class="text-uppercase fw-bold"><button class="btn btn-sm btn-outline-danger" onclick="vaciarCarrito()">🗑️Vaciar</button>
+                                <td colspan="1" id="vaciarCarro" class="text-uppercase fw-bold"><button class="btn btn-sm tProd-delete" onclick="vaciarCarrito()">🗑️Vaciar</button>
                                 </td>
                             </tr>
                         </tfoot>
                     </table>
-                    <a th:href="@{/search}" class="btn btn-warning">🔎Buscar Productos</a>
+                    <a th:href="@{/search}" class="btn btn-naranja">🔎Buscar Productos</a>
                 </div>
             
                 <!-- Template para las tarjetas de carritos -->
@@ -91,8 +91,8 @@
                         <td class="tProd-precio"></td>
                         <td class="tProd-subtotal fw-bold"></td>
                         <td>
-                            <button class="tProd-delete btn btn-sm btn-outline-danger">
-                                🗑️ Eliminar
+                            <button class="tProd-delete btn btn-sm">
+                                🗑️
                             </button>
                         </td>
                     </tr>
