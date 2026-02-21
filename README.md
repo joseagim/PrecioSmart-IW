@@ -18,12 +18,12 @@ Utiliza el código de barras (EAN) como identificador único para garantizar bú
 
 ## 💻 Vistas de la aplicación
 
-La aplicación se divide en las siguientes interfaces diseñadas para la mejor experiencia de usuario:
+La aplicación dispone de las siguientes interfaces de usuario:
 
-1.  **Vista Principal**: Página de inicio con información sobre la aplicación y acceso directo a las herramientas de búsqueda y escaneo.
-2.  **Vista de Búsqueda**: Listado de productos filtrados según lo que escriba el usuario en la barra de búsqueda.
-3.  **Vista de Productos**: Ficha detallada de cada producto con información nutricional, precios en distintas cadenas y productos similares.
-4.  **Vista de Carritos**: Gestión de varios carritos con nombres personalizados. Permite comparar cuánto costaría la misma lista de la compra en los distintos supermercados que recoge la aplicación.
-5.  **Vista de Solicitudes**: Formulario para que los usuarios reporten datos erróneos o soliciten añadir productos que no están en la base de datos.
-6.  **Vista de Notificaciones**: Panel donde el usuario recibe avisos sobre el estado de sus solicitudes (aceptado o rechazado) por parte de la administración.
-7.  **Vista de Administrador**: Panel exclusivo para la gestión de la plataforma, permitiendo validar o rechazar las solicitudes de los usuarios para mantener la base de datos actualizada.
+1.  **Vista principal**: Página de inicio con información sobre la aplicación y acceso directo a las herramientas de búsqueda y escaneo.
+2.  **Vista de búsqueda**: Listado de productos filtrados según lo que escriba el usuario en la barra de búsqueda.
+3.  **Vista de productos**: Ficha detallada de cada producto con información nutricional, precios en distintas cadenas y productos similares.
+4.  **Vista de carritos**: Gestión de varios carritos con nombres personalizados. Permite comparar cuánto costaría la misma lista de la compra en los distintos supermercados que recoge la aplicación.
+5.  **Vista de solicitudes**: Formulario para que los usuarios reporten datos erróneos o soliciten añadir productos que no están en la base de datos.
+6.  **Vista de notificaciones**: Panel donde el usuario recibe avisos sobre el estado de sus solicitudes (aceptado o rechazado) por parte de la administración.
+7.  **Vista de administrador**: Panel exclusivo para la gestión de la plataforma, permitiendo validar o rechazar las solicitudes de los usuarios para mantener la base de datos actualizada.
