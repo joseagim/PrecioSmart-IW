@@ -8,61 +8,61 @@
         type="text/css" />
 </head>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100 text-center">
     <header th:replace="~{fragments/nav.html :: nav}"></header>
 
     <main class="flex-shrink-0">
         <div class="container">
-            <h1 class="mt-5">Administración</h1>
+            <h1 class="mt-5 mb-5">Administrar solicitudes</h1>
+            <div class="border border-3 rounded-5 mx-auto panel-lg">
+                <div id="request-list" class="p-3 text-start">
+                    <div class="border border-1 rounded-3 mt-3 mb-3 p-3 d-flex justify-content-between align-items-center solicitud">
+                        <p>Usuario: Pepe | Añadir nuevo producto: Chocolate</p>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
+                            <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
+                        </div>
+                    </div>
+                    <div class="border border-1 rounded-3 mt-3 mb-3 p-3 d-flex justify-content-between align-items-center solicitud">
+                        <p>Usuario: Manuel | Modificar producto: Leche</p>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
+                            <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
+                        </div>
+                    </div>
+                    <div class="border border-1 rounded-3 mt-3 mb-3 p-3 d-flex justify-content-between align-items-center solicitud">
+                        <p>Usuario: María | Modificar producto: Arroz</p>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
+                            <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="container">
-            <h1 class="mt-5">Usuarios</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Nombre & Apellidos</th>
-                        <th>Roles</th>
-                        <th>Grupos</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="user : ${users}">
-                        <td th:text="${user.id}">1</td>
-                        <td th:text="${user.username}">paco</td>
-                        <td th:text="${user.firstName + ' ' + user.lastName}">Nombre</td>
-                        <td>
-                            <ul>
-                                <li th:text="${user.roles}">Role</li>
-                            </ul>
-                        </td>
-                        <td>
-                          <ul>
-                              <li th:text="${user.groups}">Role</li>
-                          </ul>
-                      </td>
-                      <td>
-                            <form th:action="@{'/admin/toggle/' + ${user.id}}" th:method="post">
-                                <button th:if="${user.enabled}" type="submit"
-                                    class="toggle btn btn-danger">Deshabilitar</button>
-                                <button th:unless="${user.enabled}" type="submit"
-                                    class="toggle btn btn-primary">Habilitar</button>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <script>
+            const requestList = document.querySelector("#request-list");
 
-        <div class="container">
+            const className = "border border-1 rounded-3 mt-3 mb-3 notification";
 
-            <h2>Últimos 5 mensajes del sistema</h2>
-            <table id="messages"></table> <!-- will be filled with JSON data-->
-            <button id="refresh" class="btn btn-primary">Actualizar vía AJAX</button>
+            let numSolicitudes = 1;
 
-        </div>
+            requestList.addEventListener("click", e => {
+                if (e.target.classList.contains("btn-aceptar")) {
 
+                    const btnAceptar = e.target;
+                    e.target.parentElement.parentElement.remove();
+
+                }
+                else if (e.target.classList.contains("btn-rechazar")) {
+
+                    const btnRechazar = e.target;
+                    e.target.parentElement.parentElement.remove();
+
+                }
+            });
+
+        </script>
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />

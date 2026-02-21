@@ -253,3 +253,37 @@ img.preview {
     box-shadow: 0 4px 10px rgba(255, 107, 26, 0.3);
     border-radius: 50%;
 }
+
+.panel-lg {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.panel-md {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.panel-sm {
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.notification {
+    transition: 0.1s;
+}
+
+.notification:hover {
+    background-color: #ffb366;
+}
+
+.solicitud {
+    transition: 0.1s;
+}
+
+.solicitud:hover {
+    background-color: #ffb366;
+}
