@@ -94,6 +94,11 @@ public class RootController {
         return "user";
     }
 
+    @GetMapping("/admin")
+    public String admin(Model model, HttpServletRequest request) {
+        return "admin";
+    }
+
     @GetMapping("/")
     public String index(Model model) {
         return "index";
