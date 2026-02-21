@@ -11,13 +11,56 @@
 
     <main class="flex-shrink-0">
         <div class="container">
-            <h1 class="mt-5 mb-5">Notificaciones</h1>
-            <p class="text-start">En esta ventana aparecerá un registro con las notificaciones que puede recibir el usuario:</p>
-            <ul class="text-start">
-                <li>Si enviaste una solicitud para añadir/eliminar un producto, aparecerá un log cuando un administrador acepte o rechace dicha solicitud.</li>
-                <li>En caso de que se actualice un producto que tengas en el carrito, saldrá un registro de que el producto ha sido modificado para que lo revises.</li>
-            </ul>
+            <h1 class="mt-5 mb-5">Mis notificaciones</h1>
+            <div class="border border-3 rounded-5 mx-auto panel-lg">
+                <div id="notification-list" class="p-3">
+                    <div class="border border-1 rounded-3 mt-3 mb-3 text-start notification">
+                        <p>ℹ️ Así se vería una notificación. En los botones de abajo puedes enviar más.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="border border-2 rounded-4 p-4 mt-5 mb-5 panel-sm">
+                <h4>Probar notificaciones</h4>
+                <div class="flex justify-content-center">
+                    <button id="btn-aceptar" class="btn btn-success rounded-pill px-4">Aceptar</button>
+                    <button id="btn-rechazar" class="btn btn-danger rounded-pill px-4">Rechazar</button>
+                </div>
+            </div>
         </div>
+        <script>
+            const notificationsList = document.querySelector("#notification-list");
+            const btnAceptar = document.querySelector("#btn-aceptar");
+            const btnRechazar = document.querySelector("#btn-rechazar");
+
+            const className = "border border-1 rounded-3 mt-3 mb-3 text-start notification";
+
+            let numSolicitudes = 1;
+
+            btnAceptar.addEventListener("click", e => {
+                const div = document.createElement("div");
+                div.className = className;
+                div.innerHTML = `
+                    <div>
+                        <p>✅ Tu solicitud (#${numSolicitudes}) ha sido aceptada</p>
+                    </div>
+                `;
+                notificationsList.appendChild(div);
+                numSolicitudes++;
+            });
+
+            btnRechazar.addEventListener("click", e => {
+                const div = document.createElement("div");
+                div.className = className;
+                div.innerHTML = `
+                    <div>
+                        <p>❌ Tu solicitud (#${numSolicitudes}) ha sido rechazada</p>
+                    </div>
+                `;
+                notificationsList.appendChild(div);
+                numSolicitudes++;
+            });
+
+        </script>
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
