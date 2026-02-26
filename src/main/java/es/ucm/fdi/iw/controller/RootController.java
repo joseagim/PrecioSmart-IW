@@ -15,8 +15,8 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import es.ucm.fdi.iw.Carrito;
-import es.ucm.fdi.iw.Product;
+
+import es.ucm.fdi.iw.model.Product;
 
 /**
  * Non-authenticated requests only.
