@@ -11,9 +11,8 @@
     <header th:replace="~{fragments/nav.html :: nav}"></header>
 
     <main class="flex-shrink-0">
-        <div class="container">
-            
-            <div class="contenedores-carrito">
+        <div>
+            <div class="panel-lg">
                 <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
                     <div>
                         <h1 class="text-start">
@@ -22,8 +21,8 @@
                         </h1>
                     </div>
                     <div>
-                        <button class="btn btn-naranja" onclick="borrarCarrito()">🔄️ Borrar carrito</button>
-                        <button class="btn btn-naranja" onclick="crearNuevoCarrito()">🆕 Nuevo carrito</button>
+                        <button class="btn btn-naranja" onclick="borrarCarrito()"><img class="svg-md" th:src="@{/img/svg/borrar.svg}" alt="Editar"></button>
+                        <button class="btn btn-naranja" onclick="crearNuevoCarrito()"><img class="svg-md" th:src="@{/img/svg/new.svg}" alt="Editar"></button>
                     </div>
                 </div>
             
@@ -34,11 +33,11 @@
                 </div>
             </div>
 
-            <div class="contenedores-carrito">
+            <div class="panel-lg">
 
                 <div id="alertaSeleccion">
                     <p class="text-muted mb-3">Selecciona un carrito para ver los productos.</p>
-                    <a th:href="@{/search}" class="btn btn-naranja">🔎Buscar Productos</a>
+                    <a th:href="@{/search}" class="btn btn-naranja"><img class="svg-sm" th:src="@{/img/svg/search.svg}" alt="buscar">Buscar Productos</a>
                 </div>
 
                 <div id="tablaProductos" class="d-none">
@@ -64,7 +63,7 @@
                             </tr>
                         </tfoot>
                     </table>
-                    <a th:href="@{/search}" class="btn btn-naranja">🔎Buscar Productos</a>
+                    <a th:href="@{/search}" class="btn btn-naranja"><img class="svg-sm" th:src="@{/img/svg/search.svg}" alt="buscar">Buscar Productos</a>
                 </div>
             
                 <!-- Template para las tarjetas de carritos -->
@@ -73,7 +72,7 @@
                         <div class="card-body text-start">
                             <h5 class="card-title fw-bold d-flex justify-content-between justify-content-center align-items-center">
                                 <span class="nombre-carrito-txt">Carrito</span>
-                                <button class="btn btn-sm btn-edit">✏️</button>
+                                <button class="btn btn-sm btn-edit"><img class="svg-sm" th:src="@{/img/svg/edit.svg}" alt="Editar"></button>
                             </h5>
                             <p class="card-text cant-productos-txt">0 Productos</p>
                             <p class="card-text fecha-carrito-txt">01/01/2026</p>
@@ -98,9 +97,6 @@
                     </tr>
                 </template>
             </div>
-
-        <th:block th:replace="~{fragments/footer.html :: footer}" />
-
     </main>
 
     <script th:inline="javascript">
@@ -162,8 +158,8 @@
 
         function seleccionarCarrito(elemento, nombreCarrito) {
             // 1. Gestionar estilos de tarjetas (Quitar activa de otros, poner en el actual)
-            document.querySelectorAll('.card-carrito').forEach(card => card.classList.remove('card-activa'));
-            elemento.classList.add('card-activa');
+            document.querySelectorAll('.card-carrito').forEach(card => card.classList.remove('card-carrito-activa'));
+            elemento.classList.add('card-carrito-activa');
             document.getElementById('mensajeSeleccion').classList.add('d-none');
 
             // 2. Buscar datos del carrito
@@ -213,7 +209,7 @@
         }
 
         function modificarCantidad(nombreProducto, cantidad) {
-            const carritoActivo = document.querySelector('.card-activa .nombre-carrito-txt').textContent;
+            const carritoActivo = document.querySelector('.card-carrito-activa .nombre-carrito-txt').textContent;
             const carrito = listaCarritos.find(c => c.name === carritoActivo);
             if (carrito !== undefined) {
                 const producto = carrito.products.find(p => p.name === nombreProducto);
@@ -253,7 +249,7 @@
         }
 
         function borrarCarrito() {
-            const carritoActivo = document.querySelector('.card-activa .nombre-carrito-txt').textContent;
+            const carritoActivo = document.querySelector('.card-carrito-activa .nombre-carrito-txt').textContent;
             const indice = listaCarritos.findIndex(c => c.name === carritoActivo);
             if (indice !== -1) {
                 listaCarritos.splice(indice, 1);
@@ -263,7 +259,7 @@
         }
 
         function eliminarProducto(nombreProducto) {
-            const carritoActivo = document.querySelector('.card-activa .nombre-carrito-txt').textContent;
+            const carritoActivo = document.querySelector('.card-carrito-activa .nombre-carrito-txt').textContent;
             const carrito = listaCarritos.find(c => c.name === carritoActivo);
             if (carrito !== undefined) {
                 const indice = carrito.products.findIndex(p => p.name === nombreProducto);
@@ -279,7 +275,7 @@
         }
 
         function vaciarCarrito() {
-            const carritoActivo = document.querySelector('.card-activa .nombre-carrito-txt').textContent;
+            const carritoActivo = document.querySelector('.card-carrito-activa .nombre-carrito-txt').textContent;
             const carrito = listaCarritos.find(c => c.name === carritoActivo);
             if (carrito !== undefined) {
                 carrito.products = [];
@@ -316,7 +312,7 @@
         window.onload = inicializar;
     </script>
 
-    
+     <th:block th:replace="~{fragments/footer.html :: footer}" />
 </body>
 
 </html>
