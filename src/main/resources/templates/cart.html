@@ -41,28 +41,30 @@
                 </div>
 
                 <div id="tablaProductos" class="d-none">
-                    <table class="table-carrito align-middle mt-2 shadow-sm border">
-                        <thead class="thead-carrito">
-                            <tr>
-                                <th>Producto</th>
-                                <th>Unidades</th>
-                                <th>Precio/u</th>
-                                <th>Subtotal</th>
-                                <th>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody id="filas-tabla" class="tbody-carrito">
-                            <!-- Aquí se inyectarán las filas -->
-                        </tbody>
-                        <tfoot class="tfoot-carrito">
-                            <tr>
-                                <td colspan="3" class="text-end text-uppercase fw-bold">Total estimado:</td>
-                                <td colspan="1"><strong id="precioTotalTabla" class="fs-5 text-success">0.00€</strong></td>
-                                <td colspan="1" id="vaciarCarro" class="text-uppercase fw-bold"><button class="btn btn-sm tProd-delete" onclick="vaciarCarrito()">🗑️Vaciar</button>
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                    <div class="div-responsive">
+                        <table class="table-carrito align-middle mt-2 shadow-sm border">
+                            <thead class="thead-carrito">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Unidades</th>
+                                    <th>Precio/u</th>
+                                    <th>Subtotal</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="filas-tabla" class="tbody-carrito">
+                                <!-- Aquí se inyectarán las filas -->
+                            </tbody>
+                            <tfoot class="tfoot-carrito">
+                                <tr>
+                                    <td colspan="3" class="text-end text-uppercase fw-bold">Total estimado:</td>
+                                    <td colspan="1"><strong id="precioTotalTabla" class="fs-5 text-success">0.00€</strong></td>
+                                    <td colspan="1" id="vaciarCarro" class="text-uppercase fw-bold"><button class="btn btn-sm tProd-delete" onclick="vaciarCarrito()">🗑️Vaciar</button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                     <a th:href="@{/search}" class="btn btn-naranja"><img class="svg-sm" th:src="@{/img/svg/search.svg}" alt="buscar">Buscar Productos</a>
                 </div>
             

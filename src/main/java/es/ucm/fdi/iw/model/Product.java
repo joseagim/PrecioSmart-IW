@@ -15,21 +15,19 @@ import jakarta.persistence.NamedQueries;
 @Data
 @Entity
 @NamedQueries({
-		@NamedQuery(name = "Product.EAN", query = "select obj from Product obj where :EAN = obj.EAN ")
+        @NamedQuery(name = "Product.searchByName", query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:name)"),
+        @NamedQuery(name = "Product.EAN", query = "SELECT p FROM Product p WHERE p.EAN = :EAN")
 })
 public class Product {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @OneToMany(mappedBy = "product")
-	private Set<ProductSupermarket> vinculaciones;
-    
+    private Set<ProductSupermarket> vinculaciones;
+
     private String EAN;
     private String name;
-
-  
-
-
+    private String imageURL;
 }

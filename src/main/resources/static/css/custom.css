@@ -97,6 +97,11 @@
     border-bottom: 1px solid gray;
 }
 
+.div-responsive {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
 
 /*-- LOGIN & REGISTER --*/
 .login-box {
