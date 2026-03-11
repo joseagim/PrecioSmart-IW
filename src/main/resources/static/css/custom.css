@@ -1,5 +1,89 @@
 /* usa este fichero para personalizar tus vistas */
 
+:root {
+    --naranja-oscuro: #f8882d;
+    --naranja-medio: #ff9e43;
+    --naranja-claro: #ffab56;
+    --amarillo-naranja: #fbb606;
+}
+
+.bg-naranja {
+    background-color: var(--naranja-oscuro);
+}
+
+.text-naranja {
+    color: var(--naranja-medio);
+}
+
+.btn-naranja {
+    background-color: var(--naranja-medio);
+    border: 0;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-naranja:hover {
+    background-color: var(--naranja-oscuro);
+    color: white;
+}
+
+.card-naranja {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 15px;
+    border: 2px solid var(--amarillo-naranja);
+    background-color: #ffffff;
+    overflow: hidden;
+}
+
+.card-naranja:hover {
+    transform: translateY(-5px);
+    /* Sube un poco al poner el ratón */
+    box-shadow: 0 10px 20px rgba(255, 159, 67, 0.2) !important;
+}
+
+.div-responsive {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+}
+
+.panel-xxl, .panel-xl, .panel-lg, .panel-md, .panel-sm { 
+    margin-left: auto;
+    margin-right: auto; 
+    border-radius: 15px; 
+    border: 1px solid var(--naranja-claro);
+    background-color: #ffffff;
+    padding: 25px;
+    margin-top: 15px;
+}
+
+.panel-xxl { max-width: 100%; }
+.panel-xl { max-width: 85%; }
+.panel-lg { max-width: 70%; }
+.panel-md { max-width: 50%; }
+.panel-sm { max-width: 30%; }
+
+.svg-sm {
+    width: 22px;
+    height: 22px;
+}
+.svg-md {
+    width: 40px;
+    height: 40px;
+}
+.svg-lg {
+    width: 60px;
+    height: 60px;
+}
+.svg-xl {
+    width: 90px;
+    height: 90px;
+}
+.svg-xxl {
+    width: 130px;
+    height: 130px;
+}
+
 .iwthumb {
     height: 32px;
     width: 32px;
@@ -19,30 +103,13 @@
     border-bottom: 1px solid gray;
 }
 
-img.preview {
-    object-fit: cover;
-    width: 10%;
-    height: 100px;
-    border-radius: 10px;
+.div-responsive {
+    max-width: 100%;
+    overflow-x: auto;
 }
 
 
-.author-card {
-    transition: 0.2s;
-}
-
-.author-card:hover {
-    border-color: darkgrey;
-}
-
-.author-img {
-    transition: 0.2s;
-}
-
-.author-img:hover {
-    transform: scale(1.01);
-}
-
+/*-- LOGIN & REGISTER --*/
 .login-box {
     width: 100%;
     max-width: 360px;
@@ -57,30 +124,23 @@ img.preview {
     max-height: 400px;
 }
 
-
-.contenedores-carrito {
-    border-radius: 15px; 
-    border: 1px solid #ffaa65;
-    background-color: #ffffff;
-    padding: 25px;
-    margin-top: 15px;
-}
-
+/*-- CARRITO --*/
 .card-carrito{
     min-width: 200px; 
     cursor: pointer; 
     border-radius: 15px; 
-    border: 2px solid #fd7e14; 
+    border: 2px solid var(--naranja-oscuro); 
     background-color: #fff7ef;
 }
 
 .card-carrito:hover {
-    background-color: #ff9035 !important;
+    background-color: var(--naranja-claro) !important;
     color: white !important;
 }
 
-.card-activa {
-    background-color: #ff9035 !important;
+.card-carrito-activa {
+    background-color: var(--naranja-claro) !important;
+    border: 2px solid var(--naranja-claro); 
     color: white !important;
 }
 
@@ -132,49 +192,45 @@ img.preview {
 }
 
 .btn-edit:hover{
-    width: 35px;
     border-radius: 25%;
     border: 1px solid #000000;
     background: #ffd5aa;
-}
-
-  /* Colores base: Naranja Suave (#ffb366) y Naranja Fuerte (#ff9f43) */
-
-.text-naranja {
-    color: #ff9f43 !important;
-}
-
-.btn-naranja {
-    background-color: #ffb366;
-    border-color: #ffb366;
-    color: white;
-    font-weight: bold;
-}
-
-.btn-naranja:hover {
-    background-color: #ff9f43;
-    border-color: #ff9f43;
-    color: white;
-}
-
-.card-naranja {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border-radius: 15px;
-    border: 2px solid #f8bf20;
-    background-color: #ffffff;
-    overflow: hidden;
-}
-
-.card-naranja:hover {
-    transform: translateY(-10px);
-    /* Sube un poco al poner el ratón */
-    box-shadow: 0 10px 20px rgba(255, 159, 67, 0.2) !important;
 }
 
 .card-body .fs-1 {
     display: block;
     margin-bottom: 15px;
 }
+
+
+/*-- INDEX --*/
+
+.how-it-works-container {
+    background-color: #fffaf5;
+    border-radius: 25px;
+    border: 1px solid #ffeada;
+}
+
+/* Estilo de los círculos con números */
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--amarillo-naranja), var(--naranja-oscuro));
+    /* Degradado naranja */
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: 0 4px 10px rgba(255, 107, 26, 0.3);
+    border-radius: 50%;
+}
+
+
+
+/*-- SEARCH --*/
 
 .img-producto {
     width: 100%;
@@ -204,73 +260,28 @@ img.preview {
     border-color: #ff9f43;
 }
 
+/*-- NAVBAR --*/
+.nav-link {
+    color: rgb(255, 255, 255) !important;
+    transition: color 0.2s;
+}
 
-.navbar-naranja {
-    background-color: #f8a34d;
+.nav-link:hover {
+    color: #000000 !important;
 }
 
 
-.navbar-naranja .nav-link {
-    color: rgba(255, 255, 255, 0.9) !important;
-    transition: color 0.3s;
-}
-
-.navbar-naranja .nav-link:hover {
-    color: #ff7300 !important;
-}
-
-
-.navbar-naranja .btn-outline-secondary {
+.btn-outline-secondary {
     color: white;
     border-color: rgba(255, 255, 255, 0.5);
 }
 
-.navbar-naranja .btn-outline-secondary:hover {
+.btn-outline-secondary:hover {
     background-color: rgba(255, 255, 255, 0.2);
     border-color: white;
 }
 
-
-.how-it-works-container {
-    background-color: #fffaf5;
-    border-radius: 25px;
-    border: 1px solid #ffeada;
-}
-
-/* Estilo de los círculos con números */
-.step-number {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #ff9f43, #ff6b1a);
-    /* Degradado naranja */
-    color: white;
-    font-size: 1.5rem;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto;
-    box-shadow: 0 4px 10px rgba(255, 107, 26, 0.3);
-    border-radius: 50%;
-}
-
-.panel-lg {
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.panel-md {
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.panel-sm {
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-}
+/* luego lo unifico, por ahora dejarlo así */
 
 .notification {
     transition: 0.1s;

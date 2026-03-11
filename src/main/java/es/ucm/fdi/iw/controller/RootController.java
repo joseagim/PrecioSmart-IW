@@ -5,18 +5,21 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import es.ucm.fdi.iw.Carrito;
-import es.ucm.fdi.iw.Product;
+import es.ucm.fdi.iw.model.Product;
 
 /**
  * Non-authenticated requests only.
@@ -24,6 +27,8 @@ import es.ucm.fdi.iw.Product;
 @Controller
 public class RootController {
 
+    @Autowired
+    private EntityManager entityManager;
     private static final Logger log = LogManager.getLogger(RootController.class);
 
     @ModelAttribute
@@ -43,6 +48,7 @@ public class RootController {
     @GetMapping("/authors")
     public String authors(Model model, HttpServletRequest request) {
         return "authors";
+
     }
 
     @GetMapping("/register")
@@ -64,8 +70,19 @@ public class RootController {
         return "cart";
     }
 
+    
+
     @GetMapping("/search")
-    public String search(Model model, HttpServletRequest request) {
+    @Transactional
+    public String search(@RequestParam(name = "producto", required = false) String producto, Model model) {
+
+        List<Product> productos = entityManager
+                .createNamedQuery("Product.searchByName", Product.class)
+                .setParameter("name", "%" + producto + "%")
+                .getResultList();
+
+        model.addAttribute("productos", productos);
+
         return "search";
     }
 

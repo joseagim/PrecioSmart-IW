@@ -42,7 +42,7 @@ public class Message implements Transferable<Message.Transfer> {
 	private User sender;
 	@ManyToOne
 	private User recipient;
-  @ManyToOne
+	@ManyToOne
 	private Topic topic;
   
 	private String text;
@@ -61,7 +61,7 @@ public class Message implements Transferable<Message.Transfer> {
 		private String to;
 		private String sent;
 		private String received;
-    private String topic;
+    	private String topic;
 		private String text;
 		long id;
 		public Transfer(Message m) {
