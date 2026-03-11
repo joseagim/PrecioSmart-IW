@@ -41,6 +41,12 @@
     box-shadow: 0 10px 20px rgba(255, 159, 67, 0.2) !important;
 }
 
+.div-responsive {
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+}
+
 .panel-xxl, .panel-xl, .panel-lg, .panel-md, .panel-sm { 
     margin-left: auto;
     margin-right: auto; 
