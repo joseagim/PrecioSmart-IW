@@ -1,7 +1,10 @@
 package es.ucm.fdi.iw.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import es.ucm.fdi.iw.model.Product;
+import es.ucm.fdi.iw.model.ProductSupermarket;
 
 /**
  * Non-authenticated requests only.
@@ -70,8 +74,6 @@ public class RootController {
         return "cart";
     }
 
-    
-
     @GetMapping("/search")
     @Transactional
     public String search(@RequestParam(name = "producto", required = false) String producto, Model model) {
@@ -96,15 +98,13 @@ public class RootController {
         return "request";
     }
 
-    @GetMapping("/product")
-    public String product(Model model) {
-        return "product";
-    }
+
 
     @GetMapping("/faq")
     public String faq(Model model, HttpServletRequest request) {
         return "faq";
     }
+    
 
     @GetMapping("/user")
     public String user(Model model, HttpServletRequest request) {

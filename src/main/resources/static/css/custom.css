@@ -245,6 +245,16 @@
     margin: 0 auto;
 }
 
+.form-control:focus {
+    border-color: var(--naranja-claro) !important;
+    box-shadow: none !important;
+}
+
+.input-group:focus-within .input-group-text {
+    border-color: var(--naranja-claro) !important;
+}
+
+
 .btn-scan {
     border: 2px solid #ffb366;
     background-color: transparent;

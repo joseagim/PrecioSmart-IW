@@ -25,4 +25,5 @@ public class Supermarket {
 
     private String info;
 
+    static final String[] NAMES = {"Mercadona", "Carrefour", "Lidl", "Alcampo", "Dia"};
 }
