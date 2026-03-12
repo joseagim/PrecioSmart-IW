@@ -50,7 +50,10 @@ public class ProductController {
 
         List<ProductSupermarket> result = new ArrayList<>();
         for (Supermarket supermarket : supermarkets) {
-            result.add(productBySupermarket(product, supermarket.getId()));
+            ProductSupermarket ps = productBySupermarket(product, supermarket.getId());
+            if (ps != null) {
+                result.add(ps);
+            }
         }
 
         model.addAttribute("product", product);
