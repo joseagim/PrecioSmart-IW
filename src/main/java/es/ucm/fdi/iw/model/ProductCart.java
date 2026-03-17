@@ -3,7 +3,6 @@ package es.ucm.fdi.iw.model;
 import lombok.Data;
 
 import jakarta.persistence.*;
-import java.io.Serializable;
 
 @Data
 @Entity

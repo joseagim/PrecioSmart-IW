@@ -56,7 +56,7 @@ public class SecurityConfig {
 
 		http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
 				.authorizeHttpRequests(authorize -> authorize
-						.requestMatchers("product", "/request", "/register", "/faq", "/authors", "/cart",
+						.requestMatchers("/product/**", "/request", "/register", "/faq", "/authors", "/cart",
 								"/notifications", "/search/**", "/css/**", "/js/**", "/img/**", "/", "/error")
 						.permitAll()
 						.requestMatchers("/api/**").permitAll() // <-- public api access

@@ -1,12 +1,6 @@
 package es.ucm.fdi.iw.controller;
 
 import es.ucm.fdi.iw.model.Product;
-import es.ucm.fdi.iw.model.ProductSupermarket;
-import es.ucm.fdi.iw.model.Supermarket;
-
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
 @Controller
@@ -33,11 +25,15 @@ public class SearchController {
 
     @GetMapping
     public String search(@RequestParam(required = false) String producto, Model model, HttpServletRequest request) {
-        if (producto != null && !producto.trim().isEmpty()) {
-            return "redirect:/search/" + URLEncoder.encode(producto, StandardCharsets.UTF_8);
+        if (producto == null || producto.trim().isEmpty()) {
+            List<Product> todosLosProductos = entityManager
+                    .createQuery("SELECT p FROM Product p", Product.class)
+                    .getResultList();
+            model.addAttribute("productos", todosLosProductos);
+            return "search";
         }
-        model.addAttribute("error", "No se han encontrado resultados para '" + producto + "'.");
-        return "search";
+        
+        return "redirect:/search/" + producto;
     }
 
     @GetMapping("/{product}")
@@ -51,9 +47,12 @@ public class SearchController {
 
         if (productos.size() == 1) {
             return "redirect:/product?productoID=" + productos.get(0).getId();
-        } else {
-            model.addAttribute("productos", productos);
+        } 
+        else if (productos.size() == 0) {
+            model.addAttribute("error", "No se han encontrado resultados para el producto: " + producto);
         }
+
+        model.addAttribute("productos", productos);
 
         return "search";
     }

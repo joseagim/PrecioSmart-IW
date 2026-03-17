@@ -1,29 +1,16 @@
 package es.ucm.fdi.iw.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import es.ucm.fdi.iw.model.Product;
-import es.ucm.fdi.iw.model.ProductSupermarket;
 
 /**
  * Non-authenticated requests only.
@@ -31,8 +18,6 @@ import es.ucm.fdi.iw.model.ProductSupermarket;
 @Controller
 public class RootController {
 
-    @Autowired
-    private EntityManager entityManager;
     private static final Logger log = LogManager.getLogger(RootController.class);
 
     @ModelAttribute
