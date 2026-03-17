@@ -74,28 +74,6 @@ public class RootController {
         return "cart";
     }
 
-    @GetMapping("/search")
-    @Transactional
-    public String search(@RequestParam(name = "producto", required = false) String producto, Model model) {
-
-        List<Product> productos = entityManager
-                .createNamedQuery("Product.searchByNameOrEAN", Product.class)
-                .setParameter("param", "%" + producto + "%")
-                .getResultList();
-
-        if (productos.size() == 1) {
-            return "redirect:/product?productoID=" + productos.get(0).getId();
-        }
-        else if (productos.isEmpty() && producto != null) {
-            model.addAttribute("error", "No se han encontrado resultados para '" + producto + "'.");
-        }
-        else{
-            model.addAttribute("productos", productos);
-        }
-
-        return "search";
-    }
-
     @GetMapping("/notifications")
     public String notifications(Model model, HttpServletRequest request) {
         return "notifications";
@@ -105,8 +83,6 @@ public class RootController {
     public String request(Model model) {
         return "request";
     }
-
-
 
     @GetMapping("/faq")
     public String faq(Model model, HttpServletRequest request) {
