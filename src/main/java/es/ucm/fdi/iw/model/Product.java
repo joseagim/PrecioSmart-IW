@@ -15,8 +15,18 @@ import jakarta.persistence.NamedQueries;
 @Data
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Product.searchByName", query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:name)"),
-        @NamedQuery(name = "Product.EAN", query = "SELECT p FROM Product p WHERE p.EAN = :EAN")
+        @NamedQuery(
+            name = "Product.searchByName", 
+            query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:name)"
+        ),
+        @NamedQuery(
+            name = "Product.EAN", 
+            query = "SELECT p FROM Product p WHERE p.EAN = :EAN"
+        ),
+        @NamedQuery(
+            name = "Product.searchByNameOrEAN", 
+            query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:param) OR p.EAN LIKE :param"
+        )
 })
 public class Product {
 

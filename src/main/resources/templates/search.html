@@ -36,6 +36,9 @@
             </div>
 
             <div id="cuerpo-resultados" class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+                <div th:if="${error}" class="panel-sm">
+                    <span th:text="${error}"></span>
+                </div>
                 <div class="col" th:each="p : ${productos}">
                     <div class="card h-100 card-naranja shadow-sm">
                         <img th:src="@{/img/pruebas/colacao.jpg}" class="card-img-top img-producto"
@@ -48,7 +51,6 @@
                             <a th:href="@{/product(productoID=${p.id})}" class="btn btn-naranja mt-auto btn-comparar">
                                 Comparar
                             </a>
-
                         </div>
                     </div>
                 </div>

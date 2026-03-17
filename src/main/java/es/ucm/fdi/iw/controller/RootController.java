@@ -79,11 +79,19 @@ public class RootController {
     public String search(@RequestParam(name = "producto", required = false) String producto, Model model) {
 
         List<Product> productos = entityManager
-                .createNamedQuery("Product.searchByName", Product.class)
-                .setParameter("name", "%" + producto + "%")
+                .createNamedQuery("Product.searchByNameOrEAN", Product.class)
+                .setParameter("param", "%" + producto + "%")
                 .getResultList();
 
-        model.addAttribute("productos", productos);
+        if (productos.size() == 1) {
+            return "redirect:/product?productoID=" + productos.get(0).getId();
+        }
+        else if (productos.isEmpty() && producto != null) {
+            model.addAttribute("error", "No se han encontrado resultados para '" + producto + "'.");
+        }
+        else{
+            model.addAttribute("productos", productos);
+        }
 
         return "search";
     }
