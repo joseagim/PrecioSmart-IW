@@ -39,5 +39,7 @@ public class Product {
 
     private String EAN;
     private String name;
+    private String brand;
+    private String cantidad;
     private String imageURL;
 }
