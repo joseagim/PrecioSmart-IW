@@ -4,6 +4,8 @@ import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductSupermarket;
 import es.ucm.fdi.iw.model.Supermarket;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,6 @@ import jakarta.transaction.Transactional;
 @RequestMapping("/search")
 public class SearchController {
 
-
     @Autowired
     private EntityManager entityManager;
 
@@ -30,14 +31,18 @@ public class SearchController {
      * Landing page for a product
      */
 
-    @GetMapping("")
-    public String search(Model model, HttpServletRequest request) {
+    @GetMapping
+    public String search(@RequestParam(required = false) String producto, Model model, HttpServletRequest request) {
+        if (producto != null && !producto.trim().isEmpty()) {
+            return "redirect:/search/" + URLEncoder.encode(producto, StandardCharsets.UTF_8);
+        }
+        model.addAttribute("error", "No se han encontrado resultados para '" + producto + "'.");
         return "search";
     }
 
     @GetMapping("/{product}")
     @Transactional
-    public String search(@PathVariable(name = "product") String producto, Model model) {
+    public String searchProduct(@PathVariable(name = "product") String producto, Model model) {
 
         List<Product> productos = entityManager
                 .createNamedQuery("Product.searchByNameOrEAN", Product.class)
@@ -46,11 +51,7 @@ public class SearchController {
 
         if (productos.size() == 1) {
             return "redirect:/product?productoID=" + productos.get(0).getId();
-        }
-        else if (productos.isEmpty() && producto != null) {
-            model.addAttribute("error", "No se han encontrado resultados para '" + producto + "'.");
-        }
-        else {
+        } else {
             model.addAttribute("productos", productos);
         }
 

@@ -60,24 +60,7 @@
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
 
-    <script>
-        // Seleccionamos específicamente POR ID
-        const myForm = document.querySelector('#search-form');
-
-        myForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // Ahora sí detendrá el formulario correcto
-            
-            const query = this.querySelector('input[name="producto"]').value.trim();
-
-            if (query) {
-                // Redirigimos a la ruta limpia que espera tu SearchController
-                window.location.href = '/search/' + encodeURIComponent(query);
-            } else {
-                // Si está vacío, simplemente vamos a la raíz de búsqueda
-                window.location.href = '/search';
-            }
-        });
-</script>
+   
 </body>
 
 </html>
