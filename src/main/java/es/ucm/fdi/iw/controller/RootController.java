@@ -1,7 +1,7 @@
 package es.ucm.fdi.iw.controller;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+//import org.apache.logging.log4j.LogManager;
+//import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 public class RootController {
 
-    private static final Logger log = LogManager.getLogger(RootController.class);
+    //private static final Logger log = LogManager.getLogger(RootController.class);
 
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
@@ -52,11 +52,6 @@ public class RootController {
         // del formulario de registro
         // Lógica para registrar al usuario en la base de datos
         return "login";
-    }
-
-    @GetMapping("/cart")
-    public String cart(Model model, HttpServletRequest request) {
-        return "cart";
     }
 
     @GetMapping("/notifications")

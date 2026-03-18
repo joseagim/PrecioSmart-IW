@@ -12,12 +12,15 @@
 
     <main class="flex-shrink-0">
         <div>
+            <div class="panel-lg" th:if="${errorMessage != null}">
+                <h3 class="text-center" th:text="${errorMessage}">Error</h3>
+            </div>
             <div class="panel-lg">
                 <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
                     <div>
                         <h1 class="text-start">
                             Mis carritos
-                            <span id="contadorCarritos">(0)</span>
+                            <span th:text="'(' + ${(carts != null ? #lists.size(carts) : 0)} + ')'">(0)</span>
                         </h1>
                     </div>
                     <div>
@@ -27,10 +30,24 @@
                 </div>
             
                 <p id="mensajeSeleccion" class="text-start">Selecciona un carrito para ver su contenido.</p>
-
-                <div class="d-flex flex-row flex-nowrap overflow-auto gap-3 pb-3" id="contenedorCarritos">
-                    <!-- JS METE LOS CARRITOS -->
-                </div>
+                <form th:action="@{/cart}" method="get">
+                    <div class="d-flex flex-row flex-nowrap overflow-auto gap-3 pb-3" id="contenedorCarritos">
+                        <button type="submit" name="cartId" th:value="${cart.id}" class="card"
+                            th:classappend="${selectedCart != null and selectedCart.id == cart.id} ? ' card-carrito-activa' : ' card-carrito'"
+                            th:each="cart : ${carts}">
+                            <div class="card-body text-start">
+                                <h5 class="card-title fw-bold d-flex justify-content-between justify-content-center align-items-center">
+                                    <span class="nombre-carrito-txt" th:text="${cart.name}">Carrito</span>
+                                    <!-- <button class="btn btn-sm btn-edit"><img class="svg-sm" th:src="@{/img/svg/edit.svg}" alt="Editar"></button> -->
+                                </h5>
+                                <p class="card-text cant-productos-txt"
+                                    th:text="${(cart.items != null ? #lists.size(cart.items) : 0) + ' Producto(s)'}">0 Productos</p>
+                                <p class="card-text fecha-carrito-txt"
+                                    th:text="${'Creado: ' + (cart.date != null ? #temporals.format(cart.date, 'dd/MM/yyyy') : '-')}">01/01/2026</p>
+                            </div>
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <div class="panel-lg">
@@ -68,20 +85,6 @@
                     <a th:href="@{/search}" class="btn btn-naranja"><img class="svg-sm" th:src="@{/img/svg/search.svg}" alt="buscar">Buscar Productos</a>
                 </div>
             
-                <!-- Template para las tarjetas de carritos -->
-                <template id="tarjeta-carrito-template">
-                    <div class="card card-carrito">
-                        <div class="card-body text-start">
-                            <h5 class="card-title fw-bold d-flex justify-content-between justify-content-center align-items-center">
-                                <span class="nombre-carrito-txt">Carrito</span>
-                                <button class="btn btn-sm btn-edit"><img class="svg-sm" th:src="@{/img/svg/edit.svg}" alt="Editar"></button>
-                            </h5>
-                            <p class="card-text cant-productos-txt">0 Productos</p>
-                            <p class="card-text fecha-carrito-txt">01/01/2026</p>
-                        </div>
-                    </div>
-                </template>
-
                 <!-- Template para las filas de productos -->
                 <template id="fila-producto-template">
                     <tr>
@@ -100,7 +103,7 @@
                 </template>
             </div>
     </main>
-
+<!--
     <script th:inline="javascript">
         
         const listaCarritos = [
@@ -313,7 +316,7 @@
 
         window.onload = inicializar;
     </script>
-
+-->
      <th:block th:replace="~{fragments/footer.html :: footer}" />
 </body>
 

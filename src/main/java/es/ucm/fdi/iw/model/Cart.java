@@ -8,6 +8,12 @@ import java.util.List;
 
 @Data
 @Entity
+@NamedQueries({
+        @NamedQuery(
+            name = "Cart.searchByUser", 
+            query = "SELECT c FROM Cart c WHERE c.user = :user"
+        )
+})
 public class Cart {
 
     @Id
