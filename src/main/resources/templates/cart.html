@@ -95,55 +95,63 @@
 
             <div class="panel-lg">
 
-                <div id="alertaSeleccion">
-                    <p class="text-muted mb-3">Selecciona un carrito para ver los productos.</p>
-                    <a th:href="@{/search}" class="btn btn-naranja"><img class="svg-sm" th:src="@{/img/svg/search.svg}" alt="buscar">Buscar Productos</a>
-                </div>
+                <p class="text-muted mb-3" th:if="${selectedCart == null}">Selecciona un carrito para ver los productos.</p>
+                <th:block th:if="${selectedCart != null}">
+                    <th:block th:if="${selectedCart.items != null}">
+                        <p class="text-muted mb-3" th:if="${#lists.isEmpty(selectedCart.items)}">Este carrito está vacío actualmente.</p>
+                    </th:block>
+                </th:block>
 
-                <div id="tablaProductos" class="d-none">
-                    <div class="div-responsive">
-                        <table class="table-carrito align-middle mt-2 shadow-sm border">
-                            <thead class="thead-carrito">
-                                <tr>
-                                    <th>Producto</th>
-                                    <th>Unidades</th>
-                                    <th>Precio/u</th>
-                                    <th>Subtotal</th>
-                                    <th>Acción</th>
-                                </tr>
-                            </thead>
-                            <tbody id="filas-tabla" class="tbody-carrito">
-                                <!-- Aquí se inyectarán las filas -->
-                            </tbody>
-                            <tfoot class="tfoot-carrito">
-                                <tr>
-                                    <td colspan="3" class="text-end text-uppercase fw-bold">Total estimado:</td>
-                                    <td colspan="1"><strong id="precioTotalTabla" class="fs-5 text-success">0.00€</strong></td>
-                                    <td colspan="1" id="vaciarCarro" class="text-uppercase fw-bold"><button class="btn btn-sm tProd-delete" onclick="vaciarCarrito()">🗑️Vaciar</button>
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                <th:block th:if="${selectedCart != null}">
+                    <div id="tablaProductos"
+                        th:if="${selectedCart.items != null}">
+                        <div class="div-responsive" th:if="${!#lists.isEmpty(selectedCart.items)}">
+                            <table class="table-carrito align-middle mt-2 shadow-sm border">
+                                <thead class="thead-carrito">
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Unidades</th>
+                                        <th>Precio/u</th>
+                                        <th>Subtotal</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="tbody-carrito" th:each="item : ${selectedCart.items}">
+                                    <tr>
+                                        <td class="fw-bold text-start" th:text="${item.product.name}"></td>
+                                        <td class="tProd-cantidad"><div class="d-flex justify-content-center align-items-center">
+                                            <form method="post" th:action="@{/cart/update}">
+                                                <input type="hidden" name="cartId" th:value="${selectedCart.id}">
+                                                <input type="hidden" name="itemId" th:value="${item.id}">
+                                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                                                <button type="submit" name="action" value="resta" class="btn text-start">-</button>
+                                                <span class="tProd-cantidad-num" th:text="${item.quantity}">1</span>
+                                                <button type="submit" name="action" value="suma" class="btn text-end">+</button>
+                                            </form>
+                                        </td>
+                                        <td th:text="${item.subtotal/item.quantity}"></td>
+                                        <td class="fw-bold" th:text="${item.subtotal}"></td>
+                                        <td>
+                                            <button class="tProd-delete btn btn-sm">
+                                                🗑️
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="tfoot-carrito">
+                                    <tr>
+                                        <td colspan="3" class="text-end text-uppercase fw-bold">Total estimado:</td>
+                                        <td colspan="1"><strong id="precioTotalTabla" class="fs-5 text-success">0.00€</strong></td>
+                                        <td colspan="1" id="vaciarCarro" class="text-uppercase fw-bold"><button class="btn btn-sm tProd-delete">🗑️Vaciar</button>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <a th:href="@{/search}" class="btn btn-naranja"><img class="svg-sm" th:src="@{/img/svg/search.svg}" alt="buscar">Buscar Productos</a>
                     </div>
-                    <a th:href="@{/search}" class="btn btn-naranja"><img class="svg-sm" th:src="@{/img/svg/search.svg}" alt="buscar">Buscar Productos</a>
-                </div>
-            
-                <!-- Template para las filas de productos -->
-                <template id="fila-producto-template">
-                    <tr>
-                        <td class="tProd-nombre fw-bold text-start"></td>
-                        <td class="tProd-cantidad"><div class="d-flex justify-content-center align-items-center">
-                            <button class="btn btn-control-cantidad btn-restar text-start">-  </button><span class="tProd-cantidad-num">1</span><button class="btn btn-control-cantidad btn-sumar text-end">  +</button>
-                        </div></td>
-                        <td class="tProd-precio"></td>
-                        <td class="tProd-subtotal fw-bold"></td>
-                        <td>
-                            <button class="tProd-delete btn btn-sm">
-                                🗑️
-                            </button>
-                        </td>
-                    </tr>
-                </template>
+                </th:block>
             </div>
     </main>
 <!--
