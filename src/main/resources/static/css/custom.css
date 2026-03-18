@@ -133,15 +133,33 @@
     background-color: #fff7ef;
 }
 
-.card-carrito:hover {
-    background-color: var(--naranja-claro) !important;
-    color: white !important;
+.card-carrito input{
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    font-size: inherit; 
+    font-weight: inherit;
+    width: 100%;
+}
+
+.card-carrito input:focus {
+    background-color: transparent !important;
+    color: inherit !important;
 }
 
 .card-carrito-activa {
     background-color: var(--naranja-claro) !important;
     border: 2px solid var(--naranja-claro); 
     color: white !important;
+}
+
+.card-carrito-activa input{
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: inherit;
+    font-size: inherit; 
+    font-weight: inherit;
 }
 
 .table-carrito {
