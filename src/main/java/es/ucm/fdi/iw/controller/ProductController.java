@@ -28,9 +28,9 @@ public class ProductController {
      */
 
     @Transactional
-    @GetMapping("")
-    public String product(@RequestParam(name = "productoID", required = true) Long productoID, Model model) {
-
+    @GetMapping("/{productoID}")
+   // public String product(@RequestParam(name = "productoID", required = true) Long productoID, Model model) {
+     public String product(@PathVariable(name = "productoID") Long productoID, Model model) {
         // validar el id del producto
         if (productoID == null || productoID <= 0) {
             return "error";
@@ -50,7 +50,12 @@ public class ProductController {
             ProductSupermarket ps = productBySupermarket(product, supermarket.getId());
             if (ps != null) {
                 result.add(ps);
+            }else {
+                ProductSupermarket nullPS = new ProductSupermarket();
+                nullPS.setSupermarket(supermarket);
+                result.add(nullPS);
             }
+
         }
 
         model.addAttribute("product", product);

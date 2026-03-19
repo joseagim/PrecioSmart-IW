@@ -46,9 +46,11 @@
                         <div class="card-body d-flex flex-column text-center">
                             <h5 class="card-title text-naranja fw-bold" th:text="${p.name}">Nombre</h5>
                             <ul class="list-group list-group-flush text-start mb-3">
-                                <li class="list-group-item small">EAN: <span th:text="${p.EAN}"></span></li>
+                                <li class="list-group-item medium">Marca: <span th:text="${p.brand}"></span></li>
+                                <li class="list-group-item medium">Cantidad: <span th:text="${p.quantity}"></span></li>
+                                <li class="list-group-item medium">EAN: <span th:text="${p.EAN}"></span></li>
                             </ul>
-                            <a th:href="@{/product(productoID=${p.id})}" class="btn btn-naranja mt-auto btn-comparar">
+                            <a th:href="@{/product/{productoID}(productoID=${p.id})}" class="btn btn-naranja mt-auto btn-comparar">
                                 Comparar
                             </a>
                         </div>

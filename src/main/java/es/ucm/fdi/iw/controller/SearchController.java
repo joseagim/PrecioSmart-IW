@@ -46,7 +46,7 @@ public class SearchController {
                 .getResultList();
 
         if (productos.size() == 1) {
-            return "redirect:/product?productoID=" + productos.get(0).getId();
+            return "redirect:/product/" + productos.get(0).getId();
         } 
         else if (productos.size() == 0) {
             model.addAttribute("error", "No se han encontrado resultados para el producto: " + producto);
