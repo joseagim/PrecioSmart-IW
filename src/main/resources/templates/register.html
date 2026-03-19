@@ -37,6 +37,9 @@
                     <div class="d-grid">
                         <button class="btn btn-lg btn-warning" type="submit">Register</button>
                     </div>
+                    <div class="mt-3 text-center">
+                        <span th:if="${registerError}" class="text-danger" th:text="${registerError}"></span>
+                    </div>
 
                 </form>
                 <script>

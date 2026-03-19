@@ -12,6 +12,10 @@ import java.util.List;
         @NamedQuery(
             name = "Cart.searchByUser", 
             query = "SELECT c FROM Cart c WHERE c.user = :user"
+        ),
+        @NamedQuery(
+            name = "Cart.searchByUserId",
+            query = "SELECT c FROM Cart c WHERE c.user.id = :userId ORDER BY c.date DESC"
         )
 })
 public class Cart {
