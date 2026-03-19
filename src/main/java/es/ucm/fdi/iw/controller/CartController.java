@@ -25,6 +25,13 @@ public class CartController {
     @Autowired
     private EntityManager entityManager;
 
+    private boolean isOwner(Cart cart, User user) {
+        return cart != null
+            && user != null
+            && cart.getUser() != null
+            && cart.getUser().getId() == user.getId();
+    }
+
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
         for (String name : new String[] { "u", "url", "ws", "topics" }) {
@@ -49,8 +56,8 @@ public class CartController {
         }
 
         List<Cart> carts = entityManager
-            .createNamedQuery("Cart.searchByUser", Cart.class)
-            .setParameter("user", user)
+            .createNamedQuery("Cart.searchByUserId", Cart.class)
+            .setParameter("userId", user.getId())
             .getResultList();
 
         model.addAttribute("carts", carts != null ? carts : new ArrayList<>());
@@ -62,7 +69,7 @@ public class CartController {
                 model.addAttribute("errorMessage", "Carrito no encontrado.");
                 return "cart";
             }
-            if(selectedCart.getUser().getId() != user.getId()) {
+            if(!isOwner(selectedCart, user)) {
                 model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
                 return "cart";
             }
@@ -87,8 +94,8 @@ public class CartController {
         }
 
         List<Cart> carts = entityManager
-            .createNamedQuery("Cart.searchByUser", Cart.class)
-            .setParameter("user", user)
+            .createNamedQuery("Cart.searchByUserId", Cart.class)
+            .setParameter("userId", user.getId())
             .getResultList();
         model.addAttribute("carts", carts != null ? carts : new ArrayList<>());
 
@@ -98,7 +105,7 @@ public class CartController {
             model.addAttribute("errorMessage", "Carrito no encontrado.");
             return "cart";
         }
-        if(selectedCart.getUser().getId() != user.getId()) {
+        if(!isOwner(selectedCart, user)) {
             model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
             return "cart";
         }
@@ -127,7 +134,7 @@ public class CartController {
             model.addAttribute("errorMessage", "Carrito no encontrado.");
             return "cart";
         }
-        if(cart.getUser().getId() != user.getId()) {
+        if(!isOwner(cart, user)) {
             model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
             return "cart";
         }
@@ -155,7 +162,7 @@ public class CartController {
             model.addAttribute("errorMessage", "Carrito no encontrado.");
             return "cart";
         }
-        if(cart.getUser().getId() != user.getId()) {
+        if(!isOwner(cart, user)) {
             model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
             return "cart";
         }
@@ -176,9 +183,14 @@ public class CartController {
             return "redirect:/login";
         }
 
+        User managedUser = entityManager.find(User.class, user.getId());
+        if (managedUser == null) {
+            return "redirect:/login";
+        }
+
         Cart cart = new Cart();
         cart.setName("Nuevo Carrito");
-        cart.setUser(user);
+        cart.setUser(managedUser);
         cart.setDate(LocalDateTime.now());
         cart.setItems(new ArrayList<>());
         entityManager.persist(cart);
@@ -202,7 +214,7 @@ public class CartController {
 
         Cart cart = entityManager.find(Cart.class, cartId);
 
-        if(cart == null || cart.getUser().getId() != user.getId()) {
+        if(!isOwner(cart, user)) {
             model.addAttribute("errorMessage", "Carrito no encontrado o no eres el dueño.");
             return "cart";
         }
