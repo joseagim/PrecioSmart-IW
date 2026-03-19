@@ -1,10 +1,8 @@
 package es.ucm.fdi.iw;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.ServletException;
@@ -20,9 +18,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import es.ucm.fdi.iw.model.Topic;
 import es.ucm.fdi.iw.model.User;
 
 /**
@@ -84,7 +79,8 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         .replaceFirst("[^/]*", ""); // http[s]://...foo/ => //...foo/
     String ws = "ws:" + url + "/ws"; // //...foo/ => ws://...foo/ws
     if (url.contains("ucm.es")) {
-      ws = ws.replace("ws:", "wss:"); // for deployment in containers
+      // UCM containers use https / wss, but we are behind a reverse proxy: add extra s here
+      ws = ws.replace("ws:", "wss:"); 
     }
     session.setAttribute("url", url);
     session.setAttribute("ws", ws);

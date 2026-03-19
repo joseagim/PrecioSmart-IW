@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>PrecioSmart Producto</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0">
+        <div class="container my-5">
+            <div id="product-info">
+                <div
+                    class="card w-100 h-auto d-flex flex-column flex-md-row shadow-lg align-items-center align-items-md-start">
+
+                    <div class="p-4 p-md-5 flex-shrink-0" style="max-width: 250px;">
+                        <img th:src="@{/img/pruebas/colacao.jpg}" class="img-fluid rounded-2" alt="foto del producto">
+                    </div>
+
+                    <div class="card-body text-start">
+                        <h1 id="product-title" class="card-title p-3"><b th:text="${product?.name}">Nombre del
+                                producto</b></h1>
+                        <div class="d-flex flex-column">
+                            <ul class="list-unstyled mx-2">
+                                <li class="my-2">
+                                    <h5><b>Codigo EAN: </b><span th:text="${product?.EAN}">-</span></h5>
+                                </li>
+                            </ul>
+
+                            <div class="d-flex flex-wrap gap-5 mt-3 mb-4 justify-content-start align-items-center px-2">
+                                <button id="buy-button" class="btn btn-naranja p-3 text-nowrap">Añadir al
+                                    carrito</button>
+                                <div class="d-flex align-items-center">
+                                    <label for="cantidad" class="me-2 d-md-none">Cant:</label>
+                                    <input class="form-control p-3" type="number" id="cantidad" style="width: 5em;"
+                                        min="1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container my-5 text-center">
+            <div id="compare">
+                <div class="card w-100 shadow-lg p-4">
+                    <ul class="list-unstyled d-flex flex-wrap justify-content-around align-items-center my-3 gap-4">
+                        <li th:each="entry : ${result}" class="border-end-md pe-md-4">
+                            <div th:if="${entry == null}">
+                                <h4 class="text-naranja fw-bold">Producto no disponible</h4>
+                                <p class="text-muted mb-0">Ese producto no esta en ese supermercado.</p>
+                            </div>
+                            <div th:if="${entry.product.id != product.id}">
+                                <h4>Supermercado: <b th:text="${entry.supermarket.name}">Supermercado</b></h4>
+                                <p class="text-naranja fw-bold">Producto no disponible</p>
+                                <h4 class="text-naranja fw-bold">Producto similar:</h4>
+                                <p class="text-muted" th:text="${entry.product.name}">Nombre del producto</p>
+                                <a th:href="@{/product(productoID=${entry.product.id})}"
+                                    class="btn btn-naranja mt-auto btn-comparar">
+                                    Comparar
+                                </a>
+                            </div>
+                            <div th:if="${entry.product.id == product.id}">
+
+                                <h4>Supermercado: <b th:text="${entry.supermarket.name}">Supermercado</b></h4>
+                                <h5 class="text-muted" th:text="${entry.price} + ' €'">0,00 €</h5>
+                                <p class="small text-muted mb-0" th:if="${entry.date != null}"
+                                    th:text="'Actualizado: ' + ${#temporals.format(entry.date, 'dd/MM/yyyy HH:mm')}">
+                                    Actualizado: -</p>
+                            </div>
+                        </li>
+                        <li th:if="${#lists.isEmpty(result)}">
+                            <p class="text-muted">No hay supermercados disponibles.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const ini = document.getElementById("cantidad");
+            ini.value = 1;
+            const botonCompra = document.querySelector("#buy-button");
+            botonCompra.addEventListener("click", () => {
+                const cantidad = document.getElementById("cantidad").value;
+                alert("Vas a añadir " + String(cantidad) + " productos al carrito.");
+            });
+        </script>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>
