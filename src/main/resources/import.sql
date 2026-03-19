@@ -634,23 +634,23 @@ INSERT INTO Product_Supermarket (id, price, date, product_id, supermarket_id) VA
 
 -- Primer carrito: Compra Semanal Básica
 INSERT INTO Cart (name, date, total, user_id) 
-VALUES ('Compra Semanal Super', '2026-03-18 09:15:00', 42.85, 2);
+VALUES ('Compra Semanal Super', '2026-03-18 09:15:00', 21.95, 2);
 
 -- Segundo carrito: Compra Especial (Cena/Evento)
 INSERT INTO Cart (name, date, total, user_id) 
-VALUES ('Compra Cena Amigos', '2026-03-18 10:45:00', 65.20, 2);
+VALUES ('Compra Cena Amigos', '2026-03-18 10:45:00', 10.8, 2);
 
 -- Tercer carrito para el usuario 2 (Vacío)
 INSERT INTO Cart (name, date, total, user_id) 
 VALUES ('Lista de Deseos Vacía', CURRENT_TIMESTAMP, 0.0, 2);
 
--- Productos para el Carrito 1 (Compra Semanal Super - Total 42.85)
+-- Productos para el Carrito 1 (Compra Semanal Super - Total 21.95)
 INSERT INTO Product_Cart (cart_id, product_id, quantity, subtotal) VALUES 
 (1, 1, 2, 13.00), -- 2 packs de leche
-(1, 2, 1, 8.95);  -- 1 de pollo (el resto hasta 42.85 serían otros productos)
+(1, 2, 1, 8.95);  -- 1 de pollo (el resto hasta 21.95 serían otros productos)
 
--- Productos para el Carrito 2 (Compra Cena Amigos - Total 65.20)
+-- Productos para el Carrito 2 (Compra Cena Amigos - Total 10.8)
 INSERT INTO Product_Cart (cart_id, product_id, quantity, subtotal) VALUES 
-(2, 3, 2, 22.50), -- 2 packs de refrescos
-(2, 4, 3, 38.10); -- 3 de snacks
+(2, 3, 2, 3.3), -- 2 packs de refrescos
+(2, 4, 3, 7.5); -- 3 de snacks
 
