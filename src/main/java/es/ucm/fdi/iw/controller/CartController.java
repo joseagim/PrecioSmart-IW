@@ -190,7 +190,7 @@ public class CartController {
     @PostMapping("/update")
     public String updateCart(
         @RequestParam long cartId,
-        @RequestParam long itemId,
+        @RequestParam(required = false) Long itemId,
         @RequestParam String action,
         HttpSession session,
         Model model) {
@@ -198,6 +198,20 @@ public class CartController {
         User user = (User) session.getAttribute("u");
         if (user == null) {
             return "redirect:/login";
+        }
+
+        Cart cart = entityManager.find(Cart.class, cartId);
+
+        if(cart == null || cart.getUser().getId() != user.getId()) {
+            model.addAttribute("errorMessage", "Carrito no encontrado o no eres el dueño.");
+            return "cart";
+        }
+
+        if("deleteAll".equals(action)) {
+            for(ProductCart pc : cart.getItems()) {
+                entityManager.remove(pc);
+            }
+            return "redirect:/cart?cartId=" + cartId;
         }
 
         ProductCart item = entityManager.find(ProductCart.class, itemId);
@@ -210,20 +224,33 @@ public class CartController {
             model.addAttribute("errorMessage", "El producto no pertenece a este carrito.");
             return "cart";
         }
-        if(user.getId() != item.getCart().getUser().getId()) {
-            model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
-            return "cart";
-        }
 
-        if("suma".equals(action)) {
-            item.setQuantity(item.getQuantity() + 1);
-        } else if("resta".equals(action)) {
-            item.setQuantity(item.getQuantity() - 1);
-            if(item.getQuantity() <= 0) {
+        float precioUnitario = (float) (item.getSubtotal() / item.getQuantity());
+
+        cart.setTotal(cart.getTotal() - item.getSubtotal());
+
+        switch (action) {
+            case "suma":
+                item.setQuantity(item.getQuantity() + 1);
+                break;
+
+            case "resta":
+                item.setQuantity(item.getQuantity() - 1);
+                if(item.getQuantity() <= 0) {
+                    entityManager.remove(item);
+                }
+                break;
+
+            case "delete":
                 entityManager.remove(item);
-            }
+                return "redirect:/cart?cartId=" + cartId;
+            default:
+                break;
         }
 
+        item.setSubtotal(precioUnitario*item.getQuantity());
+        cart.setTotal(cart.getTotal() + item.getSubtotal());
+        
         return "redirect:/cart?cartId=" + cartId;
     }
 }
