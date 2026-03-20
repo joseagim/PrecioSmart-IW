@@ -3,7 +3,7 @@
 
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
-    <title>PrecioSmart Carritos</title>
+    <title>PrecioSmart- Mis Carritos</title>
 
 </head>
 
@@ -12,9 +12,12 @@
 
     <main class="flex-shrink-0">
         <div>
-            <div class="panel-lg" th:if="${errorMessage != null}">
-                <h3 class="text-center" th:text="${errorMessage}">Error</h3>
-            </div>
+            <h3 class="text-center alert alert-danger" 
+                th:text="${errorMessage}"
+                th:if="${errorMessage != null}">
+                Error
+            </h3>
+
             <div class="panel-lg">
                 <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
                     <div>
@@ -111,8 +114,6 @@
                                     <tr>
                                         <th>Producto</th>
                                         <th>Unidades</th>
-                                        <th>Precio/u</th>
-                                        <th>Subtotal</th>
                                         <th>Acción</th>
                                     </tr>
                                 </thead>
@@ -122,7 +123,7 @@
                                         <form method="post" th:action="@{/cart/update}">
                                             <input type="hidden" name="cartId" th:value="${selectedCart.id}">
                                             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                            <td class="fw-bold text-start" th:text="${item.product.name}"></td>
+                                            <td class="fw-bold text-start" th:text="${item.product.name + ' - EAN: ' + item.product.EAN}"></td>
                                             <td class="tProd-cantidad"><div class="d-flex justify-content-center align-items-center">
                                                 
                                                 <input type="hidden" name="itemId" th:value="${item.id}">
@@ -131,8 +132,6 @@
                                                 <button type="submit" name="action" value="suma" class="btn text-end">+</button>
                                                 
                                             </td>
-                                            <td th:text="${item.subtotal/item.quantity}"></td>
-                                            <td class="fw-bold" th:text="${item.subtotal}"></td>
                                             <td>
                                                 <button type="submit" name="action" value="delete" class="tProd-delete btn btn-sm">
                                                     <img class="svg-sm" th:src="@{/img/svg/delete.svg}" alt="Editar">
@@ -148,9 +147,7 @@
 
                                     <tfoot class="tfoot-carrito">
                                         <tr>
-                                            <td colspan="3" class="text-end text-uppercase fw-bold">Total estimado:</td>
-                                            <td colspan="1"><strong class="fs-5 text-success" th:text="${#numbers.formatDecimal(selectedCart.total, 1, 2)}">0.00€</strong></td>
-                                            <td colspan="1" id="vaciarCarro" class="text-uppercase fw-bold">
+                                            <td colspan="3" class="text-uppercase fw-bold">
                                                 <button type="submit" name="action" value="deleteAll" class="btn btn-sm tProd-delete">
                                                     <img class="svg-sm" th:src="@{/img/svg/delete.svg}" alt="Editar">
                                                     Vaciar
@@ -165,6 +162,14 @@
                     </div>
                 </th:block>
             </div>
+            <th:block th:if="${selectedCart != null}">
+                <div class="panel-lg" 
+                    th:if="${selectedCart.items != null and !#lists.isEmpty(selectedCart.items)}">
+                    <h3 class="text-center">
+                        Precios por supermercado
+                    </h3>
+                </div>
+            </th:block>
     </main>
 <!--
     <script th:inline="javascript">
