@@ -14,11 +14,13 @@ public class Request {
     private long id;
 
     private String EAN;
-    private String info;
-    
-    private LocalDateTime date;
-    
+    private String name;
+    private String brand;
+    private String quantity;
+    private String supermarket;
+    private String imageUrl;
     private float price;
+    private LocalDateTime date;
     private boolean approved;
 
     @ManyToOne

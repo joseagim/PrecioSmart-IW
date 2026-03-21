@@ -15,7 +15,7 @@
             <h1 class="mt-5 mb-5">Búsqueda de productos</h1>
 
             <div class="search-container mb-5">
-                <form id="search-form" th:action="@{/search}" method="get">
+                <form id="search-form" th:action="@{/user/search}" method="get">
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0" style="border-radius: 12px 0 0 12px;">
                             <i class="bi bi-search text-muted"></i>
@@ -50,7 +50,7 @@
                                 <li class="list-group-item medium">Cantidad: <span th:text="${p.quantity}"></span></li>
                                 <li class="list-group-item medium">EAN: <span th:text="${p.EAN}"></span></li>
                             </ul>
-                            <a th:href="@{/product/{productoID}(productoID=${p.id})}" class="btn btn-naranja mt-auto btn-comparar">
+                            <a th:href="@{/user/product/{productoID}(productoID=${p.id})}" class="btn btn-naranja mt-auto btn-comparar">
                                 Comparar
                             </a>
                         </div>

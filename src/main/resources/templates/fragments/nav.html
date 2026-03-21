@@ -12,6 +12,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-naranja shadow-sm">
             <div class="container-fluid">
                 <!-- nombre del sitio; es un enlace que lleva a la página ppal -->
+                 
                 <a class="navbar-brand" th:href="@{/}" href="/">
                     <img th:src="@{/img/logo.png}" src="/img/logo.png" alt="logo PrecioSmart" width="200" height="50" class="d-inline-block align-text-top bg-white rounded"><!-- nombre del sitio-->
                 </a>
@@ -23,19 +24,19 @@
                     <ul class="navbar-nav ms-auto">
                         <th:block th:if="${u}"> 
                              <li class="nav-item mx-3">
-                                <a class="nav-link" th:href="@{/search}">Búsqueda</a>
+                                <a class="nav-link" th:href="@{/user/search}">Búsqueda</a>
                             </li>
 
                              <li class="nav-item mx-3">
-                                <a class="nav-link" th:href="@{/cart}">Carrito</a>
+                                <a class="nav-link" th:href="@{/user/cart}">Carrito</a>
                             </li>
 
                              <li class="nav-item mx-3">
-                                <a class="nav-link" th:href="@{/notifications}">Notificaciones</a>
+                                <a class="nav-link" th:href="@{/user/notifications}">Notificaciones</a>
                             </li>
 
                             <li class="nav-item mx-3">
-                                <a class="nav-link" th:href="@{/request}">Solicitudes</a>
+                                <a class="nav-link" th:href="@{/user/request}">Solicitudes</a>
                             </li>
 
                             <li class="nav-item mx-3">

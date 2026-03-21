@@ -56,16 +56,18 @@ public class SecurityConfig {
 
 		http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
 				.authorizeHttpRequests(authorize -> authorize
+						.requestMatchers("/login", "/register").anonymous()
+
 						.requestMatchers("/faq", "/authors", "/css/**", "/js/**", "/img/**", "/", "/error")
 						.permitAll()
+
 						.requestMatchers("/api/**").permitAll() // <-- public api access
-						.requestMatchers("/cart/**", "/product/**", "/request", "/register", "/faq", "/authors",
-								"/notifications", "/search/**")
-						.hasRole("USER") // <-- carts only for logged users
 
 						.requestMatchers("/admin/**").hasRole("ADMIN") // <-- administration
+
 						.requestMatchers("/user/**").hasRole("USER") // <-- logged-in users
 						.anyRequest().authenticated())
+
 				.formLogin(formLogin -> formLogin
 						.loginPage("/login")
 						.permitAll()

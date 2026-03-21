@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
 @Controller
-@RequestMapping("/search")
+@RequestMapping("/user/search")
 public class SearchController {
 
     @Autowired
@@ -41,7 +41,7 @@ public class SearchController {
             return "search";
         }
         
-        return "redirect:/search/" + producto;
+        return "redirect:/user/search/" + producto;
     }
 
     @GetMapping("/{product}")
@@ -54,7 +54,7 @@ public class SearchController {
                 .getResultList();
 
         if (productos.size() == 1) {
-            return "redirect:/product/" + productos.get(0).getId();
+            return "redirect:/user/product/" + productos.get(0).getId();
         } 
         else if (productos.size() == 0) {
             model.addAttribute("error", "No se han encontrado resultados para el producto: " + producto);

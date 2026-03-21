@@ -80,7 +80,7 @@
                                             producto</p>
                                     </div>
                                 </div>
-                                <a th:href="@{/product/{productoID}(productoID=${entry.product.id})}"
+                                <a th:href="@{/user/product/{productoID}(productoID=${entry.product.id})}"
                                     class="btn btn-naranja btn-sm rounded-3 w-100">
                                     Comparar
                                 </a>
@@ -101,15 +101,7 @@
             </div>
         </div>
 
-        <script>
-            const ini = document.getElementById("cantidad");
-            ini.value = 1;
-            const botonCompra = document.querySelector("#buy-button");
-            botonCompra.addEventListener("click", () => {
-                const cantidad = document.getElementById("cantidad").value;
-                alert("Vas a añadir " + String(cantidad) + " productos al carrito.");
-            });
-        </script>
+        <script th:src="@{/js/script-product.js}"></script>
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
