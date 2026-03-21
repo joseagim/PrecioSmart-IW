@@ -1,223 +1,121 @@
-<!--Queda por implementar la funcionalidad de actualizar solicitudes al tener mas dependencias que la hacen demasiado compleja para el mockup de la version estatica-->
-
 <!DOCTYPE html>
 <html class="h-100" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
-    <title>PrecioSmart Solicitud</title>
+    <title>PrecioSmart - Solicitudes</title>
 </head>
 
-<body class="d-flex flex-column h-100 text-center">
+<body class="d-flex flex-column h-100">
     <header th:replace="~{fragments/nav.html :: nav}"></header>
+
     <main class="flex-shrink-0">
-        <div class="container d-flex flex-column my-5 justify-content-center">
-            <div class="d-flex flex-row justify-content-between align-items-center mb-5">
-                <h1 class="m-0 text-nowrap ms-xl-5"><b><svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="orange"
-                            class="bi bi-file-earmark-text p-2" viewBox="0 0 16 16">
-                            <path
-                                d="M5.5 7a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1zM5 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m0 2a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5" />
-                            <path
-                                d="M9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.5zm0 1v2A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z" />
-                        </svg>Mis Solicitudes</b></h1>
-                <div id="op-buttons" class="d-flex gap-4 flex-wrap me-xl-2 justify-content-end container-fluid flex-md-row">
-                    <button id="add-button" class="btn btn-naranja text-nowrap flex-md-grow-0">+ Añadir
-                        Producto</button>
-                    <button id="mod-button" class="btn btn-secondary text-nowrap flex-md-grow-0"><svg xmlns="http://www.w3.org/2000/svg" width="16"
-                            height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                            <path
-                                d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                            <path fill-rule="evenodd"
-                                d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                        </svg> Actualizar Producto</button>
-                </div>
-            </div>
-            <div id="error-card" class="card d-flex flex-row align-items-center gap-2 w-auto p-3 mb-4 shadow-sm d-none"
-                style="background-color: rgb(194, 190, 190);">
-                <b><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="red"
-                        class="bi bi-exclamation-circle flex-shrink-0" viewBox="0 0 16 16">
-                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                        <path
-                            d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
-                    </svg></b>
-                <h5 class="text-danger m-0">La información introducida en alguno de los campos no es válida, corrigelo
-                    para enviar la solicitud</h5>
-            </div>
-            <div id="main-container"
-                class="container-fluid border border-3 rounded-5 p-2 p-md-4 d-flex flex-column align-items-center gap-1 w-100 mx-auto" style="max-width: 1000px;">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                        <div>
+                            <p class="text-secondary mb-1">Panel de usuario</p>
+                            <h1 class="mb-0">Mis solicitudes</h1>
+                        </div>
+                        <span class="badge text-bg-light border fs-6">Nueva solicitud de producto</span>
+                    </div>
 
-            </div>
-            <div id="form-buttons" class="d-flex flex-row justify-content-center m-5 gap-5 d-none">
-                <button id="ok-button" class="btn btn-naranja btn-lg w-25 p-2">Confirmar</button>
-                <button id="cancel-button" class="btn btn-secondary btn-lg w-25 p-2">Cancelar</button>
-            </div>
-        </div>
-        <script>
-            //para esta version queda sin hacer la opcion de editar solicitudes
-            const marketList = new Set(["carrefour", "dia", "mercadona", "lidl"]);
-            let requests = [];
-            const addButton = document.querySelector("#add-button");
-            const opButtons = document.querySelector("#op-buttons");
-            const formButtons = document.querySelector("#form-buttons");
-            const ok = document.querySelector("#ok-button");
-            const cancel = document.querySelector("#cancel-button");
-            const mainContainer = document.querySelector("#main-container");
+                    <div id="error-box" class="alert alert-danger d-none shadow-sm" role="alert">
+                        Revisa los campos del formulario.
+                    </div>
 
-            let reqList = ``;
+                    <div th:if="${success}" class="alert alert-success shadow-sm" role="alert">
+                        Solicitud guardada correctamente.
+                    </div>
 
-            const form = `<div class="d-flex flex-column w-50 gap-4 text-nowrap">
-                <span class="card-title mt-3 h2"><b>Formulario de Solicitud</b></span>
-                <div class="d-flex flex-column w-75 m-3">
-                    <h5 class="text-start">Nombre</h5>
-                    <input id="name-field" class="form-control" type="text" placeholder="nombre del producto" minLength="5" maxLength="15">
-                </div>
-                <div class="d-flex flex-column w-25 m-3">
-                    <h5 class="text-start">Precio</h5>
-                    <div class="d-flex flex-row align-items-center">
-                        <input id="price-field" class="form-control" type="number" min="0.01" max="999.99" style="min-width: 100px">
-                        <h3 class="ms-3"><b>€</b></h3>
+                    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                        <h2 class="h5 mb-3">Nueva solicitud</h2>
+                        <form id="request-form" class="row g-3" th:action="@{/user/request}" method="post"
+                            enctype="multipart/form-data">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Nombre</label>
+                                <input id="name" name="name" class="form-control form-control-lg" type="text"
+                                    maxlength="60" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="brand" class="form-label">Marca</label>
+                                <input id="brand" name="brand" class="form-control form-control-lg" type="text"
+                                    maxlength="60" required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="price" class="form-label">Precio</label>
+                                <input id="price" name="price" class="form-control form-control-lg" type="number"
+                                    min="0.01" step="0.01" required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="supermarket" class="form-label">Supermercado</label>
+                                <select id="supermarket" name="supermarket" class="form-select form-select-lg" required>
+                                    <option value="">Selecciona...</option>
+                                    <option value="Mercadona">Mercadona</option>
+                                    <option value="Carrefour">Carrefour</option>
+                                    <option value="Lidl">Lidl</option>
+                                    <option value="Dia">Dia</option>
+                                    <option value="Alcampo">Alcampo</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="ean" class="form-label">Codigo EAN</label>
+                                <input id="ean" name="ean" class="form-control form-control-lg" type="text"
+                                    minlength="8" maxlength="13" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="photo" class="form-label">Foto</label>
+                                <input id="photo" name="photo" class="form-control form-control-lg" type="file"
+                                    accept="image/*" required>
+                            </div>
+
+                            <div class="col-12 pt-1">
+                                <button class="btn btn-naranja btn-lg px-4" type="submit">Guardar solicitud</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4 p-4">
+                        <h2 class="h5 mb-3">Solicitudes guardadas</h2>
+                        <ul id="request-list" class="list-group list-group-flush">
+                            <li th:if="${#lists.isEmpty(requests)}" class="list-group-item text-muted px-0">No hay
+                                solicitudes todavia.
+                            </li>
+                            <li th:each="r : ${requests}" class="list-group-item px-0 py-3">
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img th:src="@{/user/request/{id}/pic(id=${r.id})}" alt="Foto del producto"
+                                            width="64" height="64" class="rounded border" />
+                                        <div>
+                                            <div class="fw-semibold" th:text="${r.name}">Producto</div>
+                                            <div class="small text-secondary" th:text="|Marca: ${r.brand}|"></div>
+                                            <div class="small text-secondary" th:text="|EAN: ${r.EAN}|"></div>
+                                            <div class="mt-1 d-flex flex-wrap gap-2">
+                                                <span class="badge text-bg-light border"
+                                                    th:text="${r.supermarket}">Market</span>
+                                                <span class="badge text-bg-warning-subtle text-dark"
+                                                    th:text="${#numbers.formatDecimal(r.price, 1, 2)} + ' EUR'">0.00
+                                                    EUR</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-                <div class="d-flex flex-column w-50 m-3">
-                    <h5 class="text-start">Supermercado</h5>
-                    <select id="market-field" placeholder="supermercado en el que se encuentra" class="form-control">
-                        <option value="Mercadona">Mercadona</option>
-    <option value="Lidl">Lidl</option>
-    <option value="Carrefour">Carrefour</option>
-    <option value="Aldi">Aldi</option>
-    <option value="Dia">Dia</option>
-                    </select>
-                </div>
-                <div class="d-flex flex-column w-50 m-3" style="min-width: 320px">
-                    <h5 class="text-start">Código EAN</h5>
-                    <input id="ean-field" class="form-control" type="text" placeholder="codigo numerico del EAN del producto" minLength="8" maxLength="13">
-                </div>
-                <div class="d-flex flex-column w-50 m-3 mb-5 gap-3">
-                    <h5 class="text-start">Foto</h5>
-                    <input id="photo-field" type="file" accept="image/*">
-                </div>
-                </div>`
-
-            const emptyFiller = `<div class="d-flex flex-column gap-3"><div class="d-flex w-100 align-items-center justify-content-center"><svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="orange"
-                    class="bi bi-question-circle mb-3 mt-1" viewBox="0 0 16 16">
-                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
-                    <path
-                        d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286m1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94" />
-                </svg>
-                </div>
-                <h3 class=""><b>No hay ninguna solicitud enviada</b></h3>
-                <h5 class="text-secondary">Crea en añadir o modifica en actualizar</h5></div>`
-
-            mainContainer.innerHTML += emptyFiller;
-
-            cancel.addEventListener("click", () => {
-                mainContainer.innerHTML = requests.length == 0 ? emptyFiller : reqList;
-                opButtons.classList.remove("d-none");
-                formButtons.classList.add("d-none");
-                const err = document.querySelector("#error-card");
-                err.classList.add("d-none");
-                showFormCards(requests)
-            });
-
-            //validaciones algo basicas para la version estatica 
-            //mas adelante se mostrara en el pop up de cuando lo envias erroneo las correciones concretas a realizar para hacerlo valido
-
-            function checkPrice(num) {
-                if (isNaN(num)) return false;
-                if (num < 0) return false;
-                if (num > 1000) return false;
-                return true;
-            }
-
-            function checkEAN(s) {
-                for (let i = 0; i < s.length; i++) {
-                    if (isNaN(s[i])) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            function showFormCards(requests) {
-                mainContainer.innerHTML = ``;
-                if (requests.length == 0) {
-                    mainContainer.innerHTML = emptyFiller;
-                    return;
-                }
-                let content = ``;
-                for (let i = 0; i < requests.length; i++) {
-                    const act = requests[i];
-                    content += `<div id="${act.name}-card" class="d-flex border border-2 rounded-3 my-3 p-4 align-items-center solicitud gap-4 w-100 ">
-    
-    <div class="flex-shrink-0" style="width: 140px; height: 140px;">
-        <img class="w-100 h-100 object-fit-cover rounded-2" src="${act.photo}" alt="imagen del producto">
-    </div>
-
-    <div class="d-flex flex-row justify-content-between align-items-center flex-grow-1">
-        
-        <ul class="list-unstyled d-flex flex-column gap-3 mb-0 text-start">
-            <li><h4 class="m-0 text-dark"><b>Nombre: </b>${act.name}</h4></li>
-            <li><h4 class="m-0 text-dark"><b>Precio: </b>${act.price}<b> €</b></h4></li>
-            <li><h4 class="m-0 text-dark"><b>Supermercado: </b>${act.market}</h4></li>
-            <li><h4 class="m-0 text-dark"><b>Estado: </b>${act.status}</h4></li>
-        </ul>
-
-        <div class="mx-4 mt-md-0">
-            <button id="${act.name}-quitter" class="btn btn-danger px-4 btn-rechazar btn-lg">
-                Quitar
-            </button>
+            </div>
         </div>
-        
-    </div>
-</div>`
-                }
-                mainContainer.innerHTML += content;
-            }
-
-            ok.addEventListener("click", () => {
-                const name = document.querySelector("#name-field");
-                const price = document.querySelector("#price-field");
-                const market = document.querySelector("#market-field");
-                const ean = document.querySelector("#ean-field");
-                const photo = document.querySelector("#photo-field");
-                if (checkPrice(price.value) && checkEAN(ean.value)) {
-                    let marketname = market.value;
-                    const priceNum = Number(price.value);
-                    const photoData = URL.createObjectURL(photo.files[0]);
-                    const newReq = { name: name.value, price: priceNum, market: marketname, ean: ean.value, status: "pendiente", photo: photoData, index: requests.length };
-                    formButtons.classList.add("d-none");
-                    opButtons.classList.remove("d-none");
-                    requests.push(newReq);
-                    const err = document.querySelector("#error-card");
-                    err.classList.add("d-none");
-                    showFormCards(requests)
-                    mainContainer.addEventListener("click", (e) => {
-                        if (e.target.classList.contains("btn-danger") && e.target.textContent.includes("Quitar")) {
-                            const cardId = e.target.closest('.solicitud').id;
-                            const name = cardId.replace("-card", '');
-                            requests = requests.filter(x => x.name !== name);
-                            showFormCards(requests);
-                        }
-                    });
-                } else {
-                    const err = document.querySelector("#error-card");
-                    err.classList.remove("d-none");
-                }
-            });
-
-
-
-
-            addButton.addEventListener("click", () => {
-                mainContainer.innerHTML = form;
-                opButtons.classList.add("d-none");
-                formButtons.classList.remove("d-none");
-
-            });
-
-
-        </script>
     </main>
+
+    <script th:src="@{/js/script-request.js}"></script>
+
     <th:block th:replace="~{fragments/footer.html :: footer}" />
 </body>
 

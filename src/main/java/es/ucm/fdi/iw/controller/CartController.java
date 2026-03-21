@@ -19,7 +19,7 @@ import es.ucm.fdi.iw.model.ProductCart;
 
 
 @Controller
-@RequestMapping("/cart")
+@RequestMapping("/user/cart")
 public class CartController {
 
     @Autowired
@@ -141,7 +141,7 @@ public class CartController {
         
         cart.setName(rename);
 
-        return "redirect:/cart?cartId=" + cartId;
+        return "redirect:/user/cart?cartId=" + cartId;
     }
 
     @Transactional
@@ -176,7 +176,7 @@ public class CartController {
         
         entityManager.remove(cart);
 
-        return "redirect:/cart";
+        return "redirect:/user/cart";
     }
 
     @Transactional
@@ -202,7 +202,7 @@ public class CartController {
         cart.setItems(new ArrayList<>());
         entityManager.persist(cart);
 
-        return "redirect:/cart?cartId=" + cart.getId();
+        return "redirect:/user/cart?cartId=" + cart.getId();
     }
 
     @Transactional
@@ -230,7 +230,7 @@ public class CartController {
             for(ProductCart pc : cart.getItems()) {
                 entityManager.remove(pc);
             }
-            return "redirect:/cart?cartId=" + cartId;
+            return "redirect:/user/cart?cartId=" + cartId;
         }
 
         ProductCart item = entityManager.find(ProductCart.class, itemId);

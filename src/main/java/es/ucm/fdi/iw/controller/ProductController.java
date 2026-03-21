@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
 @Controller
-@RequestMapping("/product")
+@RequestMapping("/user/product")
 public class ProductController {
 
 

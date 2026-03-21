@@ -37,7 +37,7 @@ public class RootController {
             model.addAttribute(name, session.getAttribute(name));
         }
     }
-
+    
     @GetMapping("/login")
     public String login(Model model, HttpServletRequest request) {
         boolean error = request.getQueryString() != null && request.getQueryString().indexOf("error") != -1;
@@ -101,15 +101,11 @@ public class RootController {
         return "login";
     }
 
-    @GetMapping("/notifications")
+    @GetMapping("/user/notifications")
     public String notifications(Model model, HttpServletRequest request) {
         return "notifications";
     }
 
-    @GetMapping("/request")
-    public String request(Model model) {
-        return "request";
-    }
 
     @GetMapping("/faq")
     public String faq(Model model, HttpServletRequest request) {
@@ -118,8 +114,12 @@ public class RootController {
     
 
     @GetMapping("/user")
-    public String user(Model model, HttpServletRequest request) {
-        return "user";
+    public String user(HttpSession session) {
+        User u = (User) session.getAttribute("u");
+        if (u == null) {
+            return "redirect:/login";
+        }
+        return "redirect:/user/" + u.getId();
     }
 
     @GetMapping("/admin")
@@ -128,7 +128,11 @@ public class RootController {
     }
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, HttpSession session) {
+         User user = (User) session.getAttribute("u");
+        if(user != null) {
+            return "redirect:/user";
+        }
         return "index";
     }
 }

@@ -10,42 +10,68 @@
     <header th:replace="~{fragments/nav.html :: nav}"></header>
 
     <main class="flex-shrink-0">
-        <div id="books" class="border border-2 border-primary rounded">
-            <label for="isbn">ISBN</label><input id="isbn" value="9780140328721" />
-            <button id="fetchBook">Buscar datos online</button>
-            <img class="preview" id="portada" alt="portada del libro" />
-            <form th:action="@{/user/__${user.id}__/pic}">
-                <button id="postPortada" class="perfilable">Usar como foto de perfil</button>
-            </form>
-        </div>
-        <div id="movies" class="border border-2 border-secondary rounded">
-            <label for="imdb">IMDB</label><input id="imdb" value="tt11286314" />
-            <button id="fetchMovie">Buscar datos online</button>
-            <img class="preview" id="poster" alt="poster de la pelicula" />
-            <form th:action="@{/user/__${user.id}__/pic}">
-                <button id="postPoster" class="perfilable">Usar como foto de perfil</button>
-            </form>
-        </div>
-        <div id="profile" class="border border-2 border-tertiary rounded">
-            <input type="file" id="f_avatar" accept="image/jpeg,image/png">
-            <img class="preview" id="avatar" alt="careto a subir" />
-            <form th:action="@{/user/__${user.id}__/pic}">
-                <button id="postAvatar">Usar como foto de perfil</button>
-            </form>
-        </div>
 
-        <div class="container">
+        <section class="profile-hero">
+            <div class="profile-hero-inner">
+                <span class="profile-kicker">MI CUENTA</span>
+
+                <h1 class="display-5  text-white fw-bold mb-3">
+                    Bienvenido de nuevo, <strong><span th:text="${user.username}">Paco</span></strong>
+                </h1>
+
+                <p class="fs-5 fw-light text-white">
+                    Ya puedes empezar a ahorrar tiempo y esfuerzo.
+                </p>
+
+                <p class="fs-6 fw-light text-white">
+                    Accede a tus carritos personalizados, solicita nuevos productos y gestiona tu lista de deseos.
+                </p>
+            </div>
+        </section>
+
+
+        <div class="container py-5 ">
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10">
+                    <div id="books" class="border border-2  rounded mb-4 p-3">
+                        <label for="isbn">ISBN</label><input id="isbn" class="ms-2 me-2" value="9780140328721" />
+                        <button id="fetchBook" class="ms-1">Buscar datos online</button>
+                        <img class="preview" id="portada" alt="portada del libro" />
+                        <form th:action="@{/user/{id}/pic(id=${user.id})}">
+                            <button id="postPortada" class="perfilable mt-2">Usar como foto de perfil</button>
+                        </form>
+                    </div>
+                    <div id="movies" class="border border-2 rounded mb-4 p-3">
+                        <label for="imdb">IMDB</label><input id="imdb" class="ms-2 me-2" value="tt11286314" />
+                        <button id="fetchMovie" class="ms-1">Buscar datos online</button>
+                        <img class="preview" id="poster" alt="poster de la pelicula" />
+                        <form th:action="@{/user/{id}/pic(id=${user.id})}">
+                            <button id="postPoster" class="perfilable mt-2">Usar como foto de perfil</button>
+                        </form>
+                    </div>
+                    <div id="profile" class="border border-2  rounded mb-4 p-3">
+                        <input type="file" id="f_avatar" accept="image/jpeg,image/png">
+                        <img class="preview" id="avatar" alt="careto a subir" />
+                        <form th:action="@{/user/{id}/pic(id=${user.id})}">
+                            <button id="postAvatar" class="mt-2">Usar como foto de perfil</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
             <h1 class="mt-5">Perfil de <span th:text="${user.username}">Paco</span></h1>
             <!-- recepción de mensajes -->
             <div class="py-5 row" id="mensajes">
             </div>
             <!-- envío de mensajes -->
             <div class="py-5 row ">
-                <form th:action="@{/user/__${user.id}__/msg}" method="POST">
-                    <input type="text" id="message" placeholder="escribe a este usuario" />
+                <form th:action="@{/user/{id}/msg(id=${user.id})}" method="POST">
+                    <input type="text" id="message" class="me-2" placeholder="escribe a este usuario" />
                     <button id="sendmsg" class="btn btn-secondary" type="submit">Enviar</button>
                 </form>
             </div>
+        </div>
         </div>
     </main>
 
