@@ -166,6 +166,13 @@ public class CartController {
             model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
             return "cart";
         }
+
+        List<ProductCart> items = cart.getItems();
+        if(items != null) {
+            for(ProductCart item : items) {
+                entityManager.remove(item);
+            }
+        }
         
         entityManager.remove(cart);
 
