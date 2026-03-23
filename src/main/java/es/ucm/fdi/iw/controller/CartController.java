@@ -145,9 +145,10 @@ public class CartController {
     }
 
     @Transactional
-    @PostMapping("/delete")
-    public String deleteCart(
-        @RequestParam long cartId,
+    @PostMapping("/gestionCarrito")
+    public String gestionCarrito(
+        @RequestParam(required = false) long cartId,
+        @RequestParam String action,
         HttpSession session,
         Model model) {
 
@@ -156,53 +157,45 @@ public class CartController {
             return "redirect:/login";
         }
 
-        Cart cart = entityManager.find(Cart.class, cartId);
-
-        if(cart == null) {
-            model.addAttribute("errorMessage", "Carrito no encontrado.");
-            return "cart";
+        if("new".equals(action)) {
+            Cart cart = new Cart();
+            cart.setName("Nuevo Carrito");
+            cart.setUser(entityManager.find(User.class, user.getId()));
+            cart.setDate(LocalDateTime.now());
+            cart.setItems(new ArrayList<>());
+            entityManager.persist(cart);
+            model.addAttribute("selectedCart", cart);
+            entityManager.flush();
         }
-        if(!isOwner(cart, user)) {
-            model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
-            return "cart";
-        }
+        else if("delete".equals(action)) {
+            Cart cart = entityManager.find(Cart.class, cartId);
 
-        List<ProductCart> items = cart.getItems();
-        if(items != null) {
-            for(ProductCart item : items) {
-                entityManager.remove(item);
+            if(cart == null) {
+                model.addAttribute("errorMessage", "Carrito no encontrado.");
+                return "cart";
             }
+            if(!isOwner(cart, user)) {
+                model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
+                return "cart";
+            }
+
+            List<ProductCart> items = cart.getItems();
+            if(items != null) {
+                for(ProductCart item : items) {
+                    entityManager.remove(item);
+                }
+            }
+            entityManager.remove(cart);
+            entityManager.flush();
+            model.addAttribute("selectedCart", null);
         }
-        
-        entityManager.remove(cart);
+        List<Cart> carts = entityManager
+            .createNamedQuery("Cart.searchByUserId", Cart.class)
+            .setParameter("userId", user.getId())
+            .getResultList();
+        model.addAttribute("carts", carts != null ? carts : new ArrayList<>());
 
-        return "redirect:/user/cart";
-    }
-
-    @Transactional
-    @PostMapping("/create")
-    public String createCart(
-        HttpSession session,
-        Model model) {
-
-        User user = (User) session.getAttribute("u");
-        if (user == null) {
-            return "redirect:/login";
-        }
-
-        User managedUser = entityManager.find(User.class, user.getId());
-        if (managedUser == null) {
-            return "redirect:/login";
-        }
-
-        Cart cart = new Cart();
-        cart.setName("Nuevo Carrito");
-        cart.setUser(managedUser);
-        cart.setDate(LocalDateTime.now());
-        cart.setItems(new ArrayList<>());
-        entityManager.persist(cart);
-
-        return "redirect:/user/cart?cartId=" + cart.getId();
+        return "cart :: #seccionGestionCarritos";
     }
 
     @Transactional
@@ -230,7 +223,9 @@ public class CartController {
             for(ProductCart pc : cart.getItems()) {
                 entityManager.remove(pc);
             }
-            return "redirect:/user/cart?cartId=" + cartId;
+            cart.getItems().clear();
+            model.addAttribute("selectedCart", cart);
+            return "cart :: #tablaProductos";
         }
 
         ProductCart item = entityManager.find(ProductCart.class, itemId);
@@ -244,10 +239,6 @@ public class CartController {
             return "cart";
         }
 
-        float precioUnitario = (float) (item.getSubtotal() / item.getQuantity());
-
-        cart.setTotal(cart.getTotal() - item.getSubtotal());
-
         switch (action) {
             case "suma":
                 item.setQuantity(item.getQuantity() + 1);
@@ -259,17 +250,15 @@ public class CartController {
                     entityManager.remove(item);
                 }
                 break;
-
             case "delete":
-                entityManager.remove(item);
-                return "redirect:/user/cart?cartId=" + cartId;
+                entityManager.remove(item); 
+                break;
             default:
                 break;
         }
 
-        item.setSubtotal(precioUnitario*item.getQuantity());
-        cart.setTotal(cart.getTotal() + item.getSubtotal());
+        model.addAttribute("selectedCart", entityManager.find(Cart.class, cartId));
         
-        return "redirect:/user/cart?cartId=" + cartId;
+        return "cart :: #tablaProductos";
     }
 }
