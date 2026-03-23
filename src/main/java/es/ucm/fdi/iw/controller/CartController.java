@@ -116,39 +116,11 @@ public class CartController {
     }
 
     @Transactional
-    @PostMapping("/rename")
-    public String renameCart(
-        @RequestParam long cartId,
-        @RequestParam String rename,
-        HttpSession session,
-        Model model) {
-
-        User user = (User) session.getAttribute("u");
-        if (user == null) {
-            return "redirect:/login";
-        }
-
-        Cart cart = entityManager.find(Cart.class, cartId);
-
-        if(cart == null) {
-            model.addAttribute("errorMessage", "Carrito no encontrado.");
-            return "cart";
-        }
-        if(!isOwner(cart, user)) {
-            model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
-            return "cart";
-        }
-        
-        cart.setName(rename);
-
-        return "redirect:/user/cart?cartId=" + cartId;
-    }
-
-    @Transactional
     @PostMapping("/gestionCarrito")
     public String gestionCarrito(
-        @RequestParam(required = false) long cartId,
+        @RequestParam(required = false) Long cartId,
         @RequestParam String action,
+        @RequestParam(required = false) String rename,
         HttpSession session,
         Model model) {
 
@@ -165,19 +137,31 @@ public class CartController {
             cart.setItems(new ArrayList<>());
             entityManager.persist(cart);
             model.addAttribute("selectedCart", cart);
-            entityManager.flush();
-        }
-        else if("delete".equals(action)) {
-            Cart cart = entityManager.find(Cart.class, cartId);
 
-            if(cart == null) {
-                model.addAttribute("errorMessage", "Carrito no encontrado.");
-                return "cart";
+            List<Cart> carts = entityManager
+                .createNamedQuery("Cart.searchByUserId", Cart.class)
+                .setParameter("userId", user.getId())
+                .getResultList();
+            model.addAttribute("carts", carts);
+
+            return "redirect:/user/cart?cartId=" + cart.getId();
+        }
+
+        if (cartId == null) return "redirect:/user/cart";
+        
+        Cart cart = entityManager.find(Cart.class, cartId);
+        if (cart == null || !isOwner(cart, user)) {
+            model.addAttribute("errorMessage", "Carrito no encontrado o no eres el dueño de este carrito.");
+            return "redirect:/user/cart";
+        }
+
+        if ("rename".equals(action)) {
+            if (rename != null && !rename.isBlank()) {
+                cart.setName(rename);
             }
-            if(!isOwner(cart, user)) {
-                model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
-                return "cart";
-            }
+            return "redirect:/user/cart?cartId=" + cartId;
+        }
+        else {
 
             List<ProductCart> items = cart.getItems();
             if(items != null) {
@@ -186,16 +170,8 @@ public class CartController {
                 }
             }
             entityManager.remove(cart);
-            entityManager.flush();
-            model.addAttribute("selectedCart", null);
+            return "redirect:/user/cart";
         }
-        List<Cart> carts = entityManager
-            .createNamedQuery("Cart.searchByUserId", Cart.class)
-            .setParameter("userId", user.getId())
-            .getResultList();
-        model.addAttribute("carts", carts != null ? carts : new ArrayList<>());
-
-        return "cart :: #seccionGestionCarritos";
     }
 
     @Transactional
