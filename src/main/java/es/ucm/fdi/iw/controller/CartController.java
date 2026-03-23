@@ -262,7 +262,7 @@ public class CartController {
 
             case "delete":
                 entityManager.remove(item);
-                return "redirect:/cart?cartId=" + cartId;
+                return "redirect:/user/cart?cartId=" + cartId;
             default:
                 break;
         }
@@ -270,6 +270,6 @@ public class CartController {
         item.setSubtotal(precioUnitario*item.getQuantity());
         cart.setTotal(cart.getTotal() + item.getSubtotal());
         
-        return "redirect:/cart?cartId=" + cartId;
+        return "redirect:/user/cart?cartId=" + cartId;
     }
 }
