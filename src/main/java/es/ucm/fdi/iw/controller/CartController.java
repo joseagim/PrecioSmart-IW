@@ -120,7 +120,7 @@ public class CartController {
     public String gestionCarrito(
         @RequestParam(required = false) Long cartId,
         @RequestParam String action,
-        @RequestParam(required = false) String rename,
+        @RequestParam(required = false) String renameCart,
         HttpSession session,
         Model model) {
 
@@ -129,7 +129,7 @@ public class CartController {
             return "redirect:/login";
         }
 
-        if("new".equals(action)) {
+        if("newCart".equals(action)) {
             Cart cart = new Cart();
             cart.setName("Nuevo Carrito");
             cart.setUser(entityManager.find(User.class, user.getId()));
@@ -155,9 +155,9 @@ public class CartController {
             return "redirect:/user/cart";
         }
 
-        if ("rename".equals(action)) {
-            if (rename != null && !rename.isBlank()) {
-                cart.setName(rename);
+        if ("renameCart".equals(action)) {
+            if (renameCart != null && !renameCart.isBlank()) {
+                cart.setName(renameCart);
             }
             return "redirect:/user/cart?cartId=" + cartId;
         }
@@ -216,17 +216,17 @@ public class CartController {
         }
 
         switch (action) {
-            case "suma":
+            case "sumaProd":
                 item.setQuantity(item.getQuantity() + 1);
                 break;
 
-            case "resta":
+            case "restaProd":
                 item.setQuantity(item.getQuantity() - 1);
                 if(item.getQuantity() <= 0) {
                     entityManager.remove(item);
                 }
                 break;
-            case "delete":
+            case "deleteProd":
                 entityManager.remove(item); 
                 break;
             default:

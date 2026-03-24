@@ -33,13 +33,13 @@
                                 th:if="${selectedCart != null}"
                                 type="submit"
                                 name="action" 
-                                value="delete">
+                                value="deleteCart">
                             <img class="svg-md" th:src="@{/img/svg/delete.svg}" alt="Borrar Carrito">
                         </button>
                         <button class="btn btn-naranja"
                                 type="submit"
                                 name="action"
-                                value="new">
+                                value="newCart">
                             <img class="svg-md" th:src="@{/img/svg/new.svg}" alt="Nuevo Carrito">
                         </button>
                     </form>
@@ -58,7 +58,7 @@
                             <div class="card-body text-start">
                                 <h5 class="card-title fw-bold d-flex justify-content-between align-items-center mb-2">
                                     <input type="text"
-                                        name="rename"
+                                        name="renameCart"
                                         th:value="${cart.name}"
                                         th:readonly="${editCart == false or selectedCart == null or selectedCart.id != cart.id}"
                                         th:disabled="${editCart == false or selectedCart == null or selectedCart.id != cart.id}"
@@ -76,7 +76,7 @@
 
                                     <button type="submit"
                                             name="action"
-                                            value="rename"
+                                            value="renameCart"
                                             class="btn btn-sm btn-edit"
                                             th:if="${editCart == true and selectedCart != null and selectedCart.id == cart.id}">
                                         <img class="svg-sm" th:src="@{/img/svg/accept.svg}" alt="Guardar">
@@ -90,6 +90,8 @@
                                     <button type="submit" 
                                             formmethod="get"
                                             th:formaction="@{/user/cart}"
+                                            name="selectCart"
+                                            th:value="${cart.id}"
                                             class="btn btn-sm btn-naranja"
                                             th:if="${selectedCart == null or selectedCart.id != cart.id}">
                                         Seleccionar
@@ -126,17 +128,20 @@
                                         <td class="tProd-cantidad d-flex justify-content-center align-items-center">
                                             
                                             <button type="button" 
-                                                    th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + ${item.id} + ', \'resta\')'" 
+                                                    name="restaProd"
+                                                    th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + ${item.id} + ', \'restaProd\')'" 
                                                     class="btn">-</button>
                                             <span class="tProd-cantidad-num" th:id="'qty-' + ${item.id}" th:text="${item.quantity}">1</span>
                                             <button type="button" 
-                                                    th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + ${item.id} + ', \'suma\')'" 
+                                                    name="sumaProd"
+                                                    th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + ${item.id} + ', \'sumaProd\')'" 
                                                     class="btn">+</button>
                                             
                                         </td>
                                         <td>
                                             <button type="button" 
-                                                    th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + ${item.id} + ', \'delete\')'" 
+                                                    name="deleteProd"
+                                                    th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + ${item.id} + ', \'deleteProd\')'" 
                                                     class="btn tProd-delete btn-sm">
                                                     <img class="svg-sm" th:src="@{/img/svg/delete.svg}" alt="Borrar Producto">
                                             </button>
@@ -147,6 +152,7 @@
                                     <tr>
                                         <td colspan="3" class="text-uppercase fw-bold">
                                             <button type="button" 
+                                                name="deleteAll"
                                                 th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + 'null' + ', \'deleteAll\')'" 
                                                 class="btn tProd-delete btn-sm">
                                                 <img class="svg-sm" th:src="@{/img/svg/delete.svg}" alt="Vaciar Carrito">
