@@ -116,10 +116,11 @@ public class CartController {
     }
 
     @Transactional
-    @PostMapping("/rename")
-    public String renameCart(
-        @RequestParam long cartId,
-        @RequestParam String rename,
+    @PostMapping("/gestionCarrito")
+    public String gestionCarrito(
+        @RequestParam(required = false) Long cartId,
+        @RequestParam String action,
+        @RequestParam(required = false) String renameCart,
         HttpSession session,
         Model model) {
 
@@ -128,81 +129,49 @@ public class CartController {
             return "redirect:/login";
         }
 
-        Cart cart = entityManager.find(Cart.class, cartId);
+        if("newCart".equals(action)) {
+            Cart cart = new Cart();
+            cart.setName("Nuevo Carrito");
+            cart.setUser(entityManager.find(User.class, user.getId()));
+            cart.setDate(LocalDateTime.now());
+            cart.setItems(new ArrayList<>());
+            entityManager.persist(cart);
+            model.addAttribute("selectedCart", cart);
 
-        if(cart == null) {
-            model.addAttribute("errorMessage", "Carrito no encontrado.");
-            return "cart";
+            List<Cart> carts = entityManager
+                .createNamedQuery("Cart.searchByUserId", Cart.class)
+                .setParameter("userId", user.getId())
+                .getResultList();
+            model.addAttribute("carts", carts);
+
+            return "redirect:/user/cart?cartId=" + cart.getId();
         }
-        if(!isOwner(cart, user)) {
-            model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
-            return "cart";
-        }
+
+        if (cartId == null) return "redirect:/user/cart";
         
-        cart.setName(rename);
-
-        return "redirect:/user/cart?cartId=" + cartId;
-    }
-
-    @Transactional
-    @PostMapping("/delete")
-    public String deleteCart(
-        @RequestParam long cartId,
-        HttpSession session,
-        Model model) {
-
-        User user = (User) session.getAttribute("u");
-        if (user == null) {
-            return "redirect:/login";
-        }
-
         Cart cart = entityManager.find(Cart.class, cartId);
-
-        if(cart == null) {
-            model.addAttribute("errorMessage", "Carrito no encontrado.");
-            return "cart";
-        }
-        if(!isOwner(cart, user)) {
-            model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
-            return "cart";
+        if (cart == null || !isOwner(cart, user)) {
+            model.addAttribute("errorMessage", "Carrito no encontrado o no eres el dueño de este carrito.");
+            return "redirect:/user/cart";
         }
 
-        List<ProductCart> items = cart.getItems();
-        if(items != null) {
-            for(ProductCart item : items) {
-                entityManager.remove(item);
+        if ("renameCart".equals(action)) {
+            if (renameCart != null && !renameCart.isBlank()) {
+                cart.setName(renameCart);
             }
+            return "redirect:/user/cart?cartId=" + cartId;
         }
-        
-        entityManager.remove(cart);
+        else {
 
-        return "redirect:/user/cart";
-    }
-
-    @Transactional
-    @PostMapping("/create")
-    public String createCart(
-        HttpSession session,
-        Model model) {
-
-        User user = (User) session.getAttribute("u");
-        if (user == null) {
-            return "redirect:/login";
+            List<ProductCart> items = cart.getItems();
+            if(items != null) {
+                for(ProductCart item : items) {
+                    entityManager.remove(item);
+                }
+            }
+            entityManager.remove(cart);
+            return "redirect:/user/cart";
         }
-
-        User managedUser = entityManager.find(User.class, user.getId());
-        if (managedUser == null) {
-            return "redirect:/login";
-        }
-
-        Cart cart = new Cart();
-        cart.setName("Nuevo Carrito");
-        cart.setUser(managedUser);
-        cart.setDate(LocalDateTime.now());
-        cart.setItems(new ArrayList<>());
-        entityManager.persist(cart);
-
-        return "redirect:/user/cart?cartId=" + cart.getId();
     }
 
     @Transactional
@@ -230,7 +199,9 @@ public class CartController {
             for(ProductCart pc : cart.getItems()) {
                 entityManager.remove(pc);
             }
-            return "redirect:/user/cart?cartId=" + cartId;
+            cart.getItems().clear();
+            model.addAttribute("selectedCart", cart);
+            return "cart :: #tablaProductos";
         }
 
         ProductCart item = entityManager.find(ProductCart.class, itemId);
@@ -244,32 +215,26 @@ public class CartController {
             return "cart";
         }
 
-        float precioUnitario = (float) (item.getSubtotal() / item.getQuantity());
-
-        cart.setTotal(cart.getTotal() - item.getSubtotal());
-
         switch (action) {
-            case "suma":
+            case "sumaProd":
                 item.setQuantity(item.getQuantity() + 1);
                 break;
 
-            case "resta":
+            case "restaProd":
                 item.setQuantity(item.getQuantity() - 1);
                 if(item.getQuantity() <= 0) {
                     entityManager.remove(item);
                 }
                 break;
-
-            case "delete":
-                entityManager.remove(item);
-                return "redirect:/cart?cartId=" + cartId;
+            case "deleteProd":
+                entityManager.remove(item); 
+                break;
             default:
                 break;
         }
 
-        item.setSubtotal(precioUnitario*item.getQuantity());
-        cart.setTotal(cart.getTotal() + item.getSubtotal());
+        model.addAttribute("selectedCart", entityManager.find(Cart.class, cartId));
         
-        return "redirect:/cart?cartId=" + cartId;
+        return "cart :: #tablaProductos";
     }
 }
