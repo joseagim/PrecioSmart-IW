@@ -40,13 +40,32 @@
                             </ul>
 
                             <div class="d-flex flex-wrap gap-3 mt-3 mb-1 justify-content-start align-items-center">
-                                <button id="buy-button" class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Añadir
-                                    al
-                                    carrito</button>
+                                <button id="buy-button" th:attr="data-product-id=${product != null ? product.id : 0}"
+                                    class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Añadir
+                                    al carrito
+                                </button>
                                 <div class="d-flex align-items-center gap-2">
                                     <label for="cantidad" class="mb-0 fw-semibold text-secondary">Cant.</label>
                                     <input class="form-control text-center rounded-3" type="number" id="cantidad"
                                         style="width: 5.2em;" min="1">
+                                </div>
+
+                                <div th:if="${carts != null and !#lists.isEmpty(carts)}"
+                                    class="d-flex align-items-center gap-2">
+                                    <label for="supermarket" class="mb-0 fw-semibold text-secondary">Carrito</label>
+                                    <select id="supermarket" name="supermarket" class="form-select form-select-lg"
+                                        required>
+                                        <option value="" selected disabled hidden>Selecciona un carrito...</option>
+                                        <option th:each="c : ${carts}" th:value="${c.id}" th:text="${c.name}">Carrito
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div th:unless="${carts != null and !#lists.isEmpty(carts)}"
+                                    class="d-flex align-items-center gap-2">
+                                    <a th:href="@{/user/cart}"
+                                        class="btn btn-naranja tn-md px-4 py-3 shadow-sm">Crear nuevo carrito y añadir
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -58,17 +77,21 @@
         <div class="container pb-5 text-center">
             <div id="compare">
                 <div class="card w-100 p-4 p-md-5 border rounded-3 bg-white">
-                    <h4 class="mb-3 bg-naranja rounded-3 p-2 text-center text-white">Comparar precios por supermercado</h4>
+                    <h3 class="mb-3 p-2 text-center text-black mb-5">Comparar precios por supermercado
+                    </h3>
                     <ul class="list-unstyled d-flex flex-nowrap align-items-stretch my-0 gap-3">
                         <li th:each="entry : ${result}" class="border rounded-3 p-3 text-start d-flex flex-column"
                             style="flex: 1 1 0; min-width: 0;">
                             <div th:if="${entry == null or entry.product == null}">
-                                     <h3 class="fs-5 mb-2 text-center"><b th:text="${entry.supermarket.name}">Supermercado</b></h3>
+                                <h3 class="fs-5 mb-2 text-center"><b
+                                        th:text="${entry.supermarket.name}">Supermercado</b></h3>
                                 <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
                                 <p class="text-muted mb-0 small">Ese producto no esta en ese supermercado.</p>
                             </div>
-                            <div th:if="${entry != null and entry.product != null and product != null and entry.product.id != product.id}">
-                                   <h3 class="fs-5 mb-2 text-center"><b th:text="${entry.supermarket.name}">Supermercado</b></h3>
+                            <div
+                                th:if="${entry != null and entry.product != null and product != null and entry.product.id != product.id}">
+                                <h3 class="fs-5 mb-2 text-center"><b
+                                        th:text="${entry.supermarket.name}">Supermercado</b></h3>
                                 <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
                                 <div class="d-flex align-items-center gap-2 mb-3">
                                     <img th:if="${entry.product.imageURL != null }" th:src="${entry.product.imageURL}"
@@ -85,8 +108,10 @@
                                     Comparar
                                 </a>
                             </div>
-                            <div th:if="${entry != null and entry.product != null and product != null and entry.product.id == product.id}">
-                                <h3 class="fs-5 mb-2 text-center"><b th:text="${entry.supermarket.name}">Supermercado</b></h3>
+                            <div
+                                th:if="${entry != null and entry.product != null and product != null and entry.product.id == product.id}">
+                                <h3 class="fs-5 mb-2 text-center"><b
+                                        th:text="${entry.supermarket.name}">Supermercado</b></h3>
                                 <h5 class="mb-2"><span class="text-muted">Precio:</span> <b
                                         th:text="${entry.price} + ' €'">0,00 €</b></h5>
                                 <p class="small text-muted mb-0" th:if="${entry.date != null}"
