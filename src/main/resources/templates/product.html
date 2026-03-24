@@ -39,21 +39,23 @@
                                 </li>
                             </ul>
 
-                            <div class="d-flex flex-wrap gap-3 mt-3 mb-1 justify-content-start align-items-center">
-                                <button id="buy-button" th:attr="data-product-id=${product != null ? product.id : 0}"
+                            <form id="add-to-cart-form" th:action="@{/user/cart/add/{productId}(productId=${product != null ? product.id : 0})}" method="post"
+                                class="d-flex flex-wrap gap-3 mt-3 mb-1 justify-content-start align-items-center">
+                                <button id="buy-button" type="submit"
+                                    th:attr="data-product-id=${product != null ? product.id : 0}"
                                     class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Añadir
                                     al carrito
                                 </button>
                                 <div class="d-flex align-items-center gap-2">
                                     <label for="cantidad" class="mb-0 fw-semibold text-secondary">Cant.</label>
                                     <input class="form-control text-center rounded-3" type="number" id="cantidad"
-                                        style="width: 5.2em;" min="1">
+                                        name="cantidad" style="width: 5.2em;" min="1" value="1">
                                 </div>
 
                                 <div th:if="${carts != null and !#lists.isEmpty(carts)}"
                                     class="d-flex align-items-center gap-2">
-                                    <label for="supermarket" class="mb-0 fw-semibold text-secondary">Carrito</label>
-                                    <select id="supermarket" name="supermarket" class="form-select form-select-lg"
+                                    <label for="cartId" class="mb-0 fw-semibold text-secondary">Carrito</label>
+                                    <select id="cartId" name="cartId" class="form-select form-select-lg"
                                         required>
                                         <option value="" selected disabled hidden>Selecciona un carrito...</option>
                                         <option th:each="c : ${carts}" th:value="${c.id}" th:text="${c.name}">Carrito
@@ -67,6 +69,9 @@
                                         class="btn btn-naranja tn-md px-4 py-3 shadow-sm">Crear nuevo carrito y añadir
                                     </a>
                                 </div>
+                            </form>
+                            <div id="registroFeedback" class="alert d-none mt-3" role="alert">
+                                <p class="mb-0"></p>
                             </div>
                         </div>
                     </div>

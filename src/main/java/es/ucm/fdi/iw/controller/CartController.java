@@ -178,31 +178,38 @@ public class CartController {
     }
 
     @Transactional
-    @PostMapping("/add")
+    @PostMapping("/add/{productId}")
     @ResponseBody // Indica que devolvemos JSON y no una vista HTML
-    public Map<String, String> addItem(
-            @RequestBody JsonNode data, // Recibe el JSON enviado por 'go'
+    public Map<String, Object> addToCart(
+            @PathVariable long productId,
+            @RequestParam(name = "cantidad", defaultValue = "1") int cantidad,
+            @RequestParam(name = "cartId", required = false) Long cartId,
             HttpSession session) {
 
-        // 1. Extraer datos del JSON
-        long cartId = data.get("cartId").asLong();
-        long productId = data.get("productId").asLong();
-        int quantity = data.get("quantity").asInt();
-
-        // 2. Obtener y refrescar usuario para evitar LazyInitializationException
-        User sessionUser = (User) session.getAttribute("u");
-        if (sessionUser == null)
-            return Map.of("status", "error", "message", "Inicie sesión");
-
-        User user = entityManager.find(User.class, sessionUser.getId());
-        Cart cart = entityManager.find(Cart.class, cartId);
-
-        // 3. Validar propiedad del carrito
-        if (cart == null || !isOwner(cart, user)) {
-            return Map.of("status", "error", "message", "Carrito no válido");
+        User user = (User) session.getAttribute("u");
+        if (user == null) {
+            return Map.of("error", "Usuario no autenticado");
         }
 
-        // 4. Lógica de negocio: Añadir o actualizar cantidad
+        Product product = entityManager.find(Product.class, productId);
+        if (product == null) {
+            return Map.of("error", "Producto no encontrado");
+        }
+
+        int quantity = cantidad > 0 ? cantidad : 1;
+
+        Cart cart = null;
+        if (cartId != null) {
+            cart = entityManager.find(Cart.class, cartId);
+            if (!isOwner(cart, user)) {
+                return Map.of("error", "Carrito no encontrado o no permitido");
+            }
+        }
+
+        if (cart == null) {
+            return Map.of("error", "Carrito no encontrado o no permitido");
+        }
+
         ProductCart existingItem = cart.getItems().stream()
                 .filter(item -> item.getProduct().getId() == productId)
                 .findFirst()
@@ -212,14 +219,14 @@ public class CartController {
             existingItem.setQuantity(existingItem.getQuantity() + quantity);
         } else {
             ProductCart newItem = new ProductCart();
-            newItem.setProduct(entityManager.find(Product.class, productId));
-            newItem.setCart(cart);
+            newItem.setProduct(product);
             newItem.setQuantity(quantity);
+            newItem.setCart(cart);
             entityManager.persist(newItem);
             cart.getItems().add(newItem);
         }
-
-        return Map.of("status", "ok", "message", "Producto añadido");
+        
+        return Map.of("success", "Producto añadido al carrito");
     }
 
     @Transactional
