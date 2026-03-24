@@ -29,6 +29,7 @@
                         <span th:if="${loginError}" class="text-danger">
                             Error en nombre de usuario o contraseña
                         </span>
+                        <span th:if="${registerOk}" class="text-success d-block" th:text="${registerOk}"></span>
                     </div>
                 </form>
             </div>

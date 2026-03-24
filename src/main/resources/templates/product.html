@@ -9,31 +9,69 @@
 <body class="d-flex flex-column h-100">
     <header th:replace="~{fragments/nav.html :: nav}"></header>
 
-    <main class="flex-shrink-0">
-        <div class="container my-5">
+    <main class="flex-shrink-0 bg-light-subtle">
+        <div class="container py-5">
             <div id="product-info">
-                <div class="card w-100 h-auto d-flex flex-column flex-md-row shadow-lg align-items-center align-items-md-start">
-                    
-                    <div class="p-4 p-md-5 flex-shrink-0" style="max-width: 250px;">
-                        <img th:src="@{/img/pruebas/colacao.jpg}" class="img-fluid rounded-2" alt="foto del producto">
+                <div
+                    class="card w-100 h-auto d-flex flex-column flex-md-row shadow-lg border-0 rounded-4 overflow-hidden align-items-center align-items-md-start">
+
+                    <div class="p-4 p-md-5 flex-shrink-0 bg-light" style="max-width: 260px;">
+                        <img th:src="@{/img/pruebas/colacao.jpg}" class="img-fluid rounded-3" alt="foto del producto">
                     </div>
 
-                    <div class="card-body text-start">
-                        <h1 id="product-title" class="card-title p-3"><b>Cacao Colacao 760g</b></h1>
+                    <div class="card-body text-start p-4 p-md-5">
+                        <h1 id="product-title" class="card-title mb-4 fs-2 fw-bold"><b th:text="${product?.name}">Nombre
+                                del
+                                producto</b></h1>
                         <div class="d-flex flex-column">
-                            <ul class="list-unstyled mx-2">
-                                <li class="my-2"><h5><b>Codigo EAN: </b>8410014478764</h5></li>
-                                <li class="my-3 my-md-5"><h5><b>Categoria: </b>Bebidas, Desayunos</h5></li>
-                                <li class="my-3 my-md-5"><h5><b>Precio Minimo Historico: </b>2,80€</h5></li>
-                                <li class="mt-3 mt-md-5 mb-4"><h5><b>Supermercado: </b>Mercadona</h5></li>
+                            <ul class="list-unstyled mb-3">
+                                <li class="my-2 pb-2 border-bottom border-light-subtle">
+                                    <h4 class="fs-5 mb-0"><b class="text-secondary">Marca: </b><span
+                                            th:text="${product?.brand}">-</span></h4>
+                                </li>
+                                <li class="my-2 pb-2 border-bottom border-light-subtle">
+                                    <h4 class="fs-5 mb-0"><b class="text-secondary">Cantidad: </b><span
+                                            th:text="${product?.quantity}">-</span></h4>
+                                </li>
+                                <li class="my-2">
+                                    <h4 class="fs-5 mb-0"><b class="text-secondary">Codigo EAN: </b><span
+                                            th:text="${product?.EAN}">-</span></h4>
+                                </li>
                             </ul>
-                            
-                            <div class="d-flex flex-wrap gap-5 mt-3 mb-4 justify-content-start align-items-center px-2">
-                                <button id="buy-button" class="btn btn-naranja p-3 text-nowrap">Añadir al carrito</button>
-                                <div class="d-flex align-items-center">
-                                    <label for="cantidad" class="me-2 d-md-none">Cant:</label>
-                                    <input class="form-control p-3" type="number" id="cantidad" style="width: 5em;" min="1">
+
+                            <form id="add-to-cart-form" th:action="@{/user/cart/add/{productId}(productId=${product != null ? product.id : 0})}" method="post"
+                                class="d-flex flex-wrap gap-3 mt-3 mb-1 justify-content-start align-items-center">
+                                <button id="buy-button" type="submit"
+                                    th:attr="data-product-id=${product != null ? product.id : 0}"
+                                    class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Añadir
+                                    al carrito
+                                </button>
+                                <div class="d-flex align-items-center gap-2">
+                                    <label for="cantidad" class="mb-0 fw-semibold text-secondary">Cant.</label>
+                                    <input class="form-control text-center rounded-3" type="number" id="cantidad"
+                                        name="cantidad" style="width: 5.2em;" min="1" value="1">
                                 </div>
+
+                                <div th:if="${carts != null and !#lists.isEmpty(carts)}"
+                                    class="d-flex align-items-center gap-2">
+                                    <label for="cartId" class="mb-0 fw-semibold text-secondary">Carrito</label>
+                                    <select id="cartId" name="cartId" class="form-select form-select-lg"
+                                        required>
+                                        <option value="" selected disabled hidden>Selecciona un carrito...</option>
+                                        <option th:each="c : ${carts}" th:value="${c.id}" th:text="${c.name}">Carrito
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div th:unless="${carts != null and !#lists.isEmpty(carts)}"
+                                    class="d-flex align-items-center gap-2">
+                                    <a th:href="@{/user/cart}"
+                                        class="btn btn-naranja tn-md px-4 py-3 shadow-sm">Crear nuevo carrito y añadir
+                                    </a>
+                                </div>
+                            </form>
+                            <div id="registroFeedback" class="alert d-none mt-3" role="alert">
+                                <p class="mb-0"></p>
                             </div>
                         </div>
                     </div>
@@ -41,42 +79,62 @@
             </div>
         </div>
 
-        <div class="container my-5 text-center">
+        <div class="container pb-5 text-center">
             <div id="compare">
-                <div class="card w-100 shadow-lg p-4">
-                    <ul class="list-unstyled d-flex flex-wrap justify-content-around align-items-center my-3 gap-4">
-                        <li class="border-end-md pe-md-4">
-                            <h4><b>Aldi</b></h4>
-                            <h5 class="text-muted">€4.50</h5>
-                        </li>
-                        <li class="border-end-md pe-md-4">
-                            <h4><b>Carrefour</b></h4>
-                            <h5 class="text-muted">€3.75</h5>
-                        </li>
-                        <li class="border-end-md pe-md-4">
-                            <h4><b>Dia</b></h4>
-                            <h5 class="text-muted">€4.30</h5>
-                        </li>
-                        <li>
-                            <h4><b>Lidl</b></h4>
-                            <h5 class="text-muted">€4.60</h5>
+                <div class="card w-100 p-4 p-md-5 border rounded-3 bg-white">
+                    <h3 class="mb-3 p-2 text-center text-black mb-5">Comparar precios por supermercado
+                    </h3>
+                    <ul class="list-unstyled d-flex flex-nowrap align-items-stretch my-0 gap-3">
+                        <li th:each="entry : ${result}" class="border rounded-3 p-3 text-start d-flex flex-column"
+                            style="flex: 1 1 0; min-width: 0;">
+                            <div th:if="${entry == null or entry.product == null}">
+                                <h3 class="fs-5 mb-2 text-center"><b
+                                        th:text="${entry.supermarket.name}">Supermercado</b></h3>
+                                <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
+                                <p class="text-muted mb-0 small">Ese producto no esta en ese supermercado.</p>
+                            </div>
+                            <div
+                                th:if="${entry != null and entry.product != null and product != null and entry.product.id != product.id}">
+                                <h3 class="fs-5 mb-2 text-center"><b
+                                        th:text="${entry.supermarket.name}">Supermercado</b></h3>
+                                <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
+                                <div class="d-flex align-items-center gap-2 mb-3">
+                                    <img th:if="${entry.product.imageURL != null }" th:src="${entry.product.imageURL}"
+                                        src="https://picsum.photos/80" class="rounded border"
+                                        style="width: 48px; height: 48px; object-fit: cover;" alt="Producto similar">
+                                    <div>
+                                        <p class="text-muted fw-bold small mb-1">Producto similar:</p>
+                                        <p class="text-muted small mb-0" th:text="${entry.product.name}">Nombre del
+                                            producto</p>
+                                    </div>
+                                </div>
+                                <a th:href="@{/user/product/{productoID}(productoID=${entry.product.id})}"
+                                    class="btn btn-naranja btn-sm rounded-3 w-100">
+                                    Comparar
+                                </a>
+                            </div>
+                            <div
+                                th:if="${entry != null and entry.product != null and product != null and entry.product.id == product.id}">
+                                <h3 class="fs-5 mb-2 text-center"><b
+                                        th:text="${entry.supermarket.name}">Supermercado</b></h3>
+                                <h5 class="mb-2"><span class="text-muted">Precio:</span> <b
+                                        th:text="${entry.price} + ' €'">0,00 €</b></h5>
+                                <p class="small text-muted mb-0" th:if="${entry.date != null}"
+                                    th:text="'Actualizado: ' + ${#temporals.format(entry.date, 'dd/MM/yyyy HH:mm')}">
+                                    Actualizado: -</p>
+                            </div>
                         </li>
                     </ul>
+                    <p class="text-muted mb-0 mt-2" th:if="${#lists.isEmpty(result)}">No hay supermercados disponibles.
+                    </p>
                 </div>
             </div>
         </div>
 
-        <script>
-            const ini = document.getElementById("cantidad");
-            ini.value = 1;
-            const botonCompra = document.querySelector("#buy-button");
-            botonCompra.addEventListener("click", () => {
-                const cantidad = document.getElementById("cantidad").value;
-                alert("Vas a añadir " + String(cantidad) + " productos al carrito.");
-            });
-        </script>
+        <script th:src="@{/js/script-product.js}"></script>
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
 </body>
+
 </html>

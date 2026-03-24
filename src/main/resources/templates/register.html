@@ -37,25 +37,17 @@
                     <div class="d-grid">
                         <button class="btn btn-lg btn-warning" type="submit">Register</button>
                     </div>
+                    <div class="mt-3 text-center">
+                        <span th:if="${registerError}" class="text-danger" th:text="${registerError}"></span>
+                    </div>
 
                 </form>
-                <script>
-                  
-                    document.querySelector('.form-signin').onsubmit = function (event) {
-                        let pass = document.getElementById("password").value;
-                        let confirm = document.getElementById("confirmPassword").value;
-                        if (pass !== confirm) {
-                            event.preventDefault();
-                            alert("¡Las contraseñas no coinciden!");
-                          
-                        }
-                    };
-                </script>
             </div>
         </div>
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
+    <script th:src="@{/js/script-register.js}"></script>
 </body>
 
 </html>

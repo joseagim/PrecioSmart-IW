@@ -2,9 +2,7 @@ package es.ucm.fdi.iw.controller;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Map;
 

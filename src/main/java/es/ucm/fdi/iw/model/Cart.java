@@ -3,13 +3,21 @@ package es.ucm.fdi.iw.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Data
 @Entity
+@NamedQueries({
+        @NamedQuery(
+            name = "Cart.searchByUser", 
+            query = "SELECT c FROM Cart c WHERE c.user = :user"
+        ),
+        @NamedQuery(
+            name = "Cart.searchByUserId",
+            query = "SELECT c FROM Cart c WHERE c.user.id = :userId ORDER BY c.date DESC"
+        )
+})
 public class Cart {
 
     @Id

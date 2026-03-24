@@ -3,9 +3,7 @@ package es.ucm.fdi.iw.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @Entity
@@ -16,11 +14,13 @@ public class Request {
     private long id;
 
     private String EAN;
-    private String info;
-    
-    private LocalDateTime date;
-    
+    private String name;
+    private String brand;
+    private String quantity;
+    private String supermarket;
+    private String imageUrl;
     private float price;
+    private LocalDateTime date;
     private boolean approved;
 
     @ManyToOne

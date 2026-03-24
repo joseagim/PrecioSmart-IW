@@ -1,9 +1,11 @@
 /* usa este fichero para personalizar tus vistas */
 
 :root {
+    --naranja-muy-oscuro: #ff7b10;
     --naranja-oscuro: #f8882d;
     --naranja-medio: #ff9e43;
     --naranja-claro: #ffab56;
+    --naranja-muy-claro: #ffebd5;
     --amarillo-naranja: #fbb606;
 }
 
@@ -129,13 +131,32 @@
     min-width: 200px; 
     cursor: pointer; 
     border-radius: 15px; 
-    border: 2px solid var(--naranja-oscuro); 
-    background-color: #fff7ef;
+    border: 2px solid var(--naranja-muy-oscuro); 
+    background-color: var(--naranja-muy-claro);
 }
 
-.card-carrito:hover {
-    background-color: var(--naranja-claro) !important;
-    color: white !important;
+.card-carrito input{
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    font-size: inherit; 
+    font-weight: inherit;
+    width: 100%;
+}
+
+.card-carrito input:enabled {
+    background-color: var(--naranja-muy-claro);
+    border-radius: 10px;
+    border: 3px solid var(--naranja-oscuro);
+    color: black;
+    cursor: text;
+}
+.card-carrito input:focus {
+    background-color: var(--naranja-muy-claro);
+    border-radius: 10px;
+    border: 3px solid var(--naranja-oscuro);
+    color: black;
+    outline: none;
 }
 
 .card-carrito-activa {
@@ -245,6 +266,16 @@
     margin: 0 auto;
 }
 
+.form-control:focus {
+    border-color: var(--naranja-claro) !important;
+    box-shadow: none !important;
+}
+
+.input-group:focus-within .input-group-text {
+    border-color: var(--naranja-claro) !important;
+}
+
+
 .btn-scan {
     border: 2px solid #ffb366;
     background-color: transparent;
@@ -281,7 +312,9 @@
     border-color: white;
 }
 
+/*-- NOTIFICATIONS --*/
 /* luego lo unifico, por ahora dejarlo así */
+
 
 .notification {
     transition: 0.1s;
@@ -298,3 +331,33 @@
 .solicitud:hover {
     background-color: #ffb366;
 }
+
+/* -- VISTA DE USUARIO -- */
+.profile-hero {
+    background:
+        radial-gradient(1200px 320px at 80% -40%, rgba(255, 255, 255, 0.2), transparent 55%),
+        linear-gradient(135deg, #d56b16 0%, #f08a24 55%, #ff9f3f 100%);
+    border-radius: 30px;
+    padding: 1.5rem 1.2rem;
+    max-width: 1200px;
+    margin: 3rem auto 3rem;
+}
+
+.profile-hero-inner {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.profile-kicker {
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #8b3e00;
+    background: #ffe5c8;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
+}
+

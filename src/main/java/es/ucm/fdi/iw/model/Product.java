@@ -6,7 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Version;
 import lombok.Data;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.NamedQuery;
@@ -15,8 +14,18 @@ import jakarta.persistence.NamedQueries;
 @Data
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Product.searchByName", query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:name)"),
-        @NamedQuery(name = "Product.EAN", query = "SELECT p FROM Product p WHERE p.EAN = :EAN")
+        @NamedQuery(
+            name = "Product.searchByName", 
+            query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:name)"
+        ),
+        @NamedQuery(
+            name = "Product.EAN", 
+            query = "SELECT p FROM Product p WHERE p.EAN = :EAN"
+        ),
+        @NamedQuery(
+            name = "Product.searchByNameOrEAN", 
+            query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:param) OR p.EAN LIKE :param"
+        )
 })
 public class Product {
 
@@ -29,5 +38,7 @@ public class Product {
 
     private String EAN;
     private String name;
+    private String brand;
+    private String quantity;
     private String imageURL;
 }

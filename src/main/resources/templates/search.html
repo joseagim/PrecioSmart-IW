@@ -15,7 +15,7 @@
             <h1 class="mt-5 mb-5">Búsqueda de productos</h1>
 
             <div class="search-container mb-5">
-                <form th:action="@{/search}" method="get">
+                <form id="search-form" th:action="@{/user/search}" method="get">
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0" style="border-radius: 12px 0 0 12px;">
                             <i class="bi bi-search text-muted"></i>
@@ -23,7 +23,7 @@
                         <input type="text" name="producto" th:value="${query}" class="form-control border-start-0"
                             placeholder="Busca por código EAN o nombre del producto..."
                             style="padding: 12px; border-radius: 0;">
-                        
+
                         <button id="buscar" class="btn btn-naranja" type="submit" style="border-radius: 0 12px 12px 0;">
                             <img th:src="@{/img/svg/search.svg}" class="svg-sm" alt="Icono de lupa"> Buscar
                         </button>
@@ -31,20 +31,28 @@
                 </form>
 
                 <button class="btn btn-scan mt-3">
-                    <i class="bi bi-qr-code-scan me-2"></i>Escanear código de barras 
+                    <i class="bi bi-qr-code-scan me-2"></i>Escanear código de barras
                 </button>
             </div>
 
             <div id="cuerpo-resultados" class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+                <div th:if="${error}" class="panel-sm">
+                    <span th:text="${error}"></span>
+                </div>
                 <div class="col" th:each="p : ${productos}">
                     <div class="card h-100 card-naranja shadow-sm">
-                        <img th:src="@{/img/pruebas/colacao.jpg}" class="card-img-top img-producto" alt="Imagen de producto">
+                        <img th:src="@{/img/pruebas/colacao.jpg}" class="card-img-top img-producto"
+                            alt="Imagen de producto">
                         <div class="card-body d-flex flex-column text-center">
                             <h5 class="card-title text-naranja fw-bold" th:text="${p.name}">Nombre</h5>
                             <ul class="list-group list-group-flush text-start mb-3">
-                                <li class="list-group-item small">EAN: <span th:text="${p.EAN}"></span></li>
+                                <li class="list-group-item medium">Marca: <span th:text="${p.brand}"></span></li>
+                                <li class="list-group-item medium">Cantidad: <span th:text="${p.quantity}"></span></li>
+                                <li class="list-group-item medium">EAN: <span th:text="${p.EAN}"></span></li>
                             </ul>
-                            <button class="btn btn-naranja mt-auto btn-comparar">Comparar</button>
+                            <a th:href="@{/user/product/{productoID}(productoID=${p.id})}" class="btn btn-naranja mt-auto btn-comparar">
+                                Comparar
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -53,6 +61,8 @@
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
+
+   
 </body>
 
 </html>
