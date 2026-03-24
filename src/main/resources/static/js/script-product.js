@@ -1,33 +1,58 @@
-const ini = document.getElementById("cantidad");
-if (ini) {
-    ini.value = 1;
-}
+const form = document.getElementById("add-to-cart-form");
+const registroFeedback = document.getElementById("registroFeedback");
+const buyButton = document.getElementById("buy-button");
 
-const botonCompra = document.querySelector("#buy-button");
+if (form) {
+    form.addEventListener("submit", function (e) {
+        e.preventDefault();
 
-if (botonCompra) {
-    botonCompra.addEventListener("click", function() {
-        const cantidad = parseInt(document.getElementById("cantidad").value) || 1;
-        const productId = this.getAttribute("data-product-id");
-        const url = `/user/cart/add/${productId}`;
-        const method = "POST";
+        const formData = new FormData(form);
+    
+        const url = form.getAttribute("action");
+        const method = (form.getAttribute("method") || "POST").toUpperCase();
 
-        // Usamos FormData para enviar el valor de cantidad y aprovechar CSRF hidden input
-        const formData = new FormData();
-        formData.append('cantidad', cantidad);
+        if (buyButton) {
+            buyButton.disabled = true;
+        }
 
-        // El helper go acepta FormData y un headers vacío para no forzar JSON
-        go(url, method, formData, {} ).then(response => {
-            // si el backend devuelve JSON con redirección o success
-            if (response && response.redirect) {
-                window.location.href = response.redirect;
-            } else {
-                // por defecto recargar la página para reflejar cambios en carrito
-                window.location.reload();
-            }
-        }).catch(err => console.error('Error al añadir al carrito:', err));
+        go(url, method, formData, {})
+            .then(response => {
+                const json = typeof response === "string" ? JSON.parse(response) : response;
+
+                if (!registroFeedback) {
+                    return;
+                }
+
+                if (json && json.error) {
+                    registroFeedback.querySelector("p").textContent = json.error;
+                    registroFeedback.classList.remove("d-none", "alert-success");
+                    registroFeedback.classList.add("alert-danger");
+                } else {
+                    const successMessage = (json && json.success) ? json.success : "Producto anadido correctamente";
+                   
+                    registroFeedback.querySelector("p").textContent = successMessage;
+                    registroFeedback.classList.remove("d-none", "alert-danger");
+                    registroFeedback.classList.add("alert-success");
+                }
+            })
+            .catch(() => {
+                if (!registroFeedback) {
+                    return;
+                }
+                registroFeedback.querySelector("p").textContent = "Error al anadir el producto";
+                registroFeedback.classList.remove("d-none", "alert-success");
+                registroFeedback.classList.add("alert-danger");
+            })
+            .finally(() => {
+                if (buyButton) {
+                    buyButton.disabled = false;
+                }
+            });
     });
 }
+
+
+
 
 
 
