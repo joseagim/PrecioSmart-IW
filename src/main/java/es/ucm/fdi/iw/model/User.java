@@ -62,6 +62,9 @@ public class User implements Transferable<User.Transfer> {
     @ManyToMany(mappedBy = "members")
     private List<Topic> groups = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<Cart> carts; 
+
     /**
      * Checks whether this user has a given role.
      * 
