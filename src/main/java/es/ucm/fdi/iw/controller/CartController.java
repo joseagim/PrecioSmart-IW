@@ -207,7 +207,12 @@ public class CartController {
         }
 
         if (cart == null) {
-            return Map.of("error", "Carrito no encontrado o no permitido");
+            cart = new Cart();
+            cart.setName("Nuevo Carrito");
+            cart.setUser(entityManager.find(User.class, user.getId()));
+            cart.setDate(LocalDateTime.now());
+            cart.setItems(new ArrayList<>());
+            entityManager.persist(cart);
         }
 
         ProductCart existingItem = cart.getItems().stream()
