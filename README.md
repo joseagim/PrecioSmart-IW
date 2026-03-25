@@ -4,15 +4,16 @@
 
 Utiliza el código de barras (EAN) como identificador único para garantizar búsquedas precisas y comparaciones justas.
 
+[Enlace al sitio web](https://vm039.containers.fdi.ucm.es/)
 
+(Necesario conectarse a la VPN de la UCM)
 ## 🚀 Funcionalidades principales
 
 * **Identificación de productos**: Uso del código de barras (EAN) para localizar productos de forma rápida y sin errores.
 * **Consulta accesible**: Búsqueda mediante escaneo con la cámara del dispositivo móvil o introducción manual del código numérico.
-* **Análisis comparativo**: Visualización de precios en distintos supermercados y comparaciones según precio y otros filtros como macros de los productos.
+* **Análisis comparativo**: Visualización de precios en distintos supermercados y comparaciones según precio y otros filtros como categorías de los productos.
 * **Carrito inteligente**: Gestión de cestas de la compra que permiten mezclar productos de distintas cadenas para que se pueda ver en qué supermercado sale más barato comprar todo el carrito.
-* **Actualización de datos**: Los usuarios pueden csolicitar agregar nuevos productos o modificar los ya existentes con la intención de actualizar el precio si este ha cambiado.
-
+* **Actualización de datos**: Los usuarios pueden solicitar agregar nuevos productos o modificar los ya existentes con la intención de actualizar el precio si este ha cambiado.
 
 
 ## 💻 Vistas de la aplicación
@@ -21,72 +22,33 @@ La aplicación dispone de las siguientes interfaces de usuario:
 
 1.  **Vista principal**: Página de inicio con información sobre la aplicación y acceso directo a las herramientas de búsqueda y escaneo.
 2.  **Vista de búsqueda**: Listado de productos filtrados según lo que escriba el usuario en la barra de búsqueda.
-3.  **Vista de productos**: Ficha detallada de cada producto con información nutricional, precios en distintas cadenas y productos similares.
+3.  **Vista de productos**: Ficha detallada de cada producto con marca, cantidad, precios en distintas cadenas y productos similares.
 4.  **Vista de carritos**: Gestión de varios carritos con nombres personalizados. Permite comparar cuánto costaría la misma lista de la compra en los distintos supermercados que recoge la aplicación.
 5.  **Vista de solicitudes**: Formulario para que los usuarios reporten datos erróneos o soliciten añadir productos que no están en la base de datos.
 6.  **Vista de notificaciones**: Panel donde el usuario recibe avisos sobre el estado de sus solicitudes (aceptado o rechazado) por parte de la administración.
 7.  **Vista de administrador**: Panel exclusivo para la gestión de la plataforma, permitiendo validar o rechazar las solicitudes de los usuarios para mantener la base de datos actualizada.
-
+8.  **Vista de registro**: Formulario para crear una nueva cuenta de usuario.
+9.  **Vista de login**: Pantalla de inicio de sesión para acceder a la cuenta.
+10. **Vista de autores**: Página con información del equipo de desarrollo.
+11. **Vista de FAQ**: Sección de preguntas frecuentes y respuestas rápidas.
+12. **Vista de usuario**: Área personal con perfil y mensajería.
 
 
 # PrecioSmart - Estado de implementación de vistas
 
-Resumen rápido
+Resumen sencillo
 
-- `login` (vista: `templates/login.html`): Completa y funcional. Formulario de login existente y mostrado. Pruebas externas (`login.feature`) usan `/login` y la redirección tras autenticación funciona.
+- Vista principal (`index`): implementada. Ya muestra la portada y acceso a funciones principales.
+- Vista de busqueda (`search`): implementada. Permite buscar productos.
+- Vista de producto (`product`): implementada. Muestra informacion del producto y precios por cada supermercado.
+- Vista de carritos (`cart`): implementada en gran parte. Permite crear carritos y gestionar productos; falta mostrar el precio total del carrito por cada supermercado.
+- Vista de solicitudes (`request`): implementada a medias. La vista esta creada, pero falta gestionar la peticion POST y guardarla en la base de datos.
+- Vista de notificaciones (`notifications`): sin implementar. La vista es un boceto de lo que seria.
+- Vista de administrador (`admin`): sin implementar. La vista es un boceto de lo que seria.
+- Vista de registro (`register`): implementada. Permite crear una cuenta.
+- Vista de login (`login`): implementada y funcional. Permite iniciar sesion correctamente.
+- Vista de autores (`authors`): implementada. Muestra informacion del equipo.
+- Vista de FAQ (`faq`): implementada. Incluye preguntas frecuentes (Se irá ampliando).
+- Vista de usuario (`user`): implementada. Incluye perfil y mensajeria.
 
-- `cart` (vista: `templates/cart.html` y JS: `static/js/script-cart.js`): Implementada en su mayor parte. Soporta:
-  - Listado de carritos del usuario.
-  - Crear nuevo carrito (`/user/cart` -> acción `newCart`).
-  - Selección de carrito, edición de nombre (modo edición), eliminación de carrito.
-  - Gestión de productos dentro del carrito (sumar, restar, borrar, vaciar) mediante endpoint `/user/cart/update` y fragmentos Thymeleaf (`cart :: #tablaProductos`) para actualización via fetch.
-  - Pruebas externas en `src/test/java/external/cart.feature` comprueban: crear, renombrar, eliminar carritos; navegar dentro de carrito y operaciones sobre productos. Estado: mayoritariamente implementado, pendientes y verificación:
-    * Asegurar que CSRF token está presente en el DOM cuando la prueba usa `submit()` o `fetch`.
-    * Confirmar que las respuestas parciales devuelvan exactamente el fragmento esperado (id `tablaProductos`) para las actualizaciones AJAX.
-    * Revisar tiempos de espera en pruebas (ya se usan delays en el feature).
 
-- `ws` (mensajería via WebSocket — vista: `templates/user.html`, JS: `static/js/stomp.js` / `static/js/script-notifications.js`): Implementado parcialmente.
-  - Envío y recepción de mensajes con WebSocket configurado en `WebSocketConfig` y plantillas que muestran mensajes.
-  - Pruebas externas `src/test/java/external/ws.feature` requieren que el flujo de envío y aparición de mensajes via AJAX/WebSocket funcione entre dos usuarios (login_a y login_b). Estado: funcional en el controlador y configuración, posible flakiness por tiempos; verificar servidor en ejecución y la carga del cliente websocket en la página.
-
-Otras vistas relevantes
-
-- `product` (`templates/product.html`, `static/js/script-product.js`): Ficha de producto implementada con lista de precios por supermercado. Revisión importante: Thymeleaf no soporta el operador `?.`; se reemplaza por comprobaciones null (`product != null ? product.name : '...'`). Asegurar plantilla sin errores de parsing.
-
-- `user` (`templates/user.html`): Perfil de usuario y envío/recepción de mensajes; implementada.
-
-- `search`, `request`, `notifications`, `admin`, `register`, `authors`, `faq`, `index`: Vistas existentes con markup y muchas funcionalidades implementadas. Algunas funciones administrativas y de datos pueden depender de controladores/back-end adicionales.
-
-Qué falta / acciones recomendadas para pasar las pruebas externas
-
-1. Revisión y pruebas locales de CSRF y formularios
-   - Confirmar que las plantillas renderizan el input CSRF (`<input type="hidden" name="_csrf" ...>`) cuando se usa `fetch` o `submit()` en tests.
-   - Asegurar que `script-cart.js` obtiene el token usando `input[name="_csrf"]` (ya implementado). Confirmar que existe en la página antes de ejecutar fetch.
-
-2. Fragmentos y selectores de actualización
-   - Verificar que el endpoint `/user/cart/update` devuelve exactamente el fragmento `cart :: #tablaProductos` (ya implementado) y que el HTML resultante reemplace el contenedor correcto en el DOM.
-   - Asegurar que el elemento con id `tablaProductos` existe en las respuestas y en la plantilla principal.
-
-3. Robustez en WebSocket/tests de mensajería
-   - Añadir delays si las pruebas fallan por sincronización. Revisar carga de `stomp.js` y config del `ws` en `fragments/nav.html` o en la plantilla `user.html`.
-
-4. Manejo de errores en plantillas
-   - Evitar operadores no soportados en Thymeleaf (por ejemplo `?.`). Usar ternarias o comprobaciones `th:if` para evitar errores 500.
-   - Revisar cualquier plantilla que haya dado `TemplateInputException` y corregir expresiones invalidas.
-
-5. Asegurar que los endpoints protegidos requieran login y que las pruebas externas invocan `login.feature@login_b` o `@login_a` adecuadamente.
-
-Prioridades (centrarse en pruebas externas)
-
-- Prioridad alta:
-  - `cart` — asegurar que crear/renombrar/eliminar y operaciones sobre productos funcionan de forma estable con CSRF y fragmentos (esto cubre la mayor parte de `cart.feature`).
-  - `login` — verificar redirecciones y mensajes de error en login (ya funcional, testear casos positivos/negativos).
-  - `ws` — asegurar mensajería entre usuarios (sincronización y carga del cliente websocket).
-
-- Prioridad media:
-  - `product` — corregir cualquier Thymeleaf malformado y asegurar que la selección de carritos en la ficha de producto funcione (si se usa en tests).
-
-- Prioridad baja:
-  - Resto de vistas administrativas y visuales.
-
-Si quieres, actualizo este README con checklist más detallado (tareas por fichero y líneas) y creo issues o TODOs en código para los puntos pendientes. ¿Lo dejo así o quieres que cree la lista de tareas detallada?
