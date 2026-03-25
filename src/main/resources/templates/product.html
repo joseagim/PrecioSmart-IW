@@ -65,9 +65,9 @@
 
                                 <div th:unless="${carts != null and !#lists.isEmpty(carts)}"
                                     class="d-flex align-items-center gap-2">
-                                    <a th:href="@{/user/cart}"
-                                        class="btn btn-naranja tn-md px-4 py-3 shadow-sm">Crear nuevo carrito y añadir
-                                    </a>
+                                    <button type="submit"
+                                        class="btn btn-naranja btn-md px-4 py-3 shadow-sm">Crear nuevo carrito y añadir
+                                    </button>
                                 </div>
                             </form>
                             <div id="registroFeedback" class="alert d-none mt-3" role="alert">
