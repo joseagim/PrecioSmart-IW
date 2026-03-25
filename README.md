@@ -5,7 +5,6 @@
 Utiliza el código de barras (EAN) como identificador único para garantizar búsquedas precisas y comparaciones justas.
 
 
-
 ## 🚀 Funcionalidades principales
 
 * **Identificación de productos**: Uso del código de barras (EAN) para localizar productos de forma rápida y sin errores.
@@ -31,8 +30,6 @@ La aplicación dispone de las siguientes interfaces de usuario:
 
 
 # PrecioSmart - Estado de implementación de vistas
-
-Este documento describe brevemente el grado de implementación de las vistas de la aplicación y qué falta por completar. Se pone especial atención a las vistas ejercitadas en las pruebas externas (`src/test/java/external/*`).
 
 Resumen rápido
 
