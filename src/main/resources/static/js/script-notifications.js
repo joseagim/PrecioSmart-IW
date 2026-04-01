@@ -2,7 +2,7 @@ const notificationsList = document.querySelector("#notification-list");
 const btnAceptar = document.querySelector("#btn-aceptar");
 const btnRechazar = document.querySelector("#btn-rechazar");
 
-const className = "border border-1 rounded-3 mt-3 mb-3 text-start notification";
+const className = "notification d-flex align-items-center p-4 mt-3 mb-3";
 
 let numSolicitudes = 1;
 
@@ -12,7 +12,7 @@ if (btnAceptar) {
         div.className = className;
         div.innerHTML = `
             <div>
-                <p>✅ Tu solicitud (#${numSolicitudes}) ha sido aceptada</p>
+                <p class="m-0">✅ Tu solicitud (#${numSolicitudes}) ha sido aceptada</p>
             </div>
         `;
         notificationsList.appendChild(div);
@@ -26,7 +26,7 @@ if (btnRechazar) {
         div.className = className;
         div.innerHTML = `
             <div>
-                <p>❌ Tu solicitud (#${numSolicitudes}) ha sido rechazada</p>
+                <p class="m-0">❌ Tu solicitud (#${numSolicitudes}) ha sido rechazada</p>
             </div>
         `;
         notificationsList.appendChild(div);
