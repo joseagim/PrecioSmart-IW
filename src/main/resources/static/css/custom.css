@@ -328,14 +328,6 @@
     background-color: var(--naranja-muy-claro);
 }
 
-.solicitud {
-    transition: 0.1s;
-}
-
-.solicitud:hover {
-    background-color: #ffb366;
-}
-
 /* -- VISTA DE USUARIO -- */
 .profile-hero {
     background:
