@@ -40,5 +40,4 @@ public class Product {
     private String name;
     private String brand;
     private String quantity;
-    private String imageURL;
 }

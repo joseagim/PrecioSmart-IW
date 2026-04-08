@@ -41,8 +41,7 @@
                 </div>
                 <div class="col" th:each="p : ${productos}">
                     <div class="card h-100 card-naranja shadow-sm">
-                        <img th:src="@{/img/pruebas/colacao.jpg}" class="card-img-top img-producto"
-                            alt="Imagen de producto">
+                        <img class="card-img-top img-producto" th:src="@{/user/product/{productoID}/pic(productoID=${p != null ? p.id : 0})}" alt="foto del producto">
                         <div class="card-body d-flex flex-column text-center">
                             <h5 class="card-title text-naranja fw-bold" th:text="${p.name}">Nombre</h5>
                             <ul class="list-group list-group-flush text-start mb-3">
