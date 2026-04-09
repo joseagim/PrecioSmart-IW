@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+
 public class Request {
 
     @Id
@@ -21,7 +22,8 @@ public class Request {
     private String imageUrl;
     private float price;
     private LocalDateTime date;
-    private boolean approved;
+    private int type; // 0: añadir producto, 1: modificar producto
+    private boolean approved; // AÑADIR DE ENUM DE ESTADOS: PENDIENTE, APROBADA, RECHAZADA
 
     @ManyToOne
     private User user; // Generará la columna 'user_id' automáticamente
