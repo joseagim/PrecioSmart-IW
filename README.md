@@ -39,7 +39,7 @@ La aplicación dispone de las siguientes interfaces de usuario:
 Resumen sencillo
 
 - Vista principal (`index`): implementada. Ya muestra la portada y acceso a funciones principales.
-- Vista de busqueda (`search`): implementada. Permite buscar productos.
+- Vista de busqueda (`search`): implementada en gran parte. Permite buscar productos, falta impeplementar la busqueda por foto de EAN.
 - Vista de producto (`product`): implementada. Muestra informacion del producto y precios por cada supermercado.
 - Vista de carritos (`cart`): implementada en gran parte. Permite crear carritos y gestionar productos; falta mostrar el precio total del carrito por cada supermercado.
 - Vista de solicitudes (`request`): implementada a medias. La vista esta creada, pero falta gestionar la peticion POST y guardarla en la base de datos.

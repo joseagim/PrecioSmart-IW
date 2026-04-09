@@ -1,29 +1,47 @@
 package es.ucm.fdi.iw.controller;
 
+import es.ucm.fdi.iw.LocalData;
+import es.ucm.fdi.iw.controller.UserController.NoEsTuPerfilException;
 import es.ucm.fdi.iw.model.Cart;
 import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductSupermarket;
 import es.ucm.fdi.iw.model.Supermarket;
 import es.ucm.fdi.iw.model.User;
+import es.ucm.fdi.iw.model.User.Role;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 @Controller
 @RequestMapping("/user/product")
 public class ProductController {
 
+    private static final Logger log = LogManager.getLogger(ProductController.class);
+
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private LocalData localData;
 
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
@@ -38,8 +56,6 @@ public class ProductController {
 
     @Transactional
     @GetMapping("/{productoID}")
-    // public String product(@RequestParam(name = "productoID", required = true)
-    // Long productoID, Model model) {
     public String product(@PathVariable(name = "productoID") Long productoID, Model model, HttpSession session) {
         // validar el id del producto
         if (productoID == null || productoID <= 0) {
@@ -137,5 +153,64 @@ public class ProductController {
         }
 
         return ret;
+    }
+
+    private static InputStream defaultPic() {
+        return new BufferedInputStream(Objects.requireNonNull(
+            ProductController.class.getClassLoader().getResourceAsStream(
+                "static/img/default-product-pic.jpg")));
+    }
+
+    /**
+     * Downloads a profile pic for a product
+     * 
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    @GetMapping("{productoID}/pic")
+    public StreamingResponseBody getPic(@PathVariable long productoID) throws IOException {
+        File f = localData.getFile("product", "" + productoID + ".jpg");
+        InputStream in = new BufferedInputStream(f.exists() ? new FileInputStream(f) : ProductController.defaultPic());
+        return os -> FileCopyUtils.copy(in, os);
+    }
+
+    /**
+     * Uploads a profile pic for a product
+     * 
+     * @param id
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("{productoID}/pic")
+    @ResponseBody
+    public String setPic(@RequestParam("photo") MultipartFile photo, @PathVariable long productoID,
+        HttpServletResponse response, HttpSession session, Model model) throws IOException {
+
+        Product target = entityManager.find(Product.class, productoID);
+        model.addAttribute("product", target);
+
+        // check permissions
+        User requester = (User) session.getAttribute("u");
+        if (requester.getId() != target.getId() &&
+            !requester.hasRole(Role.ADMIN)) {
+        throw new NoEsTuPerfilException();
+        }
+
+        log.info("Updating photo for product {}", productoID);
+        File f = localData.getFile("product", "" + productoID + ".jpg");
+        if (photo.isEmpty()) {
+        log.info("failed to upload photo: emtpy file?");
+        } else {
+        try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(f))) {
+            byte[] bytes = photo.getBytes();
+            stream.write(bytes);
+            log.info("Uploaded photo for {} into {}!", productoID, f.getAbsolutePath());
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            log.warn("Error uploading " + productoID + " ", e);
+        }
+        }
+        return "{\"status\":\"photo uploaded correctly\"}";
     }
 }

@@ -31,18 +31,28 @@
 
                     <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
                         <h2 class="h5 mb-3">Nueva solicitud</h2>
+                        <div class="col-12 mb-3">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="mode" id="mode_add" value="add" checked>
+                                <label class="form-check-label" for="mode_add">Añadir producto</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="mode" id="mode_modify" value="modify">
+                                <label class="form-check-label" for="mode_modify">Modificar producto</label>
+                            </div>
+                        </div>
                         <form id="request-form" class="row g-3" th:action="@{/user/request}" method="post"
                             enctype="multipart/form-data">
-                            <div class="col-md-6">
+                            <div class="col-md-6 add-only">
                                 <label for="name" class="form-label">Nombre</label>
                                 <input id="name" name="name" class="form-control form-control-lg" type="text"
-                                    maxlength="60" required>
+                                    maxlength="60">
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6 add-only">
                                 <label for="brand" class="form-label">Marca</label>
                                 <input id="brand" name="brand" class="form-control form-control-lg" type="text"
-                                    maxlength="60" required>
+                                    maxlength="60">
                             </div>
 
                             <div class="col-md-3">
@@ -69,10 +79,10 @@
                                     minlength="8" maxlength="13" required>
                             </div>
 
-                            <div class="col-md-6">
+                            <div class="col-md-6 add-only">
                                 <label for="photo" class="form-label">Foto</label>
                                 <input id="photo" name="photo" class="form-control form-control-lg" type="file"
-                                    accept="image/*" required>
+                                    accept="image/*">
                             </div>
 
                             <div class="col-12 pt-1">

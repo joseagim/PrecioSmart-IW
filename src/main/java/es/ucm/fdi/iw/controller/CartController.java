@@ -10,8 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -207,7 +205,12 @@ public class CartController {
         }
 
         if (cart == null) {
-            return Map.of("error", "Carrito no encontrado o no permitido");
+            cart = new Cart();
+            cart.setName("Nuevo Carrito");
+            cart.setUser(entityManager.find(User.class, user.getId()));
+            cart.setDate(LocalDateTime.now());
+            cart.setItems(new ArrayList<>());
+            entityManager.persist(cart);
         }
 
         ProductCart existingItem = cart.getItems().stream()

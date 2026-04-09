@@ -7,6 +7,7 @@
     --naranja-claro: #ffab56;
     --naranja-muy-claro: #ffebd5;
     --amarillo-naranja: #fbb606;
+    --gris-claro: #aaaaaa;
 }
 
 .bg-naranja {
@@ -317,19 +318,14 @@
 
 
 .notification {
-    transition: 0.1s;
+    border: 1px solid var(--gris-claro);
+    border-radius: 12px;
+    transition: 0.2s ease;
 }
 
 .notification:hover {
-    background-color: #ffb366;
-}
-
-.solicitud {
-    transition: 0.1s;
-}
-
-.solicitud:hover {
-    background-color: #ffb366;
+    border-color: var(--naranja-muy-oscuro);
+    background-color: var(--naranja-muy-claro);
 }
 
 /* -- VISTA DE USUARIO -- */
