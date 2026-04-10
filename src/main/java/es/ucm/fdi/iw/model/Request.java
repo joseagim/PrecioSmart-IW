@@ -22,8 +22,8 @@ public class Request {
     private String imageUrl;
     private float price;
     private LocalDateTime date;
-    private int type; // 0: añadir producto, 1: modificar producto
-    private boolean approved; // AÑADIR DE ENUM DE ESTADOS: PENDIENTE, APROBADA, RECHAZADA
+    private RequestType type; 
+    private RequestStatus status;
 
     @ManyToOne
     private User user; // Generará la columna 'user_id' automáticamente

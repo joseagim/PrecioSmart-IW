@@ -1,20 +1,43 @@
 package es.ucm.fdi.iw.controller;
 
+import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductSupermarket;
 import es.ucm.fdi.iw.model.Request;
+import es.ucm.fdi.iw.model.RequestStatus;
+import es.ucm.fdi.iw.model.RequestType;
+import es.ucm.fdi.iw.model.Supermarket;
 import es.ucm.fdi.iw.model.User;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
+import org.springframework.http.ResponseEntity;
 
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,8 +48,20 @@ import jakarta.transaction.Transactional;
 @RequestMapping("/user/request")
 public class RequestController {
 
+    private static final Logger log = LogManager.getLogger(UserController.class);
+
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private LocalData localData;
+
+    @ModelAttribute
+    public void populateModel(HttpSession session, Model model) {
+        for (String name : new String[] { "u", "url", "ws", "topics" }) {
+            model.addAttribute(name, session.getAttribute(name));
+        }
+    }
 
     @Transactional
     @GetMapping
@@ -37,89 +72,206 @@ public class RequestController {
                 .createQuery("SELECT r FROM Request r WHERE r.user.id = :uid ORDER BY r.date DESC", Request.class)
                 .setParameter("uid", requester.getId())
                 .getResultList();
+
         model.addAttribute("requests", requests);
-        model.addAttribute("success", success);
         return "request";
+    }
+
+    @GetMapping("{id}/pic")
+    public StreamingResponseBody getPic(@PathVariable long id) throws IOException {
+        Request req = entityManager.find(Request.class, id);
+        File f = null;
+        if (req != null && req.getUser() != null && req.getEAN() != null) {
+            f = localData.getFile("request_user" + req.getUser().getId(), req.getEAN() + ".jpg");
+        }
+
+        InputStream in = new BufferedInputStream(
+                (f != null && f.exists()) ? new FileInputStream(f) : defaultPic());
+        return os -> FileCopyUtils.copy(in, os);
+    }
+
+    private static InputStream defaultPic() {
+        return new BufferedInputStream(Objects.requireNonNull(
+                RequestController.class.getClassLoader().getResourceAsStream("static/img/default-product-pic.jpg")));
     }
 
     @PostMapping
     @Transactional
-    public String submitRequest(
-            @RequestParam String name,
-            @RequestParam String brand,
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> submitRequest(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) String quantity,
             @RequestParam float price,
             @RequestParam String supermarket,
             @RequestParam String ean,
             @RequestParam(value = "photo", required = false) MultipartFile photo,
-            @RequestParam int type,
+            @RequestParam String type,
             HttpSession session,
             HttpServletResponse response) throws IOException {
 
         User requester = (User) session.getAttribute("u");
-
-        if (type != 0 && type != 1) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Tipo de solicitud no válido");
-            return null;
+        if (requester == null) {
+            return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Sesion no valida"));
         }
 
-        boolean addProduct = (type == 0);
-        if (addProduct) {
-            Product existingProduct = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
-                    .setParameter("EAN", ean.trim())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
+        RequestType requestType = parseType(type);
+        if (requestType == null) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("status", "error", "message", "Tipo de solicitud no valido"));
+        }
 
-            //Caso 1: Se solicita añadir un producto que ya existe en el supermercado solicitado
-            if (existingProduct != null) {
-                for (ProductSupermarket p : existingProduct.getVinculaciones()) {
-                    if (p.getSupermarket().getName().equalsIgnoreCase(supermarket.trim())) {
-                        response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                                "El producto ya existe en ese supermercado");
-                        return null;
-                    }
-                }
-            }
-        } else {
-            Product productToModify = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
-                    .setParameter("EAN", ean.trim())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-            //Caso 3: Se solicita modificar un producto existente, pero el EAN no existe o no coincide con el producto a modificar
-            if (productToModify == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                        "No se puede modificar un producto que no existe");
-                return null;
-            } else {
-                boolean existe = false;
-                for (ProductSupermarket p : productToModify.getVinculaciones()) {
-                    if (p.getSupermarket().getName().equalsIgnoreCase(supermarket.trim())) {
-                        existe = true;
-                        break;
-                    }
-                }
-                if (!existe) {
-                    response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                            "No existe este producto en el supermercado indicado, no se puede modificar");
-                    return null;
-                }
-            }
+        String normalizedName = name == null ? "" : name.trim();
+        String normalizedBrand = brand == null ? "" : brand.trim();
+        String normalizedQuantity = quantity == null ? "" : quantity.trim();
+        String normalizedSupermarket = supermarket == null ? "" : supermarket.trim();
+        String normalizedEan = ean == null ? "" : ean.trim();
+
+        if (normalizedSupermarket.isEmpty() || normalizedEan.isEmpty() || price <= 0) {
+            return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Faltan datos obligatorios"));
         }
 
         Request request = new Request();
-        request.setName(name.trim());
-        request.setBrand(brand.trim());
+        Product existingProduct;
+
+        if (requestType == RequestType.ADD) {
+            existingProduct = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
+                    .setParameter("EAN", normalizedEan)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+
+            // Caso 1: Se solicita añadir un producto que ya existe
+            if (existingProduct != null) {
+                return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "El producto ya existe"));
+            }
+            if (normalizedName.isEmpty() || normalizedBrand.isEmpty() || normalizedQuantity.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("status", "error", "message",
+                        "Para un producto nuevo debes indicar nombre, marca y cantidad"));
+            }
+
+        } else if (requestType == RequestType.ADD_IN_SUPER) {
+            existingProduct = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
+                    .setParameter("EAN", normalizedEan)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+
+            // Caso 2: Se solicita añadir un producto ya existente en el supermercado
+            // solicitado que no existe
+            if (existingProduct == null) {
+                return ResponseEntity.badRequest().body(Map.of("status", "error", "message",
+                        "No se puede añadir un producto a un supermercado si el producto no existe"));
+            } else {
+                Supermarket supermarketEntity = entityManager
+                        .createQuery("SELECT s FROM Supermarket s WHERE LOWER(s.name) = LOWER(:name)",
+                                Supermarket.class)
+                        .setParameter("name", normalizedSupermarket)
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
+                boolean existe = supermarketEntity != null && entityManager.createQuery(
+                        "SELECT ps FROM ProductSupermarket ps WHERE ps.product.id = :productId AND ps.supermarket.id = :supermarketId",
+                        ProductSupermarket.class)
+                        .setParameter("productId", existingProduct.getId())
+                        .setParameter("supermarketId", supermarketEntity.getId())
+                        .getResultStream()
+                        .findFirst()
+                        .isPresent();
+
+                if (existe) {
+                    return ResponseEntity.badRequest()
+                            .body(Map.of("status", "error", "message", "El producto ya existe en ese supermercado"));
+                }
+            }
+
+        }
+
+        else {
+            Product productToModify = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
+                    .setParameter("EAN", normalizedEan)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            // Caso 4: Se solicita modificar un producto existente, pero el EAN no existe o
+            // no coincide con el producto a modificar
+            if (productToModify == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("status", "error", "message", "No se puede modificar un producto que no existe"));
+            } else {
+                Supermarket supermarketEntity = entityManager
+                        .createQuery("SELECT s FROM Supermarket s WHERE LOWER(s.name) = LOWER(:name)",
+                                Supermarket.class)
+                        .setParameter("name", normalizedSupermarket)
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
+                boolean existe = supermarketEntity != null && entityManager.createQuery(
+                        "SELECT ps FROM ProductSupermarket ps WHERE ps.product.id = :productId AND ps.supermarket.id = :supermarketId",
+                        ProductSupermarket.class)
+                        .setParameter("productId", productToModify.getId())
+                        .setParameter("supermarketId", supermarketEntity.getId())
+                        .getResultStream()
+                        .findFirst()
+                        .isPresent();
+                if (!existe) {
+                    return ResponseEntity.badRequest().body(Map.of("status", "error", "message",
+                            "No existe este producto en el supermercado indicado, no se puede modificar"));
+                }
+            }
+
+        }
+
+        request.setName(normalizedName);
+        request.setBrand(normalizedBrand);
         request.setPrice(price);
-        request.setSupermarket(supermarket.trim());
-        request.setEAN(ean.trim());
-        request.setQuantity("1");
-        request.setType(type);
-        request.setApproved(false);
+        request.setSupermarket(normalizedSupermarket);
+        request.setEAN(normalizedEan);
+        request.setQuantity(normalizedQuantity);
+        request.setType(requestType);
+        request.setStatus(RequestStatus.PENDING);
         request.setDate(LocalDateTime.now());
         request.setUser(requester);
+
+        if (photo != null && !photo.isEmpty()) {
+            request.setImageUrl(savePhoto(photo, requester.getId(), request.getEAN(), response));
+        }
+
         entityManager.persist(request);
 
-        return "redirect:/user/request?success=true";
+        return ResponseEntity.ok(Map.of("status", "ok", "message", "Solicitud guardada correctamente"));
+    }
+
+    private String savePhoto(MultipartFile photo, long id, String EAN,
+            HttpServletResponse response) throws IOException {
+
+        log.info("Updating photo for user {}", id);
+        File f = localData.getFile("request_user" + id, "" + EAN + ".jpg");
+        if (photo.isEmpty()) {
+            log.info("failed to upload photo: emtpy file?");
+        } else {
+            try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(f))) {
+                byte[] bytes = photo.getBytes();
+                stream.write(bytes);
+                log.info("Uploaded photo for {} into {}!", id, f.getAbsolutePath());
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                log.warn("Error uploading " + id + " ", e);
+            }
+        }
+        return f.getPath();
+
+    }
+
+    private RequestType parseType(String type) {
+        if (type == null) {
+            return null;
+        }
+        return switch (type.trim()) {
+            case "0", "ADD" -> RequestType.ADD;
+            case "1", "ADD_IN_SUPER" -> RequestType.ADD_IN_SUPER;
+            case "2", "MODIFY" -> RequestType.MODIFY;
+            default -> null;
+        };
     }
 }

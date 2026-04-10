@@ -54,7 +54,7 @@ public class SecurityConfig {
 			http.headers(header -> header.frameOptions(frameOptions -> frameOptions.sameOrigin()));
 		}
 
-		http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+		http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/user/request/**"))
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/login", "/register").anonymous()
 
@@ -65,7 +65,7 @@ public class SecurityConfig {
 
 						.requestMatchers("/admin/**").hasRole("ADMIN") // <-- administration
 
-						.requestMatchers("/user/**").hasRole("USER") // <-- logged-in users
+						.requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // <-- logged-in users
 						.anyRequest().authenticated())
 
 				.formLogin(formLogin -> formLogin
