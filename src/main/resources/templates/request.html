@@ -14,35 +14,39 @@
             <div class="row justify-content-center">
                 <div class="col-12 col-lg-10">
                     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-                        <div>
-                            <p class="text-secondary mb-1">Panel de usuario</p>
-                            <h1 class="mb-0">Mis solicitudes</h1>
-                        </div>
-                        <span class="badge text-bg-light border fs-6">Nueva solicitud de producto</span>
+                        <h1 class="mb-0">Mis solicitudes</h1>
                     </div>
 
                     <div id="error-box" class="alert alert-danger d-none shadow-sm" role="alert">
                         Revisa los campos del formulario.
                     </div>
 
-                    <div th:if="${success}" class="alert alert-success shadow-sm" role="alert">
+                    <div id="success-box" class="alert alert-success d-none shadow-sm" role="alert">
                         Solicitud guardada correctamente.
                     </div>
 
                     <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
                         <h2 class="h5 mb-3">Nueva solicitud</h2>
-                        <div class="col-12 mb-3">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="mode" id="mode_add" value="add" checked>
-                                <label class="form-check-label" for="mode_add">Añadir producto</label>
+                        <form id="request-form" class="row g-3" method="post" enctype="multipart/form-data">
+                            <div class="col-12 mb-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="type" id="mode_add" value="0"
+                                        checked>
+                                    <label class="form-check-label" for="mode_add">Añadir producto nuevo</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="type" id="mode_add_existing"
+                                        value="1">
+                                    <label class="form-check-label" for="mode_add_existing">Añadir producto existente en
+                                        supermercado nuevo</label>
+                                </div>
+
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="type" id="mode_modify" value="2">
+                                    <label class="form-check-label" for="mode_modify">Modificar producto</label>
+                                </div>
                             </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="mode" id="mode_modify" value="modify">
-                                <label class="form-check-label" for="mode_modify">Modificar producto</label>
-                            </div>
-                        </div>
-                        <form id="request-form" class="row g-3" th:action="@{/user/request}" method="post"
-                            enctype="multipart/form-data">
+
                             <div class="col-md-6 add-only">
                                 <label for="name" class="form-label">Nombre</label>
                                 <input id="name" name="name" class="form-control form-control-lg" type="text"
@@ -53,6 +57,12 @@
                                 <label for="brand" class="form-label">Marca</label>
                                 <input id="brand" name="brand" class="form-control form-control-lg" type="text"
                                     maxlength="60">
+                            </div>
+
+                            <div class="col-md-6 add-only">
+                                <label for="quantity" class="form-label">Cantidad</label>
+                                <input id="quantity" name="quantity" class="form-control form-control-lg" type="text"
+                                    maxlength="30" placeholder="Ej: 1 kg, 750 ml, 2 L">
                             </div>
 
                             <div class="col-md-3">
@@ -98,21 +108,25 @@
                                 solicitudes todavia.
                             </li>
                             <li th:each="r : ${requests}" class="list-group-item px-0 py-3">
-                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <img th:src="@{/user/request/{id}/pic(id=${r.id})}" alt="Foto del producto"
-                                            width="64" height="64" class="rounded border" />
-                                        <div>
-                                            <div class="fw-semibold" th:text="${r.name}">Producto</div>
-                                            <div class="small text-secondary" th:text="|Marca: ${r.brand}|"></div>
-                                            <div class="small text-secondary" th:text="|EAN: ${r.EAN}|"></div>
-                                            <div class="mt-1 d-flex flex-wrap gap-2">
-                                                <span class="badge text-bg-light border"
-                                                    th:text="${r.supermarket}">Market</span>
-                                                <span class="badge text-bg-warning-subtle text-dark"
-                                                    th:text="${#numbers.formatDecimal(r.price, 1, 2)} + ' EUR'">0.00
-                                                    EUR</span>
-                                            </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <img th:if="${r.imageUrl != null}" th:src="@{'/user/request/' + ${r.id} + '/pic'}"
+                                        alt="Foto del producto" width="64" height="64" class="rounded border" />
+                                    <div th:if="${r.imageUrl == null}"
+                                        class="rounded border bg-light d-flex align-items-center justify-content-center"
+                                        style="width:64px;height:64px;">
+                                        <span class="small text-muted">Sin foto</span>
+                                    </div>
+                                    <div>
+                                        <div class="fw-semibold" th:text="${r.name}">Producto</div>
+                                        <div class="small text-secondary" th:text="|Marca: ${r.brand}|"></div>
+                                        <div class="small text-secondary" th:text="|Cantidad: ${r.quantity}|"></div>
+                                        <div class="small text-secondary" th:text="|EAN: ${r.EAN}|"></div>
+                                        <div class="mt-1 d-flex flex-wrap gap-2">
+                                            <span class="badge text-bg-light border"
+                                                th:text="${r.supermarket}">Market</span>
+                                            <span class="badge text-bg-warning-subtle text-dark"
+                                                th:text="${#numbers.formatDecimal(r.price, 1, 2)} + ' EUR'">0.00
+                                                EUR</span>
                                         </div>
                                     </div>
                                 </div>

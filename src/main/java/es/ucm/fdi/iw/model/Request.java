@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
+
 public class Request {
 
     @Id
@@ -21,7 +22,8 @@ public class Request {
     private String imageUrl;
     private float price;
     private LocalDateTime date;
-    private boolean approved;
+    private RequestType type; 
+    private RequestStatus status;
 
     @ManyToOne
     private User user; // Generará la columna 'user_id' automáticamente
