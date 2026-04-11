@@ -104,9 +104,7 @@ form.addEventListener("submit", function (e) {
                 return;
             }
 
-            showMessage(successBox, data.message || "Solicitud guardada correctamente.");
-            form.reset();
-            setMode("0");
+            window.location.replace("/user/request?success=true");
            
         })
         .catch(error => {

@@ -73,6 +73,7 @@ public class RequestController {
                 .setParameter("uid", requester.getId())
                 .getResultList();
 
+        model.addAttribute("success", success);
         model.addAttribute("requests", requests);
         return "request";
     }
