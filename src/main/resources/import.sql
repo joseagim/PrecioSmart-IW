@@ -222,7 +222,12 @@ INSERT INTO Supermarket (id, name, info) VALUES
 (4, 'Dia', 'Supermercado de confianza'),
 (5, 'Alcampo', 'Supermercado de confianza');
 INSERT INTO Product_Supermarket (id, price, date, product_id, supermarket_id) VALUES 
-(6, 1.25, '2024-06-02', 3, 1), 
+(1, 1.5, '2024-06-01', 1, 1),
+(2, 1.6, '2024-06-01', 1, 2),
+(3, 1.4, '2024-06-01', 1, 3),
+(4, 1.4, '2024-06-01', 1, 4),
+(5, 1.4, '2024-06-01', 2, 5),
+(6, 1.4, '2024-06-01', 2, 1),
 (7, 1.19, '2024-06-02', 3, 3),
 (8, 0.95, '2024-06-02', 4, 2), 
 (9, 0.89, '2024-06-02', 4, 4),
