@@ -18,6 +18,8 @@ import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.Cart;
 import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductCart;
+import es.ucm.fdi.iw.model.ProductSupermarket;
+import es.ucm.fdi.iw.model.Supermarket;
 
 @Controller
 @RequestMapping("/user/cart")
@@ -25,6 +27,9 @@ public class CartController {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private ProductController productController;
 
     private boolean isOwner(Cart cart, User user) {
         return cart != null
@@ -112,6 +117,27 @@ public class CartController {
         }
 
         model.addAttribute("selectedCart", selectedCart);
+
+        List<ProductCart> items = selectedCart.getItems();
+        List<Supermarket> supermarkets = entityManager
+                .createQuery("SELECT s FROM Supermarket s ORDER BY s.id", Supermarket.class)
+                .getResultList();
+
+        List<ProductSupermarket> result = new ArrayList<>();
+        for(ProductCart item : items) {
+            for (Supermarket supermarket : supermarkets) {
+                ProductSupermarket ps = productController.productBySupermarket(item.getProduct(), supermarket.getId());
+                if (ps != null) {
+                    result.add(ps);
+                } else {
+                    ProductSupermarket nullPS = new ProductSupermarket();
+                    nullPS.setSupermarket(supermarket);
+                    result.add(nullPS);
+                }
+            }
+        }
+        
+        model.addAttribute("productSupermarkets", result);
 
         return "cart";
     }

@@ -107,7 +107,7 @@ public class ProductController {
      * @param supermarketID supermarket to find
      * @return product of the supermarket (or the most similar to the reference)
      */
-    private ProductSupermarket productBySupermarket(Product product, long supermarketID) {
+    protected ProductSupermarket productBySupermarket(Product product, long supermarketID) {
 
         // busco el producto en el supermercado
         List<ProductSupermarket> matches = entityManager

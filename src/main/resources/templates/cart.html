@@ -11,387 +11,180 @@
     <header th:replace="~{fragments/nav.html :: nav}"></header>
 
     <main class="flex-shrink-0">
-        <div>
-            <h3 class="text-center alert alert-danger" 
-                th:text="${errorMessage}"
-                th:if="${errorMessage != null}">
-                Error
-            </h3>
+        <h3 class="text-center alert alert-danger" 
+            th:text="${errorMessage}"
+            th:if="${errorMessage != null}">
+            Error
+        </h3>
 
-            <div class="panel-lg">
-                <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
-                    <div>
-                        <h1 class="text-start">
-                            Mis carritos
-                            <span th:text="'(' + ${(carts != null ? #lists.size(carts) : 0)} + ')'">(0)</span>
-                        </h1>
-                    </div>
-                    <form method="post" th:action="@{/user/cart/gestionCarrito}">
-                        <input type="hidden" name="cartId" th:if="${selectedCart != null}" th:value="${selectedCart.id}">
+        <div class="panel-lg">
+            <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
+                <div>
+                    <h1 class="text-start">
+                        Mis carritos
+                        <span th:text="'(' + ${(carts != null ? #lists.size(carts) : 0)} + ')'">(0)</span>
+                    </h1>
+                </div>
+                <form method="post" th:action="@{/user/cart/gestionCarrito}">
+                    <input type="hidden" name="cartId" th:if="${selectedCart != null}" th:value="${selectedCart.id}">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button class="btn btn-naranja"
+                            th:if="${selectedCart != null}"
+                            type="submit"
+                            name="action" 
+                            value="deleteCart">
+                        <img class="svg-md" th:src="@{/img/svg/delete.svg}" alt="Borrar Carrito">
+                    </button>
+                    <button class="btn btn-naranja"
+                            type="submit"
+                            name="action"
+                            value="newCart">
+                        <img class="svg-md" th:src="@{/img/svg/new.svg}" alt="Nuevo Carrito">
+                    </button>
+                </form>
+            </div>
+        
+            <p id="mensajeSeleccion" class="text-start">Selecciona un carrito para ver su contenido.</p>
+            <div class="d-flex flex-row flex-nowrap overflow-auto gap-3 pb-3"           
+                id="contenedorCarritos">
+                <div class="card card-carrito"
+                    th:classappend="${selectedCart != null and selectedCart.id == cart.id} ? ' card-carrito-activa' : ''"
+                    th:each="cart : ${carts}">
+                    <form th:action="@{/user/cart/gestionCarrito}" method="post">
+                        <input type="hidden" name="cartId" th:value="${cart.id}">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                        <button class="btn btn-naranja"
-                                th:if="${selectedCart != null}"
-                                type="submit"
-                                name="action" 
-                                value="deleteCart">
-                            <img class="svg-md" th:src="@{/img/svg/delete.svg}" alt="Borrar Carrito">
-                        </button>
-                        <button class="btn btn-naranja"
-                                type="submit"
-                                name="action"
-                                value="newCart">
-                            <img class="svg-md" th:src="@{/img/svg/new.svg}" alt="Nuevo Carrito">
-                        </button>
+
+                        <div class="card-body text-start">
+                            <h5 class="card-title fw-bold d-flex justify-content-between align-items-center mb-2">
+                                <input type="text"
+                                    name="renameCart"
+                                    th:value="${cart.name}"
+                                    th:readonly="${editCart == false or selectedCart == null or selectedCart.id != cart.id}"
+                                    th:disabled="${editCart == false or selectedCart == null or selectedCart.id != cart.id}"
+                                    required maxlength="80">
+
+                                <button type="submit"
+                                        formmethod="get"
+                                        th:formaction="@{/user/cart}"
+                                        name="editCart"
+                                        value="true"
+                                        class="btn btn-sm btn-edit"
+                                        th:if="${editCart == false or selectedCart == null or selectedCart.id != cart.id}">
+                                    <img class="svg-sm" th:src="@{/img/svg/edit.svg}" alt="Editar">
+                                </button>
+
+                                <button type="submit"
+                                        name="action"
+                                        value="renameCart"
+                                        class="btn btn-sm btn-edit"
+                                        th:if="${editCart == true and selectedCart != null and selectedCart.id == cart.id}">
+                                    <img class="svg-sm" th:src="@{/img/svg/accept.svg}" alt="Guardar">
+                                </button>
+                            </h5>
+
+                            <p class="ms-2" th:text="${(cart.items != null ? #lists.size(cart.items) : 0) + ' Producto(s)'}">0 Productos</p>
+                            <p class="ms-2" th:text="${'Creado: ' + (cart.date != null ? #temporals.format(cart.date, 'dd/MM/yyyy') : '-')}">01/01/2026</p>
+
+                            <div class="d-flex gap-2 mt-2 justify-content-center">
+                                <button type="submit" 
+                                        formmethod="get"
+                                        th:formaction="@{/user/cart}"
+                                        name="selectCart"
+                                        th:value="${cart.id}"
+                                        class="btn btn-sm btn-naranja"
+                                        th:if="${selectedCart == null or selectedCart.id != cart.id}">
+                                    Seleccionar
+                                </button>
+                            </div>
+                        </div>
                     </form>
                 </div>
-            
-                <p id="mensajeSeleccion" class="text-start">Selecciona un carrito para ver su contenido.</p>
-                <div class="d-flex flex-row flex-nowrap overflow-auto gap-3 pb-3"           
-                    id="contenedorCarritos">
-                    <div class="card card-carrito"
-                        th:classappend="${selectedCart != null and selectedCart.id == cart.id} ? ' card-carrito-activa' : ''"
-                        th:each="cart : ${carts}">
-                        <form th:action="@{/user/cart/gestionCarrito}" method="post">
-                            <input type="hidden" name="cartId" th:value="${cart.id}">
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-
-                            <div class="card-body text-start">
-                                <h5 class="card-title fw-bold d-flex justify-content-between align-items-center mb-2">
-                                    <input type="text"
-                                        name="renameCart"
-                                        th:value="${cart.name}"
-                                        th:readonly="${editCart == false or selectedCart == null or selectedCart.id != cart.id}"
-                                        th:disabled="${editCart == false or selectedCart == null or selectedCart.id != cart.id}"
-                                        required maxlength="80">
-
-                                    <button type="submit"
-                                            formmethod="get"
-                                            th:formaction="@{/user/cart}"
-                                            name="editCart"
-                                            value="true"
-                                            class="btn btn-sm btn-edit"
-                                            th:if="${editCart == false or selectedCart == null or selectedCart.id != cart.id}">
-                                        <img class="svg-sm" th:src="@{/img/svg/edit.svg}" alt="Editar">
-                                    </button>
-
-                                    <button type="submit"
-                                            name="action"
-                                            value="renameCart"
-                                            class="btn btn-sm btn-edit"
-                                            th:if="${editCart == true and selectedCart != null and selectedCart.id == cart.id}">
-                                        <img class="svg-sm" th:src="@{/img/svg/accept.svg}" alt="Guardar">
-                                    </button>
-                                </h5>
-
-                                <p class="ms-2" th:text="${(cart.items != null ? #lists.size(cart.items) : 0) + ' Producto(s)'}">0 Productos</p>
-                                <p class="ms-2" th:text="${'Creado: ' + (cart.date != null ? #temporals.format(cart.date, 'dd/MM/yyyy') : '-')}">01/01/2026</p>
-
-                                <div class="d-flex gap-2 mt-2 justify-content-center">
-                                    <button type="submit" 
-                                            formmethod="get"
-                                            th:formaction="@{/user/cart}"
-                                            name="selectCart"
-                                            th:value="${cart.id}"
-                                            class="btn btn-sm btn-naranja"
-                                            th:if="${selectedCart == null or selectedCart.id != cart.id}">
-                                        Seleccionar
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
             </div>
+        </div>
 
-            <div class="panel-lg">
+        <div class="panel-lg">
 
-                <p class="text-muted mb-3" th:if="${selectedCart == null}">Selecciona un carrito para ver los productos.</p>
-                <div th:if="${selectedCart != null}">
-                    <div id="tablaProductos" th:if="${selectedCart.items != null}">
-                        <p class="text-muted mb-3" th:if="${#lists.isEmpty(selectedCart.items)}">
-                            Este carrito está vacío actualmente.
-                        </p>
-                        <div class="div-responsive" th:if="${!#lists.isEmpty(selectedCart.items)}">
-                            <table class="table-carrito align-middle mt-2 shadow-sm border">
-                                <thead class="thead-carrito">
-                                    <tr>
-                                        <th>Producto</th>
-                                        <th>Unidades</th>
-                                        <th>Acción</th>
-                                    </tr>
-                                </thead>
-                                    
-                                <tbody class="tbody-carrito" th:each="item : ${selectedCart.items}">
-                                    <tr>
-                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-                                        <td class="fw-bold text-start" th:text="${item.product.name + ' - EAN: ' + item.product.EAN}"></td>
-                                        <td class="tProd-cantidad d-flex justify-content-center align-items-center">
-                                            
-                                            <button type="button" 
-                                                    name="restaProd"
-                                                    th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + ${item.id} + ', \'restaProd\')'" 
-                                                    class="btn">-</button>
-                                            <span class="tProd-cantidad-num" th:id="'qty-' + ${item.id}" th:text="${item.quantity}">1</span>
-                                            <button type="button" 
-                                                    name="sumaProd"
-                                                    th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + ${item.id} + ', \'sumaProd\')'" 
-                                                    class="btn">+</button>
-                                            
-                                        </td>
-                                        <td>
-                                            <button type="button" 
-                                                    name="deleteProd"
-                                                    th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + ${item.id} + ', \'deleteProd\')'" 
-                                                    class="btn tProd-delete btn-sm">
-                                                    <img class="svg-sm" th:src="@{/img/svg/delete.svg}" alt="Borrar Producto">
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                                <tfoot class="tfoot-carrito">
-                                    <tr>
-                                        <td colspan="3" class="text-uppercase fw-bold">
-                                            <button type="button" 
-                                                name="deleteAll"
-                                                th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + 'null' + ', \'deleteAll\')'" 
+            <p class="text-muted mb-3" th:if="${selectedCart == null}">Selecciona un carrito para ver los productos.</p>
+            <div th:if="${selectedCart != null}">
+                <div id="tablaProductos" th:if="${selectedCart.items != null}">
+                    <p class="text-muted mb-3" th:if="${#lists.isEmpty(selectedCart.items)}">
+                        Este carrito está vacío actualmente.
+                    </p>
+                    <div class="div-responsive" th:if="${!#lists.isEmpty(selectedCart.items)}">
+                        <table class="table-carrito align-middle mt-2 shadow-sm border">
+                            <thead class="thead-carrito">
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Unidades</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                                
+                            <tbody class="tbody-carrito" th:each="item : ${selectedCart.items}">
+                                <tr>
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                    <td class="fw-bold text-start" th:text="${item.product.name + ' - EAN: ' + item.product.EAN}"></td>
+                                    <td class="tProd-cantidad d-flex justify-content-center align-items-center">
+                                        
+                                        <button type="button" 
+                                                name="restaProd"
+                                                th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + ${item.id} + ', \'restaProd\')'" 
+                                                class="btn">-</button>
+                                        <span class="tProd-cantidad-num" th:id="'qty-' + ${item.id}" th:text="${item.quantity}">1</span>
+                                        <button type="button" 
+                                                name="sumaProd"
+                                                th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + ${item.id} + ', \'sumaProd\')'" 
+                                                class="btn">+</button>
+                                        
+                                    </td>
+                                    <td>
+                                        <button type="button" 
+                                                name="deleteProd"
+                                                th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + ${item.id} + ', \'deleteProd\')'" 
                                                 class="btn tProd-delete btn-sm">
-                                                <img class="svg-sm" th:src="@{/img/svg/delete.svg}" alt="Vaciar Carrito">
-                                                Vaciar
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                        <a th:href="@{/user/search}" class="btn btn-naranja"><img class="svg-sm" th:src="@{/img/svg/search.svg}" alt="buscar">Buscar Productos</a>
+                                                <img class="svg-sm" th:src="@{/img/svg/delete.svg}" alt="Borrar Producto">
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="tfoot-carrito">
+                                <tr>
+                                    <td colspan="3" class="text-uppercase fw-bold">
+                                        <button type="button" 
+                                            name="deleteAll"
+                                            th:onclick="'actualizarCantidad(' + ${selectedCart.id} + ',' + 'null' + ', \'deleteAll\')'" 
+                                            class="btn tProd-delete btn-sm">
+                                            <img class="svg-sm" th:src="@{/img/svg/delete.svg}" alt="Vaciar Carrito">
+                                            Vaciar
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
+                    <a th:href="@{/user/search}" class="btn btn-naranja"><img class="svg-sm" th:src="@{/img/svg/search.svg}" alt="buscar">Buscar Productos</a>
                 </div>
             </div>
-            <th:block th:if="${selectedCart != null}">
-                <div class="panel-lg" 
-                    th:if="${selectedCart.items != null and !#lists.isEmpty(selectedCart.items)}">
-                    <h3 class="text-center">
-                        Precios por supermercado
-                    </h3>
+        </div>
+        <th:block th:if="${selectedCart != null}">
+            <div class="panel-lg" 
+                th:if="${selectedCart.items != null and !#lists.isEmpty(selectedCart.items)}">
+                <div th:each="productSupermarket : ${productSupermarkets}">
+                    <div class="card mb-3 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold" th:text="${productSupermarket.supermarket.name}">Supermercado</h5>
+                            <p class="card-text" th:text="'Precio total: ' + #numbers.formatDecimal(productSupermarket.totalPrice, 1, 'POINT', 2, 'COMMA') + ' €'">Precio total: 0,00 €</p>
+                            <a th:href="@{/user/cart/comparativa/{cartId}/{supermarketId}(cartId=${selectedCart.id}, supermarketId=${productSupermarket.supermarket.id})}" class="btn btn-naranja">Ver comparativa</a>
+                        </div>
+                    </div>
                 </div>
-            </th:block>
+
+            </div>
+        </th:block>
     </main>
     <script th:src="@{/js/script-cart.js}"></script>
-<!--
-    <script th:inline="javascript">
-        
-        const listaCarritos = [
-            {
-                name: "Primero",
-                createdAt: "19/02/2026",
-                products: [
-                    { name: "Leche", price: 1.50, quantity: 1 },
-                    { name: "Pan", price: 0.80, quantity: 1 },
-                    { name: "Huevos", price: 2.00, quantity: 1 },
-                    { name: "Manzanas", price: 1.20, quantity: 1 },
-                    { name: "Arroz", price: 1.00, quantity: 1 }
-                ]
-            },
-            {
-                name: "Carrito 2",
-                createdAt: "17/02/2026",
-                products: []
-            },
-            {
-                name: "Carrito 3",
-                createdAt: "19/02/2026",
-                products: []
-            }
-        ];
-        
-        // Referencias al DOM
-        const contenedorCarritos = document.getElementById('contenedorCarritos');
-        const contadorCarritos = document.getElementById('contadorCarritos');
-        const alertaSeleccion = document.getElementById('alertaSeleccion');
 
-        const tablaProductos = document.getElementById('tablaProductos');
-        const filasTabla = document.getElementById('filas-tabla');
-        const precioTotal = document.getElementById('precioTotalTabla');
-        
-        function inicializar() {
-            contadorCarritos.textContent = `(${listaCarritos.length})`;
-            contenedorCarritos.innerHTML = "";
-            
-            listaCarritos.forEach(carrito => {
-                const clon = document.getElementById('tarjeta-carrito-template').content.cloneNode(true);
-
-                const card = clon.querySelector('.card-carrito');
-                clon.querySelector('.nombre-carrito-txt').textContent = carrito.name;
-                clon.querySelector('.cant-productos-txt').textContent = `${carrito.products.length} Producto(s)`;
-                clon.querySelector('.fecha-carrito-txt').textContent = `Creado: ${carrito.createdAt}`;
-                card.onclick = () => seleccionarCarrito(card, carrito.name);
-
-                clon.querySelector('.btn-edit').onclick = (e) => {
-                    e.stopPropagation(); // Evitar que se dispare el onclick de la tarjeta
-                    editarNombreCarrito(carrito.name);
-                };
-
-                contenedorCarritos.appendChild(clon);
-            });
-        }
-
-        function seleccionarCarrito(elemento, nombreCarrito) {
-            // 1. Gestionar estilos de tarjetas (Quitar activa de otros, poner en el actual)
-            document.querySelectorAll('.card-carrito').forEach(card => card.classList.remove('card-carrito-activa'));
-            elemento.classList.add('card-carrito-activa');
-            document.getElementById('mensajeSeleccion').classList.add('d-none');
-
-            // 2. Buscar datos del carrito
-            const miCarrito = listaCarritos.find(carrito => carrito.name === nombreCarrito);
-
-            if (miCarrito && miCarrito.products && miCarrito.products.length > 0) {
-                actualizarInterfaz(miCarrito, miCarrito.products);
-            } else {
-                mostrarVacio();
-            }
-        }
-
-        function actualizarInterfaz(carrito, productos) {
-            // Limpiar tabla
-            filasTabla.innerHTML = "";
-            let sumaTotal = 0;
-
-            // Llenar tabla usando el Template
-            productos.forEach(prod => {
-                const clon = document.getElementById('fila-producto-template').content.cloneNode(true);
-                const subtotal = (prod.price * prod.quantity);
-                sumaTotal += subtotal;
-
-                clon.querySelector('.tProd-nombre').textContent = prod.name;
-                clon.querySelector('.tProd-cantidad-num').textContent = prod.quantity;
-                clon.querySelector('.tProd-precio').textContent = prod.price.toFixed(2) + "€";
-                clon.querySelector('.tProd-subtotal').textContent = subtotal.toFixed(2) + "€";
-
-                clon.querySelector('.btn-sumar').onclick = () => modificarCantidad(prod.name, 1);
-                clon.querySelector('.btn-restar').onclick = () => modificarCantidad(prod.name, -1);
-                clon.querySelector('.tProd-delete').onclick = () => eliminarProducto(prod.name);
-
-                filasTabla.appendChild(clon);
-            });
-
-            // Actualizar total y visibilidad
-            precioTotal.textContent = sumaTotal.toFixed(2) + "€";
-            
-            tablaProductos.classList.remove('d-none');
-            alertaSeleccion.classList.add('d-none');
-        }
-
-        function mostrarVacio() {
-            tablaProductos.classList.add('d-none');
-            alertaSeleccion.classList.remove('d-none');
-            alertaSeleccion.querySelector('p').textContent = "Este carrito está vacío actualmente.";
-        }
-
-        function modificarCantidad(nombreProducto, cantidad) {
-            const carritoActivo = document.querySelector('.card-carrito-activa .nombre-carrito-txt').textContent;
-            const carrito = listaCarritos.find(c => c.name === carritoActivo);
-            if (carrito !== undefined) {
-                const producto = carrito.products.find(p => p.name === nombreProducto);
-                if (producto !== undefined) {
-                    producto.quantity += cantidad;
-                    if (producto.quantity <= 0) {
-                        eliminarProducto(nombreProducto);
-                    } else {
-                        actualizarInterfaz(carrito, carrito.products);
-                    }
-                }
-            }
-        }
-
-        function crearNuevoCarrito() {
-
-            let nombre = window.prompt("Introduce el nombre del nuevo carrito:");
-
-            if (nombre !== "" && nombre !== null) {
-
-                nombre = nombre.trim();
-
-                if (listaCarritos.some(c => c.name.toLowerCase() === nombre.toLowerCase())) {
-                    window.alert("Ya tienes un carrito con ese nombre. Por favor, elige uno distinto.");
-                    return;
-                }
-
-                const nuevoCarrito = {
-                    name: nombre,
-                    createdAt: new Date().toLocaleDateString('es-ES'),
-                    products: []
-                };
-
-                listaCarritos.push(nuevoCarrito);
-                inicializar();
-            }
-        }
-
-        function borrarCarrito() {
-            const carritoActivo = document.querySelector('.card-carrito-activa .nombre-carrito-txt').textContent;
-            const indice = listaCarritos.findIndex(c => c.name === carritoActivo);
-            if (indice !== -1) {
-                listaCarritos.splice(indice, 1);
-                mostrarVacio();
-                inicializar();
-            }
-        }
-
-        function eliminarProducto(nombreProducto) {
-            const carritoActivo = document.querySelector('.card-carrito-activa .nombre-carrito-txt').textContent;
-            const carrito = listaCarritos.find(c => c.name === carritoActivo);
-            if (carrito !== undefined) {
-                const indice = carrito.products.findIndex(p => p.name === nombreProducto);
-                if (indice !== -1) {
-                    carrito.products.splice(indice, 1);
-                }
-                if (carrito.products.length > 0) {
-                    actualizarInterfaz(carrito, carrito.products);
-                } else {
-                    mostrarVacio();
-                }
-            }
-        }
-
-        function vaciarCarrito() {
-            const carritoActivo = document.querySelector('.card-carrito-activa .nombre-carrito-txt').textContent;
-            const carrito = listaCarritos.find(c => c.name === carritoActivo);
-            if (carrito !== undefined) {
-                carrito.products = [];
-                mostrarVacio();
-                inicializar();
-            }
-        }
-
-        function editarNombreCarrito(nombreAnterior) {
-
-            let nuevoNombre = window.prompt("Introduce el nuevo nombre del carrito:", nombreAnterior);
-
-            if (nuevoNombre !== null) {
-                nuevoNombre = nuevoNombre.trim();
-
-                if (nuevoNombre === "") {
-                    alert("El nombre no puede estar vacío.");
-                    return;
-                }
-
-                if (listaCarritos.some(c => c.name.toLowerCase() === nuevoNombre.toLowerCase() && c.name !== nombreAnterior)) {
-                    alert("Ya tienes un carrito con ese nombre.");
-                    return;
-                }
-
-                let carrito = listaCarritos.findIndex(c => c.name === nombreAnterior);
-                if (carrito !== -1) {
-                    listaCarritos[carrito].name = nuevoNombre;
-                    inicializar();
-                }
-            }
-        }
-
-        window.onload = inicializar;
-    </script>
--->
-     <th:block th:replace="~{fragments/footer.html :: footer}" />
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
 </body>
 
 </html>
