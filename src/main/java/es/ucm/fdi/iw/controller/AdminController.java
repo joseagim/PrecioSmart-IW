@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import es.ucm.fdi.iw.model.Topic;
 import es.ucm.fdi.iw.model.Lorem;
 import es.ucm.fdi.iw.model.Message;
+import es.ucm.fdi.iw.model.Request;
 import es.ucm.fdi.iw.model.Transferable;
 import es.ucm.fdi.iw.model.User;
 import jakarta.persistence.EntityManager;
@@ -43,81 +44,109 @@ public class AdminController {
 
   @ModelAttribute
   public void populateModel(HttpSession session, Model model) {
-    for (String name : new String[] { "u", "url", "ws", "topics"}) {
+    for (String name : new String[] { "u", "url", "ws", "topics" }) {
       model.addAttribute(name, session.getAttribute(name));
     }
   }
 
   private static final Logger log = LogManager.getLogger(AdminController.class);
 
-  @GetMapping("/")
-  public String index(Model model) {
-    log.info("Admin acaba de entrar");
-    model.addAttribute("users",
-        entityManager.createQuery("select u from User u").getResultList());
+  @Transactional
+  @GetMapping("/mod")
+  public String getRequest(Model model) {
+
+    model.addAttribute("users", entityManager.createQuery("select u from User u").getResultList());
+
+    List<Request> pending = entityManager.createNamedQuery("findByStatus", Request.class)
+        .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.PENDING)
+        .getResultList();
+
+    List<Request> accepted = entityManager.createNamedQuery("findByStatus", Request.class)
+        .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.APPROVED)
+        .getResultList();
+
+    List<Request> rejected = entityManager.createNamedQuery("findByStatus", Request.class)
+        .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.REJECTED)
+        .getResultList();
+
+    model.addAttribute("pendingRequests", pending);
+    model.addAttribute("acceptedRequests", accepted);
+    model.addAttribute("rejectedRequests", rejected);
+
     return "admin";
   }
 
-  @PostMapping("/toggle/{id}")
-  @Transactional
-  @ResponseBody
-  public String toggleUser(@PathVariable long id, Model model) {
-    log.info("Admin cambia estado de " + id);
-    User target = entityManager.find(User.class, id);
-    target.setEnabled(!target.isEnabled());
-    return "{\"enabled\":" + target.isEnabled() + "}";
-  }
-
-  /**
-   * Returns JSON with all received messages
+  /*
+   * @PostMapping("/toggle/{id}")
+   * 
+   * @Transactional
+   * 
+   * @ResponseBody
+   * public String toggleUser(@PathVariable long id, Model model) {
+   * log.info("Admin cambia estado de " + id);
+   * User target = entityManager.find(User.class, id);
+   * target.setEnabled(!target.isEnabled());
+   * return "{\"enabled\":" + target.isEnabled() + "}";
+   * }
    */
-  @GetMapping(path = "all-messages", produces = "application/json")
-  @Transactional // para no recibir resultados inconsistentes
-  @ResponseBody // para indicar que no devuelve vista, sino un objeto (jsonizado)
-  public List<Message.Transfer> retrieveMessages(HttpSession session) {
-    TypedQuery<Message> query = entityManager.createQuery("select m from Message m", Message.class);
-    query.setMaxResults(5);
-    query.setFirstResult(0); // para paginar: cambias el 1er resultado
-    // devuelve resultado
-    return query.getResultList().stream().map(Transferable::toTransfer)
-        .collect(Collectors.toList());
-  }
-
-  @RequestMapping("/populate")
-  @ResponseBody
-  @Transactional
-  public String populate(Model model) {
-
-    // create some groups
-    Topic g1 = new Topic();
-    g1.setName("g1");
-    g1.setKey(UserController.generateRandomBase64Token(6));
-    entityManager.persist(g1);
-    Topic g2 = new Topic();
-    g2.setName("g2");
-    g2.setKey(UserController.generateRandomBase64Token(6));
-    entityManager.persist(g2);
-
-    // create some users & assign to groups
-    for (int i = 0; i < 15; i++) {
-      User u = new User();
-      u.setUsername("user" + i);
-      u.setPassword(passwordEncoder
-          .encode("aa"));
-            //UserController.generateRandomBase64Token(9)));
-      u.setEnabled(true);
-      u.setRoles(User.Role.USER.toString());
-      u.setFirstName(Lorem.nombreAlAzar());
-      u.setLastName(Lorem.apellidoAlAzar());
-      entityManager.persist(u);
-      if (i%2 == 0) {
-        g1.getMembers().add(u);
-        // u.getTopics().add(g1); NO FUNCIONA: propietario es g, no u
-      }
-      if (i%3 == 0) {
-        g2.getMembers().add(u);
-      }
-    }
-    return "{\"admin\": \"populated\"}";
-  }
+  /*
+   * 
+   * Returns JSON with all received messages
+   * 
+   * @GetMapping(path = "all-messages", produces = "application/json")
+   * 
+   * @Transactional // para no recibir resultados inconsistentes
+   * 
+   * @ResponseBody // para indicar que no devuelve vista, sino un objeto
+   * (jsonizado)
+   * public List<Message.Transfer> retrieveMessages(HttpSession session) {
+   * TypedQuery<Message> query =
+   * entityManager.createQuery("select m from Message m", Message.class);
+   * query.setMaxResults(5);
+   * query.setFirstResult(0); // para paginar: cambias el 1er resultado
+   * // devuelve resultado
+   * return query.getResultList().stream().map(Transferable::toTransfer)
+   * .collect(Collectors.toList());
+   * }
+   * 
+   * @RequestMapping("/populate")
+   * 
+   * @ResponseBody
+   * 
+   * @Transactional
+   * public String populate(Model model) {
+   * 
+   * // create some groups
+   * Topic g1 = new Topic();
+   * g1.setName("g1");
+   * g1.setKey(UserController.generateRandomBase64Token(6));
+   * entityManager.persist(g1);
+   * Topic g2 = new Topic();
+   * g2.setName("g2");
+   * g2.setKey(UserController.generateRandomBase64Token(6));
+   * entityManager.persist(g2);
+   * 
+   * // create some users & assign to groups
+   * for (int i = 0; i < 15; i++) {
+   * User u = new User();
+   * u.setUsername("user" + i);
+   * u.setPassword(passwordEncoder
+   * .encode("aa"));
+   * // UserController.generateRandomBase64Token(9)));
+   * u.setEnabled(true);
+   * u.setRoles(User.Role.USER.toString());
+   * u.setFirstName(Lorem.nombreAlAzar());
+   * u.setLastName(Lorem.apellidoAlAzar());
+   * entityManager.persist(u);
+   * if (i % 2 == 0) {
+   * g1.getMembers().add(u);
+   * // u.getTopics().add(g1); NO FUNCIONA: propietario es g, no u
+   * }
+   * if (i % 3 == 0) {
+   * g2.getMembers().add(u);
+   * }
+   * }
+   * return "{\"admin\": \"populated\"}";
+   * }
+   */
 }

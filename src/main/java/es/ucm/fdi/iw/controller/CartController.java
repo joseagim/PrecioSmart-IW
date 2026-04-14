@@ -2,6 +2,7 @@ package es.ucm.fdi.iw.controller;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.Cart;
 import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductCart;
+import es.ucm.fdi.iw.model.ProductSupermarket;
+import es.ucm.fdi.iw.model.Supermarket;
 
 @Controller
 @RequestMapping("/user/cart")
@@ -25,6 +28,9 @@ public class CartController {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private ProductController productController;
 
     private boolean isOwner(Cart cart, User user) {
         return cart != null
@@ -46,7 +52,28 @@ public class CartController {
 
     @GetMapping
     public String cart(
-            @RequestParam(required = false) Long cartId,
+            HttpSession session,
+            Model model) {
+
+        User user = (User) session.getAttribute("u");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        List<Cart> carts = entityManager
+                .createNamedQuery("Cart.searchByUserId", Cart.class)
+                .setParameter("userId", user.getId())
+                .getResultList();
+
+        model.addAttribute("carts", carts != null ? carts : new ArrayList<>());
+        model.addAttribute("editCart", false);
+
+        return "cart";
+    }
+
+    @GetMapping("/{cartId}")
+    public String userCart(
+            @PathVariable long cartId,
             @RequestParam(defaultValue = "false") boolean editCart,
             HttpSession session,
             Model model) {
@@ -62,43 +89,7 @@ public class CartController {
                 .getResultList();
 
         model.addAttribute("carts", carts != null ? carts : new ArrayList<>());
-
-        if (cartId != null) {
-            Cart selectedCart = entityManager.find(Cart.class, cartId);
-
-            if (selectedCart == null) {
-                model.addAttribute("errorMessage", "Carrito no encontrado.");
-                return "cart";
-            }
-            if (!isOwner(selectedCart, user)) {
-                model.addAttribute("errorMessage", "No eres el dueño de este carrito.");
-                return "cart";
-            }
-
-            model.addAttribute("selectedCart", selectedCart);
-
-        }
         model.addAttribute("editCart", editCart);
-
-        return "cart";
-    }
-
-    @GetMapping("/{cartId}")
-    public String userCart(
-            @PathVariable long cartId,
-            HttpSession session,
-            Model model) {
-
-        User user = (User) session.getAttribute("u");
-        if (user == null) {
-            return "redirect:/login";
-        }
-
-        List<Cart> carts = entityManager
-                .createNamedQuery("Cart.searchByUserId", Cart.class)
-                .setParameter("userId", user.getId())
-                .getResultList();
-        model.addAttribute("carts", carts != null ? carts : new ArrayList<>());
 
         Cart selectedCart = entityManager.find(Cart.class, cartId);
 
@@ -112,6 +103,43 @@ public class CartController {
         }
 
         model.addAttribute("selectedCart", selectedCart);
+
+        List<Supermarket> supermarkets = entityManager
+                .createQuery("SELECT s FROM Supermarket s ORDER BY s.id", Supermarket.class)
+                .getResultList();
+
+        List<Map<String, Object>> totalesPorSuper = new ArrayList<>();
+
+        for (Supermarket s : supermarkets) {
+            double totalPrecio = 0.0;
+            boolean todosLosProductosDisponibles = true;
+
+            for (ProductCart item : selectedCart.getItems()) {
+                // Buscamos el precio de este producto en este supermercado
+                ProductSupermarket ps = productController.productBySupermarket(item.getProduct(), s.getId());
+                
+                if(ps == null) {
+                    todosLosProductosDisponibles = false;
+                }
+                else if (ps.getProduct().getEAN() == item.getProduct().getEAN()) {
+                    totalPrecio += ps.getPrice() * item.getQuantity();
+                } 
+                else {
+                    totalPrecio += ps.getPrice() * item.getQuantity();
+                    todosLosProductosDisponibles = false;
+                }
+            }
+
+            // Creamos un objeto simple para la vista
+            Map<String, Object> infoSuper = new HashMap<>();
+            infoSuper.put("supermarket", s);
+            infoSuper.put("total", totalPrecio);
+            infoSuper.put("completo", todosLosProductosDisponibles); // Opcional: para avisar si falta algún producto
+            
+            totalesPorSuper.add(infoSuper);
+        }
+
+        model.addAttribute("totalesPorSuper", totalesPorSuper);
 
         return "cart";
     }
@@ -145,7 +173,7 @@ public class CartController {
                     .getResultList();
             model.addAttribute("carts", carts);
 
-            return "redirect:/user/cart?cartId=" + cart.getId();
+            return "redirect:/user/cart/" + cart.getId();
         }
 
         if (cartId == null)
@@ -161,7 +189,7 @@ public class CartController {
             if (renameCart != null && !renameCart.isBlank()) {
                 cart.setName(renameCart);
             }
-            return "redirect:/user/cart?cartId=" + cartId;
+            return "redirect:/user/cart/" + cartId;
         } else {
 
             List<ProductCart> items = cart.getItems();

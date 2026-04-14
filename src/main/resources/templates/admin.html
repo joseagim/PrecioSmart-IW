@@ -15,54 +15,86 @@
         <div class="container">
             <h1 class="mt-5 mb-5">Administrar solicitudes</h1>
             <div class="panel-lg mb-5">
-                <div id="request-list" class="p-3 text-start">
-                    <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
-                        <p class="m-0">Usuario: Pepe | Añadir nuevo producto: Chocolate</p>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
-                            <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
+
+                <h2 class="h5 mb-3">Selecciona el tipo</h2>
+                <form id="admin-request-form" class="row g-3" method="get" enctype="multipart/form-data">
+                    <div class="col-12 mb-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="type" id="pending-request" value="0"
+                                checked>
+                            <label class="form-check-label" for="pending-request">Pendientes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="type" id="accepted-request"
+                                value="1">
+                            <label class="form-check-label" for="accepted-request">Aceptadas</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="type" id="rejected-request" value="2">
+                            <label class="form-check-label" for="rejected-request">Rechazadas</label>
                         </div>
                     </div>
-                    <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
-                        <p class="m-0">Usuario: Manuel | Modificar producto: Leche</p>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
-                            <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
-                        </div>
+                </form>
+
+                <!-- PENDING REQUESTS -->
+                <div id="pending-request-list" class="p-3 text-start">
+                    <div th:if="${pendingRequests.empty}">
+                        <h2 class="h5 mb-3">No hay solicitudes pendientes</h2>
                     </div>
-                    <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
-                        <p class="m-0">Usuario: María | Modificar producto: Arroz</p>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
-                            <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
+                    <div th:each="pr : ${pendingRequests}">
+                        <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
+                            <p th:text="${pr.name}" class="m-0">Info solicitud</p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
+                                <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- ACCEPTED REQUESTS -->
+                <div id="accepted-request-list" class="p-3 text-start">
+                    <div th:if="${acceptedRequests.empty}">
+                        <h2 class="h5 mb-3">No hay solicitudes aceptadas</h2>
+                    </div>
+                    <div th:each="ar : ${acceptedRequests}">
+                        <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
+                            <p th:text="${ar.name}" class="m-0">Info solicitud</p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
+                                <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- REJECTED REQUESTS -->
+                <div id="rejected-request-list" class="p-3 text-start">
+                    <div th:if="${rejectedRequests.empty}">
+                        <h2 class="h5 mb-3">No hay solicitudes rechazadas</h2>
+                    </div>
+                    <div th:each="rr : ${rejectedRequests}">
+                        <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
+                            <p th:text="${rr.name}" class="m-0">Info solicitud</p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
+                                <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
-        <script>
-            const requestList = document.querySelector("#request-list");
+        
+        <script th:src="@{/js/script-admin.js}"></script>
 
-            requestList.addEventListener("click", e => {
-                if (e.target.classList.contains("btn-aceptar")) {
-
-                    const btnAceptar = e.target;
-                    e.target.parentElement.parentElement.remove();
-
-                }
-                else if (e.target.classList.contains("btn-rechazar")) {
-
-                    const btnRechazar = e.target;
-                    e.target.parentElement.parentElement.remove();
-
-                }
-            });
-
-        </script>
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
+    <!-- Bloque de toggles: si no lo usas, está comentado. Para reactivar, elimina /* ... */ alrededor del código -->
     <script>
+        /*
         const toggles = document.querySelectorAll('.toggle');
         toggles.forEach(toggle => {
             toggle.addEventListener('click', (e) => {
@@ -82,11 +114,12 @@
                 });
             });
         });
-
-
+        */
     </script>
 
+    <!-- Bloque de mensajes / DataTable: comentado si no se usa. Reactivar quitando /* ... */ -->
     <script type="module">
+        /*
         import { DataTable } from "../js/simple-datatables-10.js"
         let dt = null;
         function refreshMessages() {
@@ -111,6 +144,7 @@
         }
         document.getElementById('refresh').addEventListener('click', refreshMessages);
         refreshMessages();
+        */
     </script>
 </body>
 

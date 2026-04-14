@@ -78,6 +78,7 @@ public class RequestController {
         return "request";
     }
 
+    @Transactional
     @GetMapping("{id}/pic")
     public StreamingResponseBody getPic(@PathVariable long id) throws IOException {
         Request req = entityManager.find(Request.class, id);

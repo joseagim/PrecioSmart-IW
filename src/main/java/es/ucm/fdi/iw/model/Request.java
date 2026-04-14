@@ -7,7 +7,9 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-
+@NamedQueries({
+        @NamedQuery(name = "findByStatus", query = "SELECT r FROM Request r WHERE r.status = :status ORDER BY r.date DESC")
+})
 public class Request {
 
     @Id
@@ -22,7 +24,7 @@ public class Request {
     private String imageUrl;
     private float price;
     private LocalDateTime date;
-    private RequestType type; 
+    private RequestType type;
     private RequestStatus status;
 
     @ManyToOne

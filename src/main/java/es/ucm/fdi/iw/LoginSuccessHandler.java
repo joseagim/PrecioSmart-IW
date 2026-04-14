@@ -79,8 +79,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         .replaceFirst("[^/]*", ""); // http[s]://...foo/ => //...foo/
     String ws = "ws:" + url + "/ws"; // //...foo/ => ws://...foo/ws
     if (url.contains("ucm.es")) {
-      // UCM containers use https / wss, but we are behind a reverse proxy: add extra s here
-      ws = ws.replace("ws:", "wss:"); 
+      // UCM containers use https / wss, but we are behind a reverse proxy: add extra
+      // s here
+      ws = ws.replace("ws:", "wss:");
     }
     session.setAttribute("url", url);
     session.setAttribute("ws", ws);
@@ -92,7 +93,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     session.setAttribute("topics", String.join(",", topics));
 
     // redirects to 'admin' or 'user/{id}', depending on the user
-    String nextUrl = u.hasRole(User.Role.ADMIN) ? "admin/" : "user/" + u.getId();
+    String nextUrl = u.hasRole(User.Role.ADMIN) ? "admin/mod" : "user/" + u.getId();
 
     log.info("LOG IN: {} (id {}) -- session is {}, websocket is {} -- redirected to {}",
         u.getUsername(), u.getId(), session.getId(), ws, nextUrl);
