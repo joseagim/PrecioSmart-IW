@@ -78,6 +78,17 @@ public class RequestController {
         return "request";
     }
 
+    @GetMapping("view")
+    public String viewRequest(@RequestParam long id, Model model, HttpSession session) {
+        User requester = (User) session.getAttribute("u");
+        Request request = entityManager.find(Request.class, id);
+        if (request == null || request.getUser().getId() != requester.getId()) {
+            return "redirect:/user/request?success=false";
+        }
+        model.addAttribute("request", request);
+        return "view-request";
+    }
+
     @Transactional
     @GetMapping("{id}/pic")
     public StreamingResponseBody getPic(@PathVariable long id) throws IOException {
@@ -107,7 +118,7 @@ public class RequestController {
             @RequestParam float price,
             @RequestParam String supermarket,
             @RequestParam String ean,
-            @RequestParam(value = "photo", required = false) MultipartFile photo,
+            @RequestParam(required = false) MultipartFile photo,
             @RequestParam String type,
             HttpSession session,
             HttpServletResponse response) throws IOException {
@@ -216,10 +227,13 @@ public class RequestController {
                         .getResultStream()
                         .findFirst()
                         .isPresent();
+                
                 if (!existe) {
                     return ResponseEntity.badRequest().body(Map.of("status", "error", "message",
                             "No existe este producto en el supermercado indicado, no se puede modificar"));
                 }
+                else
+                
             }
 
         }

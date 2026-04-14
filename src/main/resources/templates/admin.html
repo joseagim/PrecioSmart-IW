@@ -43,8 +43,8 @@
                     </div>
                     <div th:each="pr : ${pendingRequests}">
                         <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
-                            <p th:text="${pr.name}" class="m-0">Info solicitud</p>
-                            <div class="d-flex gap-2">
+                            <div th:replace="~{fragments/request-info :: requestInfo(${pr})}"></div>
+                            <div class="d-flex gap-2 mt-3 ms-3">
                                 <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
                                 <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
                             </div>
@@ -59,8 +59,8 @@
                     </div>
                     <div th:each="ar : ${acceptedRequests}">
                         <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
-                            <p th:text="${ar.name}" class="m-0">Info solicitud</p>
-                            <div class="d-flex gap-2">
+                            <div th:replace="~{fragments/request-info :: requestInfo(${ar})}"></div>
+                            <div class="d-flex gap-2 mt-3 ms-3">
                                 <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
                                 <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
                             </div>
@@ -75,8 +75,8 @@
                     </div>
                     <div th:each="rr : ${rejectedRequests}">
                         <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
-                            <p th:text="${rr.name}" class="m-0">Info solicitud</p>
-                            <div class="d-flex gap-2">
+                            <div th:replace="~{fragments/request-info :: requestInfo(${rr})}"></div>
+                            <div class="d-flex gap-2 mt-3 ms-3">
                                 <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
                                 <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
                             </div>
