@@ -28,8 +28,6 @@ public class Cart {
 
     private LocalDateTime date;
 
-    private float total;
-
     @OneToMany(mappedBy = "cart")
     private List<ProductCart> items; // lines of the cart
 

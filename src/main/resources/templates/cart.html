@@ -134,17 +134,40 @@
         </div>
 
         <div class="panel-lg" th:if="${selectedCart != null and !#lists.isEmpty(selectedCart.items)}">
-            <h4 class="text-start mb-3">Comparativa de Precios</h4>
+            <h4 class="text-center mb-3">Comparativa de Precios</h4>
             <div th:each="info : ${totalesPorSuper}">
                 <div class="card mb-3 shadow-sm">
-                    <div class="card-body d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5 class="card-title fw-bold mb-0" th:text="${info.supermarket.name}">Supermercado</h5>
-                            <small class="text-danger" th:if="${!info.completo}">* Algunos productos no están disponibles aquí.</small>
-                        </div>
-                        <p class="card-text fs-5 fw-bold mb-0" th:text="${#numbers.formatDecimal(info.total, 1, 2, 'COMMA')} + ' €'">
-                            0,00 €
-                        </p>
+                    <div class="card-body">
+                        <details>
+                            <summary class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title fw-bold" th:text="${info.supermarket.name}">Supermercado</h5>
+                                <small class="text-danger d-block mb-2" th:if="${!info.completo}">
+                                    * Algunos de los productos seleccionados no están disponibles.
+                                </small>
+                                <div class="d-flex align-items-center gap-2">
+                                    <p class="card-text fs-5 fw-bold mb-0" 
+                                    th:text="${#numbers.formatDecimal(info.total, 1, 2, 'COMMA')} + ' €'">
+                                        0,00 €
+                                    </p>
+                                </div>
+                            </summary>
+                            <div class="text-start">
+                                <ul>
+                                    <li th:each="prod : ${info.productos}">
+                                        <span th:text="${prod.key}">Producto</span>:
+                                        <span class="fw-bold" th:text="${#numbers.formatDecimal(prod.value, 1, 2, 'COMMA')} + ' €'">0,00 €</span>
+                                        <span class="text-danger" th:if="${info.productosSugeridos.contains(prod.key)}"> (Sugerencia)</span>
+                                    </li>
+                                </ul>
+                                <div th:if="${!info.productosNoDisponibles.isEmpty()}" class="mt-2 p-2 bg-light">
+                                    <small class="text-muted">
+                                        <strong>Faltantes:</strong> 
+                                        <span th:each="faltante, iter : ${info.productosNoDisponibles}" 
+                                            th:text="${faltante} + (${iter.last} ? '' : ', ')"></span>
+                                    </small>
+                                </div>
+                            </div>
+                        </details>
                     </div>
                 </div>
             </div>

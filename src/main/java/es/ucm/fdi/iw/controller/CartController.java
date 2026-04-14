@@ -112,21 +112,37 @@ public class CartController {
 
         for (Supermarket s : supermarkets) {
             double totalPrecio = 0.0;
-            boolean todosLosProductosDisponibles = true;
+            Map<String, Float> prods = new HashMap<>();
+            List<String> productosNoDisponibles = new ArrayList<>();
+            List<String> productosSugeridos = new ArrayList<>();
 
             for (ProductCart item : selectedCart.getItems()) {
-                // Buscamos el precio de este producto en este supermercado
-                ProductSupermarket ps = productController.productBySupermarket(item.getProduct(), s.getId());
+                
+                Product p = item.getProduct();
+                ProductSupermarket ps = productController.productBySupermarket(p, s.getId());
                 
                 if(ps == null) {
-                    todosLosProductosDisponibles = false;
+                    productosNoDisponibles.add(p.getName());
                 }
-                else if (ps.getProduct().getEAN() == item.getProduct().getEAN()) {
-                    totalPrecio += ps.getPrice() * item.getQuantity();
-                } 
                 else {
-                    totalPrecio += ps.getPrice() * item.getQuantity();
-                    todosLosProductosDisponibles = false;
+                    boolean sugerencia = !p.getEAN().equals(ps.getProduct().getEAN());
+                   
+                    float precio = ps.getPrice() * item.getQuantity();
+                    totalPrecio += precio;                    
+
+                    if (sugerencia) {
+                        productosNoDisponibles.add(p.getName());
+                        if (!prods.containsKey(ps.getProduct().getName())){
+                            productosSugeridos.add(ps.getProduct().getName());
+                        }
+                    }
+
+                    prods.put(ps.getProduct().getName(), ps.getPrice());
+
+                    if(productosSugeridos.contains(ps.getProduct().getName()) 
+                        && !sugerencia) {
+                        productosSugeridos.remove(ps.getProduct().getName());
+                    }
                 }
             }
 
@@ -134,8 +150,10 @@ public class CartController {
             Map<String, Object> infoSuper = new HashMap<>();
             infoSuper.put("supermarket", s);
             infoSuper.put("total", totalPrecio);
-            infoSuper.put("completo", todosLosProductosDisponibles); // Opcional: para avisar si falta algún producto
-            
+            infoSuper.put("completo", productosNoDisponibles.isEmpty());
+            infoSuper.put("productos", prods);
+            infoSuper.put("productosNoDisponibles", productosNoDisponibles);
+            infoSuper.put("productosSugeridos", productosSugeridos);
             totalesPorSuper.add(infoSuper);
         }
 

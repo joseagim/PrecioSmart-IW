@@ -232,8 +232,6 @@ public class RequestController {
                     return ResponseEntity.badRequest().body(Map.of("status", "error", "message",
                             "No existe este producto en el supermercado indicado, no se puede modificar"));
                 }
-                else
-                
             }
 
         }

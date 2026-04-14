@@ -19,5 +19,4 @@ public class ProductCart {
     private Product product;
 
     private int quantity;
-    private float subtotal;
 }
