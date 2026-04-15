@@ -50,38 +50,60 @@
     display: block;
 }
 
-.panel-xxl, .panel-xl, .panel-lg, .panel-md, .panel-sm { 
+.panel-xxl,
+.panel-xl,
+.panel-lg,
+.panel-md,
+.panel-sm {
     margin-left: auto;
-    margin-right: auto; 
-    border-radius: 15px; 
+    margin-right: auto;
+    border-radius: 15px;
     border: 1px solid var(--naranja-claro);
     background-color: #ffffff;
     padding: 25px;
     margin-top: 15px;
 }
 
-.panel-xxl { max-width: 100%; }
-.panel-xl { max-width: 85%; }
-.panel-lg { max-width: 70%; }
-.panel-md { max-width: 50%; }
-.panel-sm { max-width: 30%; }
+.panel-xxl {
+    max-width: 100%;
+}
+
+.panel-xl {
+    max-width: 85%;
+}
+
+.panel-lg {
+    max-width: 70%;
+}
+
+.panel-md {
+    max-width: 50%;
+}
+
+.panel-sm {
+    max-width: 30%;
+}
 
 .svg-sm {
     width: 22px;
     height: 22px;
 }
+
 .svg-md {
     width: 40px;
     height: 40px;
 }
+
 .svg-lg {
     width: 60px;
     height: 60px;
 }
+
 .svg-xl {
     width: 90px;
     height: 90px;
 }
+
 .svg-xxl {
     width: 130px;
     height: 130px;
@@ -116,31 +138,31 @@
 .login-box {
     width: 100%;
     max-width: 360px;
-    height: 100%;
-    max-height: 310px;
+    height: auto;
+    min-height: 310px;
 }
 
 .register-box {
     width: 100%;
     max-width: 360px;
-    height: 100%;
-    max-height: 400px;
+    min-height: 300px;
+    height: auto;
 }
 
 /*-- CARRITO --*/
-.card-carrito{
-    min-width: 200px; 
-    cursor: pointer; 
-    border-radius: 15px; 
-    border: 2px solid var(--naranja-muy-oscuro); 
+.card-carrito {
+    min-width: 200px;
+    cursor: pointer;
+    border-radius: 15px;
+    border: 2px solid var(--naranja-muy-oscuro);
     background-color: var(--naranja-muy-claro);
 }
 
-.card-carrito input{
+.card-carrito input {
     background-color: transparent;
     border: none;
     color: inherit;
-    font-size: inherit; 
+    font-size: inherit;
     font-weight: inherit;
     width: 100%;
 }
@@ -152,6 +174,7 @@
     color: black;
     cursor: text;
 }
+
 .card-carrito input:focus {
     background-color: var(--naranja-muy-claro);
     border-radius: 10px;
@@ -162,21 +185,21 @@
 
 .card-carrito-activa {
     background-color: var(--naranja-claro) !important;
-    border: 2px solid var(--naranja-claro); 
+    border: 2px solid var(--naranja-claro);
     color: white !important;
 }
 
 .table-carrito {
-  width: 100%;
-  margin-bottom: 1rem;
-  vertical-align: top;
-  border: 3px solid rgb(80, 80, 80);
+    width: 100%;
+    margin-bottom: 1rem;
+    vertical-align: top;
+    border: 3px solid rgb(80, 80, 80);
 }
 
 .table-carrito th,
 .table-carrito td {
-  padding: 7px;
-  border-bottom: 1px solid rgb(171, 171, 171);
+    padding: 7px;
+    border-bottom: 1px solid rgb(171, 171, 171);
 }
 
 .thead-carrito {
@@ -184,7 +207,7 @@
     color: white
 }
 
-.tbody-carrito > tr:hover {
+.tbody-carrito>tr:hover {
     background-color: #ffddb9;
     color: black
 }
@@ -193,19 +216,20 @@
     background-color: #e8e8e8;
 }
 
-.tProd-delete{
+.tProd-delete {
     border-radius: 15%;
     border: 1px solid #dc3545;
     background: #ffffff;
     font-weight: bold;
 }
-.tProd-delete:hover{
+
+.tProd-delete:hover {
     background: #dc3545;
     color: white;
     font-weight: bold;
 }
 
-.tProd-cantidad-num{
+.tProd-cantidad-num {
     width: 35px;
     border-radius: 15%;
     border: 1px solid #fd7e14;
@@ -213,7 +237,7 @@
     color: #fd7e14;
 }
 
-.btn-edit:hover{
+.btn-edit:hover {
     border-radius: 25%;
     border: 1px solid #000000;
     background: #ffd5aa;
@@ -335,7 +359,7 @@
         linear-gradient(135deg, #d56b16 0%, #f08a24 55%, #ff9f3f 100%);
     border-radius: 30px;
     padding: 1.5rem 1.2rem;
-    max-width: 1200px;
+    max-width: 70%;
     margin: 3rem auto 3rem;
 }
 
@@ -356,4 +380,3 @@
     border-radius: 999px;
     margin-bottom: 1rem;
 }
-

@@ -170,11 +170,15 @@ public class RequestController {
                     .findFirst()
                     .orElse(null);
 
-            // Caso 2: Se solicita añadir un producto ya existente en el supermercado
-            // solicitado que no existe
+            /*
+             * Caso 2: Se solicita añadir un producto ya existente en el supermercado
+             * solicitado que no existe
+             * Case 3 Se solicita modificar un producto existente, pero el EAN no existe o
+             * no coincide con el producto a modificar
+             */
             if (existingProduct == null) {
                 return ResponseEntity.badRequest().body(Map.of("status", "error", "message",
-                        "No se puede añadir un producto a un supermercado si el producto no existe"));
+                        "El producto con ese EAN no existe"));
             } else {
                 Supermarket supermarketEntity = entityManager
                         .createQuery("SELECT s FROM Supermarket s WHERE LOWER(s.name) = LOWER(:name)",
@@ -195,40 +199,7 @@ public class RequestController {
                 if (existe) {
                     return ResponseEntity.badRequest()
                             .body(Map.of("status", "error", "message", "El producto ya existe en ese supermercado"));
-                }
-            }
-
-        }
-
-        else {
-            Product productToModify = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
-                    .setParameter("EAN", normalizedEan)
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-            // Caso 4: Se solicita modificar un producto existente, pero el EAN no existe o
-            // no coincide con el producto a modificar
-            if (productToModify == null) {
-                return ResponseEntity.badRequest()
-                        .body(Map.of("status", "error", "message", "No se puede modificar un producto que no existe"));
-            } else {
-                Supermarket supermarketEntity = entityManager
-                        .createQuery("SELECT s FROM Supermarket s WHERE LOWER(s.name) = LOWER(:name)",
-                                Supermarket.class)
-                        .setParameter("name", normalizedSupermarket)
-                        .getResultStream()
-                        .findFirst()
-                        .orElse(null);
-                boolean existe = supermarketEntity != null && entityManager.createQuery(
-                        "SELECT ps FROM ProductSupermarket ps WHERE ps.product.id = :productId AND ps.supermarket.id = :supermarketId",
-                        ProductSupermarket.class)
-                        .setParameter("productId", productToModify.getId())
-                        .setParameter("supermarketId", supermarketEntity.getId())
-                        .getResultStream()
-                        .findFirst()
-                        .isPresent();
-                
-                if (!existe) {
+                } else {
                     return ResponseEntity.badRequest().body(Map.of("status", "error", "message",
                             "No existe este producto en el supermercado indicado, no se puede modificar"));
                 }

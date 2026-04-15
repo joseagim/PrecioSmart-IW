@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class RootController {
 
-    //private static final Logger log = LogManager.getLogger(RootController.class);
+    // private static final Logger log = LogManager.getLogger(RootController.class);
 
     @Autowired
     private EntityManager entityManager;
@@ -37,7 +37,7 @@ public class RootController {
             model.addAttribute(name, session.getAttribute(name));
         }
     }
-    
+
     @GetMapping("/login")
     public String login(Model model, HttpServletRequest request) {
         boolean error = request.getQueryString() != null && request.getQueryString().indexOf("error") != -1;
@@ -59,20 +59,20 @@ public class RootController {
     @PostMapping("/register")
     @Transactional
     public String postRegister(
-        @RequestParam String username,
-        @RequestParam(required = false) String email,
-        @RequestParam String password,
-        @RequestParam String confirmPassword,
-        Model model
-    ) {
+            @RequestParam String username,
+            @RequestParam String email,
+            @RequestParam String password,
+            @RequestParam String confirmPassword,
+            Model model) {
         // email is currently collected in the form but not persisted in User
         if (email != null) {
             email = email.trim();
         }
 
         String normalizedUsername = username == null ? "" : username.trim();
-        if (normalizedUsername.isEmpty() || password == null || password.isBlank()) {
-            model.addAttribute("registerError", "Usuario y contrasena son obligatorios");
+        String normalizedEmail = email == null ? "" : email.trim();
+        if (normalizedUsername.isEmpty() || normalizedEmail.isEmpty() || password == null || password.isBlank()) {
+            model.addAttribute("registerError", "Usuario, email y contrasena son obligatorios");
             return "register";
         }
 
@@ -82,22 +82,33 @@ public class RootController {
         }
 
         Long existing = entityManager.createNamedQuery("User.hasUsername", Long.class)
-            .setParameter("username", normalizedUsername)
-            .getSingleResult();
+                .setParameter("username", normalizedUsername)
+                .getSingleResult();
 
         if (existing != null && existing > 0) {
             model.addAttribute("registerError", "Ese nombre de usuario ya existe");
             return "register";
         }
 
+        Long existingEmail = entityManager.createNamedQuery("User.hasEmail", Long.class)
+                .setParameter("email", normalizedEmail)
+                .getSingleResult();
+
+        if(existingEmail != null && existingEmail > 0) {
+            model.addAttribute("registerError", "Ese email ya está registrado");
+            return "register";
+        }
+        
+
         User user = new User();
         user.setUsername(normalizedUsername);
         user.setPassword(passwordEncoder.encode(password));
         user.setEnabled(true);
         user.setRoles(User.Role.USER.toString());
+        user.setEmail(email);
         entityManager.persist(user);
 
-        model.addAttribute("registerOk", "Usuario creado, ya puedes iniciar sesion");
+        model.addAttribute("registerOk", "Usuario creado, ya puedes iniciar sesión");
         return "login";
     }
 
@@ -106,12 +117,10 @@ public class RootController {
         return "notifications";
     }
 
-
     @GetMapping("/faq")
     public String faq(Model model, HttpServletRequest request) {
         return "faq";
     }
-    
 
     @GetMapping("/user")
     public String user(HttpSession session) {
@@ -129,8 +138,8 @@ public class RootController {
 
     @GetMapping("/")
     public String index(Model model, HttpSession session) {
-         User user = (User) session.getAttribute("u");
-        if(user != null) {
+        User user = (User) session.getAttribute("u");
+        if (user != null) {
             return "redirect:/user";
         }
         return "index";
