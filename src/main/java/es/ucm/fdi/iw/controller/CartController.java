@@ -104,6 +104,41 @@ public class CartController {
 
         model.addAttribute("selectedCart", selectedCart);
 
+        List<Map<String, Object>> totalesPorSuper = calcularTotalesPorSuper(selectedCart);
+
+        model.addAttribute("totalesPorSuper", totalesPorSuper);
+
+        return "cart";
+    }
+
+    @Transactional
+    @PostMapping("/updateSuperCarts")
+    public String updateSupermarketCarts(
+            @RequestParam long cartId,
+            HttpSession session,
+            Model model) {
+
+        User user = (User) session.getAttribute("u");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        Cart cart = entityManager.find(Cart.class, cartId);
+
+        if (!isOwner(cart, user)) {
+            model.addAttribute("errorMessage", "Carrito no encontrado o no eres el dueño.");
+            return "cart";
+        }
+
+        List<Map<String, Object>> totalesPorSuper = calcularTotalesPorSuper(cart);
+
+        model.addAttribute("selectedCart", cart);
+        model.addAttribute("totalesPorSuper", totalesPorSuper);
+
+        return "cart :: #totalesSupermercados";
+    }
+
+    private List<Map<String,Object>> calcularTotalesPorSuper(Cart cart) {
         List<Supermarket> supermarkets = entityManager
                 .createQuery("SELECT s FROM Supermarket s ORDER BY s.id", Supermarket.class)
                 .getResultList();
@@ -116,7 +151,7 @@ public class CartController {
             List<String> productosNoDisponibles = new ArrayList<>();
             List<String> productosSugeridos = new ArrayList<>();
 
-            for (ProductCart item : selectedCart.getItems()) {
+            for (ProductCart item : cart.getItems()) {
                 
                 Product p = item.getProduct();
                 ProductSupermarket ps = productController.productBySupermarket(p, s.getId());
@@ -157,9 +192,7 @@ public class CartController {
             totalesPorSuper.add(infoSuper);
         }
 
-        model.addAttribute("totalesPorSuper", totalesPorSuper);
-
-        return "cart";
+        return totalesPorSuper;
     }
 
     @Transactional

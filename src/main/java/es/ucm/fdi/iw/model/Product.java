@@ -19,10 +19,6 @@ import jakarta.persistence.NamedQueries;
             query = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:name)"
         ),
         @NamedQuery(
-            name = "Product.EAN", 
-            query = "SELECT p FROM Product p WHERE p.EAN = :EAN"
-        ),
-        @NamedQuery(
             name = "Product.searchByEAN", 
             query = "SELECT p FROM Product p WHERE p.EAN = :EAN"
         )

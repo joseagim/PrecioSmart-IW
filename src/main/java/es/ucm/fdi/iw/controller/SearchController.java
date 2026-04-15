@@ -1,6 +1,8 @@
 package es.ucm.fdi.iw.controller;
 
 import es.ucm.fdi.iw.model.Product;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,10 +50,18 @@ public class SearchController {
     @Transactional
     public String searchProduct(@PathVariable(name = "product") String producto, Model model) {
 
-        List<Product> productos = entityManager
-                .createNamedQuery("Product.searchByNameOrEAN", Product.class)
-                .setParameter("param", "%" + producto + "%")
+        List<Product> productos = new ArrayList<>();
+        productos = entityManager
+                .createNamedQuery("Product.searchByEAN", Product.class)
+                .setParameter("EAN", producto)
                 .getResultList();
+
+        if (productos.size() == 0){
+            productos = entityManager
+                .createNamedQuery("Product.searchByName", Product.class)
+                .setParameter("name", "%" + producto + "%")
+                .getResultList();
+        }
 
         if (productos.size() == 1) {
             return "redirect:/user/product/" + productos.get(0).getId();

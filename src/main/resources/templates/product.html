@@ -99,8 +99,8 @@
                                         th:text="${entry.supermarket.name}">Supermercado</b></h3>
                                 <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
                                 <div class="d-flex align-items-center gap-2 mb-3">
-                                    <img th:if="${entry.product.imageURL != null }" th:src="${entry.product.imageURL}"
-                                        src="https://picsum.photos/80" class="rounded border"
+                                    <img class="rounded border" 
+                                        th:src="@{/user/product/{productoID}/pic(productoID=${entry.product != null ? entry.product.id : 0})}"
                                         style="width: 48px; height: 48px; object-fit: cover;" alt="Producto similar">
                                     <div>
                                         <p class="text-muted fw-bold small mb-1">Producto similar:</p>
