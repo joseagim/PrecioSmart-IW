@@ -32,7 +32,7 @@ import org.apache.logging.log4j.Logger;
 
 
 @Controller
-@RequestMapping("/user/product")
+@RequestMapping("/product")
 public class ProductController {
 
     private static final Logger log = LogManager.getLogger(ProductController.class);
@@ -49,10 +49,6 @@ public class ProductController {
             model.addAttribute(name, session.getAttribute(name));
         }
     }
-
-    /**
-     * Landing page for a product
-     */
 
     @Transactional
     @GetMapping("/{productoID}")
@@ -85,10 +81,12 @@ public class ProductController {
         }
 
         User user = (User) session.getAttribute("u");
-        User u = entityManager.find(User.class, user.getId());
-        List<Cart> carts = u.getCarts();
-
-        model.addAttribute("carts", carts);
+        if(user != null) {
+            User u = entityManager.find(User.class, user.getId());
+            List<Cart> carts = u.getCarts();
+            model.addAttribute("carts", carts);
+        }
+        
         model.addAttribute("product", product);
         model.addAttribute("result", result);
 

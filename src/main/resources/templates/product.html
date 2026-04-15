@@ -16,7 +16,7 @@
                     class="card w-100 h-auto d-flex flex-column flex-md-row shadow-lg border-0 rounded-4 overflow-hidden align-items-center align-items-md-start">
 
                     <div class="p-4 p-md-5 flex-shrink-0 bg-light" style="max-width: 260px;">
-                        <img class="img-fluid rounded-3" th:src="@{/user/product/{productoID}/pic(productoID=${product != null ? product.id : 0})}" alt="foto del producto">
+                        <img class="img-fluid rounded-3" th:src="@{/product/{productoID}/pic(productoID=${product != null ? product.id : 0})}" alt="foto del producto">
                     </div>
 
                     <div class="card-body text-start p-4 p-md-5">
@@ -39,39 +39,47 @@
                                 </li>
                             </ul>
 
-                            <form id="add-to-cart-form" th:action="@{/user/cart/add/{productId}(productId=${product != null ? product.id : 0})}" method="post"
-                                class="d-flex flex-wrap gap-3 mt-3 mb-1 justify-content-start align-items-center">
-                                <button id="buy-button" type="submit"
-                                    th:attr="data-product-id=${product != null ? product.id : 0}"
-                                    class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Añadir
-                                    al carrito
-                                </button>
-                                <div class="d-flex align-items-center gap-2">
-                                    <label for="cantidad" class="mb-0 fw-semibold text-secondary">Cant.</label>
-                                    <input class="form-control text-center rounded-3" type="number" id="cantidad"
-                                        name="cantidad" style="width: 5.2em;" min="1" value="1">
-                                </div>
-
-                                <div th:if="${carts != null and !#lists.isEmpty(carts)}"
-                                    class="d-flex align-items-center gap-2">
-                                    <label for="cartId" class="mb-0 fw-semibold text-secondary">Carrito</label>
-                                    <select id="cartId" name="cartId" class="form-select form-select-lg"
-                                        required>
-                                        <option value="" selected disabled hidden>Selecciona un carrito...</option>
-                                        <option th:each="c : ${carts}" th:value="${c.id}" th:text="${c.name}">Carrito
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div th:unless="${carts != null and !#lists.isEmpty(carts)}"
-                                    class="d-flex align-items-center gap-2">
-                                    <button type="submit"
-                                        class="btn btn-naranja btn-md px-4 py-3 shadow-sm">Crear nuevo carrito y añadir
+                            <div th:if="${u}">
+                                <form id="add-to-cart-form" 
+                                    th:action="@{/user/cart/add/{productId}(productId=${product != null ? product.id : 0})}" 
+                                    method="post"
+                                    class="d-flex flex-wrap gap-3 mt-3 mb-1 justify-content-start align-items-center">
+                                    <button th:if="${carts != null and !#lists.isEmpty(carts)}" 
+                                        id="buy-button" type="submit"
+                                        th:attr="data-product-id=${product != null ? product.id : 0}"
+                                        class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Añadir
+                                        al carrito
                                     </button>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <label for="cantidad" class="mb-0 fw-semibold text-secondary">Cant.</label>
+                                        <input class="form-control text-center rounded-3" type="number" id="cantidad"
+                                            name="cantidad" style="width: 5.2em;" min="1" value="1">
+                                    </div>
+
+                                    <div th:if="${carts != null and !#lists.isEmpty(carts)}"
+                                        class="d-flex align-items-center gap-2">
+                                        <label for="cartId" class="mb-0 fw-semibold text-secondary">Carrito</label>
+                                        <select id="cartId" name="cartId" class="form-select form-select-lg"
+                                            required>
+                                            <option value="" selected disabled hidden>Selecciona un carrito...</option>
+                                            <option th:each="c : ${carts}" th:value="${c.id}" th:text="${c.name}">Carrito
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div th:unless="${carts != null and !#lists.isEmpty(carts)}"
+                                        class="d-flex align-items-center gap-2">
+                                        <button type="submit"
+                                            class="btn btn-naranja btn-md px-4 py-3 shadow-sm">Crear nuevo carrito y añadir
+                                        </button>
+                                    </div>
+                                </form>
+                                <div id="registroFeedback" class="alert d-none mt-3" role="alert">
+                                    <p class="mb-0"></p>
                                 </div>
-                            </form>
-                            <div id="registroFeedback" class="alert d-none mt-3" role="alert">
-                                <p class="mb-0"></p>
+                            </div>
+                            <div th:unless="${u}">
+                                <a th:href="@{/login}" class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Inicia sesión para crear un carrito</a>
                             </div>
                         </div>
                     </div>
@@ -100,7 +108,7 @@
                                 <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
                                 <div class="d-flex align-items-center gap-2 mb-3">
                                     <img class="rounded border" 
-                                        th:src="@{/user/product/{productoID}/pic(productoID=${entry.product != null ? entry.product.id : 0})}"
+                                        th:src="@{/product/{productoID}/pic(productoID=${entry.product != null ? entry.product.id : 0})}"
                                         style="width: 48px; height: 48px; object-fit: cover;" alt="Producto similar">
                                     <div>
                                         <p class="text-muted fw-bold small mb-1">Producto similar:</p>
@@ -108,7 +116,7 @@
                                             producto</p>
                                     </div>
                                 </div>
-                                <a th:href="@{/user/product/{productoID}(productoID=${entry.product.id})}"
+                                <a th:href="@{/product/{productoID}(productoID=${entry.product.id})}"
                                     class="btn btn-naranja btn-sm rounded-3 w-100">
                                     Comparar
                                 </a>
