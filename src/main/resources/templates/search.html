@@ -15,7 +15,7 @@
             <h1 class="mt-5 mb-5">Búsqueda de productos</h1>
 
             <div class="search-container mb-5">
-                <form id="search-form" th:action="@{/user/search}" method="get">
+                <form id="search-form" th:action="@{/search}" method="get">
                     <div class="input-group">
                         <span class="input-group-text bg-white border-end-0" style="border-radius: 12px 0 0 12px;">
                             <i class="bi bi-search text-muted"></i>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="col" th:each="p : ${productos}">
                     <div class="card h-100 card-naranja shadow-sm">
-                        <img class="card-img-top img-producto" th:src="@{/user/product/{productoID}/pic(productoID=${p != null ? p.id : 0})}" alt="foto del producto">
+                        <img class="card-img-top img-producto" th:src="@{/product/{productoID}/pic(productoID=${p != null ? p.id : 0})}" alt="foto del producto">
                         <div class="card-body d-flex flex-column text-center">
                             <h5 class="card-title text-naranja fw-bold" th:text="${p.name}">Nombre</h5>
                             <ul class="list-group list-group-flush text-start mb-3">
@@ -49,7 +49,7 @@
                                 <li class="list-group-item medium">Cantidad: <span th:text="${p.quantity}"></span></li>
                                 <li class="list-group-item medium">EAN: <span th:text="${p.EAN}"></span></li>
                             </ul>
-                            <a th:href="@{/user/product/{productoID}(productoID=${p.id})}" class="btn btn-naranja mt-auto btn-comparar">
+                            <a th:href="@{/product/{productoID}(productoID=${p.id})}" class="btn btn-naranja mt-auto btn-comparar">
                                 Comparar
                             </a>
                         </div>

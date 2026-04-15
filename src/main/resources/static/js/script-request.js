@@ -47,7 +47,7 @@ form.addEventListener("submit", function (e) {
 
     const selectedType = document.querySelector("input[name='type']:checked");
 
-    const name = document.getElementById("name").value.trim();
+    const name = document.querySelector("#name").value.trim();
     const brand = document.getElementById("brand").value.trim();
     const quantity = document.getElementById("quantity").value.trim();
     const price = Number(document.getElementById("price").value);

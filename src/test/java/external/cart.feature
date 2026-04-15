@@ -29,7 +29,7 @@ Feature: Pruebas UI de la gestión de carritos
     And match html('body') contains 'Carrito Automatizado Karate'
 
     # 5. Navegar a la vista búsqueda
-    Given driver baseUrl + '/user/search'
+    Given driver baseUrl + '/search'
     #click en el primer producto
     And waitFor('.btn-comparar')
     When click('.btn-comparar')

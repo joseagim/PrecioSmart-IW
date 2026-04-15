@@ -1,3 +1,10 @@
+function actualizarPagina(cartId, itemId, action) {
+    actualizarCantidad(cartId, itemId, action)
+    .then(() => {
+        actualizarSupermercados(cartId);
+    });
+}
+
 function actualizarCantidad(cartId, itemId, action) {
     const token = document.querySelector('input[name="_csrf"]').value;
     const header = "X-CSRF-TOKEN";
@@ -10,7 +17,7 @@ function actualizarCantidad(cartId, itemId, action) {
         formData.append("itemId", itemId);
     }
 
-    fetch("/user/cart/update", {
+    return fetch("/user/cart/update", {
         method: "POST",
         headers: {
             [header]: token
@@ -23,6 +30,30 @@ function actualizarCantidad(cartId, itemId, action) {
     })
     .then(htmlFragment => {
         document.getElementById("tablaProductos").innerHTML = htmlFragment;
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function actualizarSupermercados(cartId) {
+    const token = document.querySelector('input[name="_csrf"]').value;
+    const header = "X-CSRF-TOKEN";
+
+    const formData = new FormData();
+    formData.append("cartId", cartId);
+
+    fetch("/user/cart/updateSuperCarts", {
+        method: "POST",
+        headers: {
+            [header]: token
+        },
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Error en la red');
+        return response.text(); 
+    })
+    .then(htmlFragment => {
+        document.getElementById("totalesSupermercados").innerHTML = htmlFragment;
     })
     .catch(error => console.error('Error:', error));
 }

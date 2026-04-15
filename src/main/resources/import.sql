@@ -626,36 +626,30 @@ INSERT INTO Product_Supermarket (id, price, date, product_id, supermarket_id) VA
 (402, 2.80, '2024-06-02', 200, 5),
 (403, 1.95, '2024-06-02', 201, 1), 
 (404, 2.10, '2024-06-02', 201, 2),
-(405, 0.85, '2024-06-02', 202, 3), 
-(406, 0.95, '2024-06-02', 202, 4);
-
-INSERT INTO Product_Supermarket (id, price, date, product_id, supermarket_id) VALUES 
-(1, 1.5, '2024-06-01', 1, 1),
-(2, 1.6, '2024-06-01', 1, 2),
-(3, 1.4, '2024-06-01', 1, 3),
-(4, 1.4, '2024-06-01', 1, 4),
-(5, 1.4, '2024-06-01', 2, 5);
+(405, 0.85, '2024-06-02', 202, 1), 
+(406, 0.85, '2024-06-02', 202, 3), 
+(407, 0.95, '2024-06-02', 202, 4);
 
 
 -- Primer carrito: Compra Semanal Básica
-INSERT INTO Cart (name, date, total, user_id) 
-VALUES ('Compra Semanal Super', '2026-03-18 10:45:00', 21.95, 2);
+INSERT INTO Cart (name, date, user_id) 
+VALUES ('Compra Semanal Super', '2026-03-18 10:45:00', 2);
 
 -- Segundo carrito: Compra Especial (Cena/Evento)
-INSERT INTO Cart (name, date, total, user_id) 
-VALUES ('Compra Cena Amigos', '2026-03-18 09:15:00', 10.8, 2);
+INSERT INTO Cart (name, date, user_id) 
+VALUES ('Compra Cena Amigos', '2026-03-18 09:15:00', 2);
 
 -- Tercer carrito para el usuario 2 (Vacío)
-INSERT INTO Cart (name, date, total, user_id) 
-VALUES ('Lista de Deseos Vacía', '2026-03-18 08:10:00', 0.0, 2);
+INSERT INTO Cart (name, date, user_id) 
+VALUES ('Lista de Deseos Vacía', '2026-03-18 08:10:00', 2);
 
--- Productos para el Carrito 1 (Compra Semanal Super - Total 21.95)
-INSERT INTO Product_Cart (cart_id, product_id, quantity, subtotal) VALUES 
-(1, 1, 2, 13.00), -- 2 packs de leche
-(1, 2, 1, 8.95);  -- 1 de pollo (el resto hasta 21.95 serían otros productos)
+-- Productos para el Carrito 1 (Compra Semanal Super)
+INSERT INTO Product_Cart (cart_id, product_id, quantity) VALUES 
+(1, 1, 2), -- 2 packs de leche
+(1, 2, 1);  -- 1 de pollo
 
--- Productos para el Carrito 2 (Compra Cena Amigos - Total 10.8)
-INSERT INTO Product_Cart (cart_id, product_id, quantity, subtotal) VALUES 
-(2, 3, 2, 3.3), -- 2 packs de refrescos
-(2, 4, 3, 7.5); -- 3 de snacks
+-- Productos para el Carrito 2 (Compra Cena Amigos)
+INSERT INTO Product_Cart (cart_id, product_id, quantity) VALUES 
+(2, 3, 2), -- 2 packs de refrescos
+(2, 4, 3); -- 3 de snacks
 
