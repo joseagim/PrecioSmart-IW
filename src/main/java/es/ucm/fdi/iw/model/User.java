@@ -25,7 +25,10 @@ import java.util.List;
         + "WHERE u.username = :username"),
     @NamedQuery(name = "User.topics", query = "SELECT t.key "
         + "FROM Topic t JOIN t.members u "
-        + "WHERE u.id = :id")
+        + "WHERE u.id = :id"),
+     @NamedQuery(name = "User.hasEmail", query = "SELECT COUNT(u) "
+        + "FROM User u "
+        + "WHERE u.email = :email"),
 })
 @Table(name = "IWUser")
 public class User implements Transferable<User.Transfer> {
@@ -47,6 +50,7 @@ public class User implements Transferable<User.Transfer> {
 
     private String firstName;
     private String lastName;
+    private String email;
 
     private String colorFavorito;
 
