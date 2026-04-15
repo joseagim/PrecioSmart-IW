@@ -163,7 +163,7 @@ public class RequestController {
                         "Para un producto nuevo debes indicar nombre, marca y cantidad"));
             }
 
-        } else if (requestType == RequestType.ADD_IN_SUPER) {
+        } else {
             existingProduct = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
                     .setParameter("EAN", normalizedEan)
                     .getResultStream()
@@ -196,13 +196,20 @@ public class RequestController {
                         .findFirst()
                         .isPresent();
 
-                if (existe) {
+
+                if (existe && requestType == RequestType.ADD_IN_SUPER) {
                     return ResponseEntity.badRequest()
                             .body(Map.of("status", "error", "message", "El producto ya existe en ese supermercado"));
-                } else {
+                } else if (!existe && requestType == RequestType.MODIFY) {
                     return ResponseEntity.badRequest().body(Map.of("status", "error", "message",
                             "No existe este producto en el supermercado indicado, no se puede modificar"));
                 }
+
+                normalizedName = existingProduct.getName();
+                normalizedBrand = existingProduct.getBrand();
+                normalizedQuantity = existingProduct.getQuantity();
+                request.setImageUrl(existingProduct.getImageUrl());
+
             }
 
         }
