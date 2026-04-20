@@ -12,20 +12,34 @@
     <main class="flex-shrink-0">
 
         <section class="profile-hero">
-            <div class="profile-hero-inner">
+            <div class="profile-hero-inner" th:if="${u != null}">
                 <span class="profile-kicker">MI CUENTA</span>
 
                 <h1 class="display-5  text-white fw-bold mb-3">
                     Bienvenido de nuevo, <strong><span th:text="${user.username}">Paco</span></strong>
                 </h1>
 
-                <p class="fs-5 fw-light text-white">
-                    Ya puedes empezar a ahorrar tiempo y esfuerzo.
-                </p>
 
-                <p class="fs-6 fw-light text-white">
-                    Accede a tus carritos personalizados, solicita nuevos productos y gestiona tu lista de deseos.
-                </p>
+                <th:block th:if="${u.hasRole('ADMIN')}">
+                    <p class="fs-5 fw-light text-white">
+                        Eres un administrador, puedes gestionar los productos, las solicitudes de los usuarios y mucho
+                        más.
+                    </p>
+                    <p class="fs-6 fw-light text-white">
+                        Accede a tu panel de administración para gestionar los usuarios y peticiones.
+                    </p>
+
+                </th:block>
+                <th:block th:unless="${u.hasRole('USER')}">
+                    <p class="fs-5 fw-light text-white">
+                        Ya puedes empezar a ahorrar tiempo y esfuerzo.
+                    </p>
+
+                    <p class="fs-6 fw-light text-white">
+                        Accede a tus carritos personalizados, solicita nuevos productos y gestiona tu lista de deseos.
+                    </p>
+                </th:block>
+
             </div>
         </section>
 
@@ -41,30 +55,39 @@
                         </li>
                     </ul>
 
-                    <h3>Cambiar foto de perfil</h3>
-                    <div id="profile" class="border border-2 border-tertiary rounded">
-                        <input type="file" id="f_avatar" accept="image/jpeg,image/png">
-                        <img class="preview" id="avatar" alt="careto a subir" />
-                        <form th:action="@{/user/__${user.id}__/pic}">
-                            <button id="postAvatar">Usar como foto de perfil</button>
-                        </form>
+                    <h3 class="h5 fw-bold mb-3">Cambiar foto de perfil</h3>
+                    <div id="profile" class="card border-0 shadow-sm bg-light-subtle">
+                        <div class="card-body p-4">
+                            <label for="f_avatar" class="form-label fw-semibold">Selecciona una imagen</label>
+                            <input class="form-control form-control-sm mb-3" type="file" id="f_avatar"
+                                accept="image/jpeg,image/png">
+
+                            <div class="text-center mb-3">
+                                <img class="preview img-thumbnail " id="avatar" alt="Vista previa de la imagen" />
+                            </div>
+
+                            <form th:action="@{/user/__${user.id}__/pic}" class="d-grid">
+                                <button id="postAvatar" class="btn btn-naranja fw-semibold">Usar como foto de
+                                    perfil</button>
+                            </form>
+                        </div>
                     </div>
 
                 </div>
             </div>
 
             <div class="container">
-                <h2 class="mt-5">Mensajes de <span th:text="${user.username}">Paco</span></h1>
-                    <!-- recepción de mensajes -->
-                    <div class="py-5 row" id="mensajes">
-                    </div>
-                    <!-- envío de mensajes -->
-                    <div class="py-5 row ">
-                        <form th:action="@{/user/{id}/msg(id=${user.id})}" method="POST">
-                            <input type="text" id="message" class="me-2" placeholder="escribe a este usuario" />
-                            <button id="sendmsg" class="btn btn-secondary" type="submit">Enviar</button>
-                        </form>
-                    </div>
+                <h2 class="mt-5">Mensajes de <span th:text="${user.username}">Paco</span></h2>
+                <!-- recepción de mensajes -->
+                <div class="py-5 row" id="mensajes">
+                </div>
+                <!-- envío de mensajes -->
+                <div class="py-5 row ">
+                    <form th:action="@{/user/{id}/msg(id=${user.id})}" method="POST">
+                        <input type="text" id="message" class="me-2" placeholder="escribe a este usuario" />
+                        <button id="sendmsg" class="btn btn-secondary" type="submit">Enviar</button>
+                    </form>
+                </div>
             </div>
         </div>
 

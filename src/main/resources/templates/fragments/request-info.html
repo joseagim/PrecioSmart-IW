@@ -7,58 +7,64 @@
 
 <body>
     <div th:fragment="requestInfo (r)">
-    <div class="row g-3 g-md-4 ">
+        <div class="row g-3 g-md-4 ">
 
-        <div class="col-12 col-md-3 d-flex flex-column h-100">
-            <div class="d-flex flex-column justify-content-center flex-grow-1 w-100">
-                <th:block th:switch="${r.type != null ? r.type.name() : ''}">
+            <div class="col-12 col-md-3 d-flex flex-column h-100">
+                <div class="d-flex flex-column justify-content-center flex-grow-1 w-100">
+                    <th:block th:switch="${r.type != null ? r.type.name() : ''}">
 
-                    <span th:case="'ADD'" class="badge rounded-pill text-bg-primary px-3 py-2">AÑADIR NUEVO
-                        PRODUCTO</span>
-                    <span th:case="'ADD_IN_SUPER'" class="badge rounded-pill text-bg-success px-3 py-2">AÑADIR A
-                        SUPERMERCADO</span>
-                    <span th:case="'MODIFY'" class="badge rounded-pill text-bg-warning  px-3 py-2">MODIFICAR
-                        PRODUCTO</span>
+                        <span th:case="'ADD'"
+                            class="badge rounded-pill text-bg-primary px-3 py-2 d-inline-flex w-100 justify-content-center align-items-center text-center text-wrap">AÑADIR
+                            NUEVO
+                            PRODUCTO</span>
+                        <span th:case="'ADD_IN_SUPER'"
+                            class="badge rounded-pill text-bg-success px-3 py-2 d-inline-flex w-100 justify-content-center align-items-center text-center text-wrap">AÑADIR
+                            A
+                            SUPERMERCADO</span>
+                        <span th:case="'MODIFY'"
+                            class="badge rounded-pill text-bg-warning px-3 py-2 d-inline-flex w-100 justify-content-center align-items-center text-center text-wrap">MODIFICAR
+                            PRODUCTO</span>
 
-                </th:block>
+                    </th:block>
+                </div>
+
+                <div class="pt-2 mt-auto">
+                    <div class="fs-6 text-secondary" th:text="|Fecha: ${#temporals.format(r.date, 'dd/MM/yyyy')}|">
+                        Fecha:
+                        --/--/----</div>
+                    <div class="fs-6 text-secondary" th:text="|Hora: ${#temporals.format(r.date, 'HH:mm')}|">Hora: --:--
+                    </div>
+                </div>
             </div>
 
-            <div class="pt-2 mt-auto">
-                <div class="fs-6 text-secondary" th:text="|Fecha: ${#temporals.format(r.date, 'dd/MM/yyyy')}|">Fecha:
-                    --/--/----</div>
-                <div class="fs-6 text-secondary" th:text="|Hora: ${#temporals.format(r.date, 'HH:mm')}|">Hora: --:--
+            <div class="col-12 col-md-6">
+                <div class="fw-semibold fs-3 mb-2" th:text="${r.name}">Producto</div>
+                <div class="fs-6 text-secondary" th:text="|Marca: ${r.brand}|"></div>
+                <div  class="fs-6 text-secondary" th:text="|Cantidad: ${r.quantity}|">
+                </div>
+                <div class="fs-6 text-secondary" th:text="|EAN: ${r.EAN}|"></div>
+
+
+                <div class="mt-3 d-flex flex-wrap gap-2">
+                    <span class="badge rounded-pill text-bg-light border fs-6" th:text="${r.supermarket}">Market</span>
+                    <span class="badge rounded-pill text-bg-warning-subtle text-dark fs-6"
+                        th:text="${#numbers.formatDecimal(r.price, 1, 2)} + ' EUR'">0.00
+                        EUR</span>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-3 d-flex justify-content-center justify-content-md-end">
+                <div class="rounded-4 border bg-light-subtle p-2" style="width:180px;height:180px;">
+                    <img th:if="${r.imageUrl != null}" th:src="@{'/user/request/' + ${r.id} + '/pic'}"
+                        alt="Foto del producto" class="w-100 h-100 rounded-3 d-block bg-white"
+                        style="object-fit: contain;" />
+                    <div th:if="${r.imageUrl == null}"
+                        class="rounded-3 bg-white d-flex align-items-center justify-content-center text-muted h-100 w-100">
+                        <span class="small">Sin foto</span>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-12 col-md-6">
-            <div th:if="${r.type.name() == 'ADD'}" class="fw-semibold fs-3 mb-2" th:text="${r.name}">Producto</div>
-            <div th:if="${r.type.name() == 'ADD'}" class="fs-6 text-secondary" th:text="|Marca: ${r.brand}|"></div>
-            <div th:if="${r.type.name() == 'ADD'}" class="fs-6 text-secondary" th:text="|Cantidad: ${r.quantity}|">
-            </div>
-            <div class="fs-6 text-secondary" th:text="|EAN: ${r.EAN}|"></div>
-
-
-            <div class="mt-3 d-flex flex-wrap gap-2">
-                <span class="badge rounded-pill text-bg-light border fs-6" th:text="${r.supermarket}">Market</span>
-                <span class="badge rounded-pill text-bg-warning-subtle text-dark fs-6"
-                    th:text="${#numbers.formatDecimal(r.price, 1, 2)} + ' EUR'">0.00
-                    EUR</span>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-3 d-flex justify-content-center justify-content-md-end">
-            <div class="rounded-4 border bg-light-subtle p-2" style="width:180px;height:180px;">
-                <img th:if="${r.imageUrl != null}" th:src="@{'/user/request/' + ${r.id} + '/pic'}"
-                    alt="Foto del producto" class="w-100 h-100 rounded-3 d-block bg-white"
-                    style="object-fit: contain;" />
-                <div th:if="${r.imageUrl == null}"
-                    class="rounded-3 bg-white d-flex align-items-center justify-content-center text-muted h-100 w-100">
-                    <span class="small">Sin foto</span>
-                </div>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>
