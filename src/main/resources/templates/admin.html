@@ -25,8 +25,7 @@
                             <label class="form-check-label" for="pending-request">Pendientes</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="type" id="accepted-request"
-                                value="1">
+                            <input class="form-check-input" type="radio" name="type" id="accepted-request" value="1">
                             <label class="form-check-label" for="accepted-request">Aceptadas</label>
                         </div>
                         <div class="form-check form-check-inline">
@@ -45,8 +44,16 @@
                         <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
                             <div th:replace="~{fragments/request-info :: requestInfo(${pr})}"></div>
                             <div class="d-flex gap-2 mt-3 ms-3">
-                                <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
-                                <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
+                                <form th:action="@{accept}" method="POST" id="accept-form">
+                                    <input type="hidden" name="id" th:value="${pr.id}">
+                                    <button type="submit"
+                                        class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
+                                </form>
+                                <form th:action="@{reject}" method="POST" id="reject-form">
+                                    <input type="hidden" name="id" th:value="${pr.id}">
+                                    <button type="submit"
+                                        class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -60,10 +67,6 @@
                     <div th:each="ar : ${acceptedRequests}">
                         <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
                             <div th:replace="~{fragments/request-info :: requestInfo(${ar})}"></div>
-                            <div class="d-flex gap-2 mt-3 ms-3">
-                                <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
-                                <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -76,17 +79,13 @@
                     <div th:each="rr : ${rejectedRequests}">
                         <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
                             <div th:replace="~{fragments/request-info :: requestInfo(${rr})}"></div>
-                            <div class="d-flex gap-2 mt-3 ms-3">
-                                <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
-                                <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
-                            </div>
                         </div>
                     </div>
                 </div>
 
             </div>
         </div>
-        
+
         <script th:src="@{/js/script-admin.js}"></script>
 
     </main>

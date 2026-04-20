@@ -22,9 +22,14 @@ radioButtons.forEach(radio => {
 // Mostrar la primera lista al cargar
 showRequestList("0");
 
-// Manejar clics en botones de aceptar/rechazar
-document.querySelectorAll(".btn-aceptar, .btn-rechazar").forEach(btn => {
-    btn.addEventListener("click", (e) => {
-        e.target.parentElement.parentElement.remove();
-    });
-});
+// Pillar los datos del formulario y mandar el AJAX
+const acceptForm = document.querySelector("#accept-form");
+const rejectForm = document.querySelector("#reject-form");
+
+acceptForm.addEventListener("submit", (e) => {
+    e.preventDefault(); // para que no se envíe
+    go(acceptForm, "POST")
+    .then(data => {
+        
+    })
+})

@@ -3,7 +3,7 @@
 
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
-    <title>PrecioSmart FAQ</title>
+    <title>PrecioSmart - Preguntas frecuentes</title>
 
 </head>
 
@@ -11,19 +11,62 @@
     <header th:replace="~{fragments/nav.html :: nav}"></header>
 
     <main class="flex-shrink-0">
-        <div class="container">
-            <h1 class="mt-5 mb-5">Preguntas frecuentes</h1>
-            <p class="text-start">Aparecerán varias preguntas que se puede llegar a hacer la gente sobre la aplicación. Algunas preguntas pueden ser:</p>
-            <ul class="text-start">
-                <li>
-                    <h3>Cómo puedo comparar productos?</h3>
-                    <p>Debes ir al apartado de búsqueda y escanear el código de barras o buscarlo manualmente. Después te aparecerán automáticamente productos similares y una opción para filtrarlos según varios criterios (precio, gramos, grasas, etc).</p>
-                </li>
-                <li>
-                    <h3>Cómo puedo crear un carrito?</h3>
-                    <p>En el apartado de carrito debes dar click al botón de crear e introducir los productos que quieras añadir. Después la aplicación calcula el precio total y realiza una comparación del precio entre varios supermercados.</p>
-                </li>
-            </ul>
+        <div class="container py-5 text-start">
+            <h1 class="mt-4 mb-4">Preguntas frecuentes (FAQ)</h1>
+
+            <p>Esta página recoge las dudas más habituales sobre el funcionamiento de la aplicación PrecioSmart.</p>
+
+            <section class="mt-4">
+                <h3>1. ¿Cómo puedo buscar o comparar un producto?</h3>
+                <p>Usa la página de <strong>Búsqueda</strong>. Puedes introducir el nombre manualmente o usar la opción de <strong>escaneo de código de barras</strong>. La aplicación mostrará productos similares y te permitirá filtrarlos por precio, peso, grasas, azúcar u otros criterios.</p>
+
+                <h3 class="mt-3">2. ¿Cómo creo y gestiono un carrito?</h3>
+                <p>En la sección <strong>Carrito</strong> puedes crear un nuevo carrito, añadir productos y ver el precio total. También se muestra una comparación de precios entre distintos supermercados para los productos del carrito.</p>
+
+                <h3 class="mt-3">3. ¿Necesito una cuenta para usar la app?</h3>
+                <p>No todas las funciones requieren cuenta, pero para crear carritos, enviar solicitudes, recibir notificaciones y personalizar el perfil debes <strong>registrarte</strong> e <strong>iniciar sesión</strong>.</p>
+
+                <h3 class="mt-3">4. ¿Cómo cambio mi foto de perfil?</h3>
+                <p>Desde tu perfil hay una opción para seleccionar un archivo de imagen (jpg/png). Tras seleccionar la imagen verás una <strong>previsualización</strong> y podrás confirmar para usarla como avatar. La imagen se sube al servidor y se usa en el menú y en tu perfil.</p>
+
+                <h3 class="mt-3">5. ¿Qué responsabilidades tiene un administrador?</h3>
+                <p>Los administradores tienen acceso al <strong>panel de administración</strong> para gestionar usuarios, productos y solicitudes. Pueden validar o rechazar peticiones de nuevos productos y editar entradas del catálogo.</p>
+
+                <h3 class="mt-3">6. ¿Qué es la funcionalidad de solicitudes (requests)?</h3>
+                <p>Si no encuentras un producto puedes enviar una <strong>solicitud</strong>. El equipo (o los admins) puede revisar la solicitud, añadir el producto al catálogo y notificarte cuando esté disponible.</p>
+
+                <h3 class="mt-3">7. ¿Cómo funcionan los mensajes y notificaciones?</h3>
+                <p>La aplicación usa <strong>WebSocket</strong> para notificaciones en tiempo real. Puedes enviar mensajes a otros usuarios desde su perfil y recibir avisos (por ejemplo, cuando un admin responde a tu solicitud o cuando hay cambios relevantes).</p>
+
+                <h3 class="mt-3">8. ¿Puedo subir imágenes de productos?</h3>
+                <p>Sí. Al crear o editar productos puedes subir imágenes. El sistema acepta formatos comunes (jpg/png); comprueba el tamaño y la resolución para garantizar una carga correcta.</p>
+
+                <h3 class="mt-3">9. ¿Cómo se protege mi información?</h3>
+                <p>Las operaciones protegidas utilizan tokens CSRF y control de sesiones. Los datos sensibles (contraseñas) se almacenan de forma segura en el servidor. Consulta la política de privacidad para más detalles.</p>
+
+                <h3 class="mt-3">10. ¿Qué hago si encuentro un error o falta un producto?</h3>
+                <p>Usa la sección de <strong>Solicitudes</strong> para pedir productos nuevos o contacta con el equipo mediante el formulario de contacto (o el correo que aparece en la página principal). Adjunta detalles y capturas si es posible.</p>
+
+                <h3 class="mt-3">11. ¿Cómo funciona la subida de avatar en el perfil (detalles técnicos)?</h3>
+                <p>El selector de archivo genera una previsualización en el cliente (FileReader). Al confirmar, la imagen se envía al servidor como multipart/form-data y el servidor actualiza la imagen asociada al usuario. La caché se evita añadiendo un parámetro único (cache buster) a la URL.</p>
+
+                <h3 class="mt-3">12. ¿Puedo eliminar o cambiar información de mi cuenta?</h3>
+                <p>Desde el área de perfil puedes modificar datos personales (dentro de las opciones disponibles). Para eliminación completa de cuenta contacta con el soporte indicando tu usuario.</p>
+
+                <h3 class="mt-3">13. ¿Dónde puedo ver la lista completa de autores y créditos?</h3>
+                <p>En la página <strong>Authors</strong> (en el pie o barra de navegación) encontrarás los autores y sus fotos.</p>
+
+                <h3 class="mt-3">14. ¿Hay límites en el tamaño de las imágenes?</h3>
+                <p>Se recomiendan imágenes optimizadas. El servidor puede rechazar ficheros muy grandes; si tienes problemas, reduce la resolución antes de subir.</p>
+
+                <h3 class="mt-3">15. ¿Cómo contribuyo al proyecto o consulto el código?</h3>
+                <p>El proyecto dispone de un repositorio con el código fuente. Consulta el README y el LICENSE en el repositorio para instrucciones sobre cómo colaborar.</p>
+            </section>
+
+            <div class="mt-4">
+                <p>Si tu duda no aparece aquí, ponte en contacto usando el formulario de contacto o abre una incidencia describiendo el problema.</p>
+            </div>
+
         </div>
     </main>
 

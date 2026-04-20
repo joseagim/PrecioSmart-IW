@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,7 +52,6 @@ public class AdminController {
 
   private static final Logger log = LogManager.getLogger(AdminController.class);
 
-  @Transactional
   @GetMapping("/mod")
   public String getRequest(Model model) {
 
@@ -76,77 +76,14 @@ public class AdminController {
     return "admin";
   }
 
-  /*
-   * @PostMapping("/toggle/{id}")
-   * 
-   * @Transactional
-   * 
-   * @ResponseBody
-   * public String toggleUser(@PathVariable long id, Model model) {
-   * log.info("Admin cambia estado de " + id);
-   * User target = entityManager.find(User.class, id);
-   * target.setEnabled(!target.isEnabled());
-   * return "{\"enabled\":" + target.isEnabled() + "}";
-   * }
-   */
-  /*
-   * 
-   * Returns JSON with all received messages
-   * 
-   * @GetMapping(path = "all-messages", produces = "application/json")
-   * 
-   * @Transactional // para no recibir resultados inconsistentes
-   * 
-   * @ResponseBody // para indicar que no devuelve vista, sino un objeto
-   * (jsonizado)
-   * public List<Message.Transfer> retrieveMessages(HttpSession session) {
-   * TypedQuery<Message> query =
-   * entityManager.createQuery("select m from Message m", Message.class);
-   * query.setMaxResults(5);
-   * query.setFirstResult(0); // para paginar: cambias el 1er resultado
-   * // devuelve resultado
-   * return query.getResultList().stream().map(Transferable::toTransfer)
-   * .collect(Collectors.toList());
-   * }
-   * 
-   * @RequestMapping("/populate")
-   * 
-   * @ResponseBody
-   * 
-   * @Transactional
-   * public String populate(Model model) {
-   * 
-   * // create some groups
-   * Topic g1 = new Topic();
-   * g1.setName("g1");
-   * g1.setKey(UserController.generateRandomBase64Token(6));
-   * entityManager.persist(g1);
-   * Topic g2 = new Topic();
-   * g2.setName("g2");
-   * g2.setKey(UserController.generateRandomBase64Token(6));
-   * entityManager.persist(g2);
-   * 
-   * // create some users & assign to groups
-   * for (int i = 0; i < 15; i++) {
-   * User u = new User();
-   * u.setUsername("user" + i);
-   * u.setPassword(passwordEncoder
-   * .encode("aa"));
-   * // UserController.generateRandomBase64Token(9)));
-   * u.setEnabled(true);
-   * u.setRoles(User.Role.USER.toString());
-   * u.setFirstName(Lorem.nombreAlAzar());
-   * u.setLastName(Lorem.apellidoAlAzar());
-   * entityManager.persist(u);
-   * if (i % 2 == 0) {
-   * g1.getMembers().add(u);
-   * // u.getTopics().add(g1); NO FUNCIONA: propietario es g, no u
-   * }
-   * if (i % 3 == 0) {
-   * g2.getMembers().add(u);
-   * }
-   * }
-   * return "{\"admin\": \"populated\"}";
-   * }
-   */
+  @PostMapping("/mod/accept")
+  public ResponseEntity acceptRequest(Model model) {
+    return "";
+  }
+
+  @PostMapping("/mod/reject")
+  public String rejectRequest(Model model) {
+    return "";
+  }
+
 }
