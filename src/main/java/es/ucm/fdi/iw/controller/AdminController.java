@@ -2,7 +2,14 @@ package es.ucm.fdi.iw.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,8 +29,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import es.ucm.fdi.iw.model.Topic;
 import es.ucm.fdi.iw.model.Lorem;
 import es.ucm.fdi.iw.model.Message;
+import es.ucm.fdi.iw.model.Product;
+import es.ucm.fdi.iw.model.ProductSupermarket;
 import es.ucm.fdi.iw.model.Request;
 import es.ucm.fdi.iw.model.RequestStatus;
+import es.ucm.fdi.iw.model.Supermarket;
 import es.ucm.fdi.iw.model.Transferable;
 import es.ucm.fdi.iw.model.User;
 import jakarta.persistence.EntityManager;
@@ -65,19 +75,19 @@ public class AdminController {
 
       type = "pending";
       requests = entityManager.createNamedQuery("findByStatus", Request.class)
-          .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.PENDING)
+          .setParameter("status", RequestStatus.PENDING)
           .getResultList();
 
     } else if (type.equals("accepted")) {
 
       requests = entityManager.createNamedQuery("findByStatus", Request.class)
-          .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.APPROVED)
+          .setParameter("status", RequestStatus.APPROVED)
           .getResultList();
 
     } else if (type.equals("rejected")) {
 
       requests = entityManager.createNamedQuery("findByStatus", Request.class)
-          .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.REJECTED)
+          .setParameter("status", RequestStatus.REJECTED)
           .getResultList();
 
     } else {
@@ -91,28 +101,153 @@ public class AdminController {
   }
 
   @PostMapping("/mod/accept")
-  public ResponseEntity acceptRequest(Model model, @RequestParam Long id) {
+  @Transactional
+  public ResponseEntity<Map<String, String>> acceptRequest(Model model, @RequestParam Long id) {
+
+    // si no hay id
     if (id == null) {
-      return ResponseEntity.badRequest().body("El ID de la solicitud es requerido");
+      return ResponseEntity.badRequest().body(Map.of("message", "El ID de la solicitud es requerido"));
+    }
+
+    Request request = entityManager.find(Request.class, id);
+    // si no existe la request
+    if (request == null) {
+      return ResponseEntity.badRequest().body(Map.of("message", "No se encontró la solicitud con el ID proporcionado"));
+    }
+    // si la request no está pendiente
+    if (request.getStatus() != RequestStatus.PENDING) {
+      return ResponseEntity.badRequest().body(Map.of("message", "La solicitud ya ha sido procesada"));
+    }
+
+    Product product = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
+      .setParameter("EAN", request.getEAN())
+        .getResultStream()
+        .findFirst()
+        .orElse(null);
+
+    Supermarket supermarket = entityManager.createNamedQuery("Supermarket.searchByName", Supermarket.class)
+        .setParameter("name", request.getSupermarket())
+        .getSingleResult();
+
+    // el supermercado no existe
+    if (supermarket == null) {
+      return ResponseEntity.badRequest()
+          .body(Map.of("message", "No se encontró el supermercado con el nombre proporcionado"));
+    }
+
+    // aceptamos la request según su tipo
+    switch (request.getType()) {
+      // añadir product y product supermarket
+      case ADD: {
+        // el producto ya existe
+        if (product != null) {
+          return ResponseEntity.badRequest().body(Map.of("message", "El producto ya existe"));
+        }
+
+        // el producto no existe, lo creamos
+        product = new Product();
+        product.setEAN(request.getEAN());
+        product.setName(request.getName());
+        product.setBrand(request.getBrand());
+        product.setQuantity(request.getQuantity());
+
+        // añadimos el precio en el super
+        ProductSupermarket ps = new ProductSupermarket();
+        ps.setProduct(product);
+        ps.setSupermarket(supermarket);
+        ps.setPrice(request.getPrice());
+        ps.setDate(request.getDate());
+
+        // ponemos la request como aceptada
+        request.setStatus(RequestStatus.APPROVED);
+
+        // guardamos en la bbdd
+        entityManager.merge(request);
+        entityManager.persist(product);
+        entityManager.persist(ps);
+
+        moveImage(request, product.getId());
+        break;
+      }
+      // añadir product supermarket
+      case ADD_IN_SUPER: {
+
+          // el producto no existe
+          if (product == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "El producto no existe"));
+          }
+
+        break;
+      }
+      // añadir product supermarket
+      case MODIFY: {
+
+            // el producto no existe
+            if (product == null) {
+              return ResponseEntity.badRequest().body(Map.of("message", "El producto no existe"));
+            }
+
+        break;
+      }
+      default: {
+
+      }
+    }
+
+    return ResponseEntity.ok().body(Map.of("message", "Solicitud aceptada correctamente"));
+  }
+
+  @PostMapping("/mod/reject")
+  @Transactional
+  public ResponseEntity<Map<String, String>> rejectRequest(Model model, @RequestParam Long id) {
+    if (id == null) {
+      return ResponseEntity.badRequest().body(Map.of("message", "El ID de la solicitud es requerido"));
     }
 
     Request request = entityManager.find(Request.class, id);
     if (request == null) {
-      return ResponseEntity.badRequest().body("No se encontró la solicitud con el ID proporcionado");
+      return ResponseEntity.badRequest().body(Map.of("message", "No se encontró la solicitud con el ID proporcionado"));
     }
     if (request.getStatus() != RequestStatus.PENDING) {
-      return ResponseEntity.badRequest().body("La solicitud ya ha sido procesada");
+      return ResponseEntity.badRequest().body(Map.of("message", "La solicitud ya ha sido procesada"));
     }
 
-    request.setStatus(RequestStatus.APPROVED);
+    request.setStatus(RequestStatus.REJECTED);
     entityManager.merge(request);
 
-    return null;
+    return ResponseEntity.ok().body(Map.of("message", "Solicitud rechazada correctamente"));
   }
 
-  @PostMapping("/mod/reject")
-  public String rejectRequest(Model model, @RequestParam Long id) {
-    return "";
-  }
+  void moveImage(Request request, long productId) {
+    // 1. Definimos la ruta base (donde vive 'iwdata')
+    // Es buena práctica tener esto en una constante o configuración
+    String baseDir = "iwdata";
 
+    // 2. Construimos los Paths de origen y destino
+    // Origen: iwdata/request/{id}.jpg
+    Path source = Paths.get(baseDir, "request", request.getId() + ".jpg");
+
+    // Destino: iwdata/product/{id}.jpg
+    Path target = Paths.get(baseDir, "product", productId + ".jpg");
+
+    try {
+      // 3. Verificamos si la imagen de la request existe antes de moverla
+      if (Files.exists(source)) {
+
+        // 4. Aseguramos que la carpeta de destino existe (por si acaso)
+        Files.createDirectories(target.getParent());
+
+        // 5. Movemos el archivo
+        // REPLACE_EXISTING sirve para que, si ya había una foto vieja del producto, la
+        // sobreescriba
+        Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+      } else
+        throw new IOException("La imagen no existe");
+    } catch (IOException e) {
+      // Las operaciones de archivos siempre pueden fallar (permisos, disco lleno,
+      // etc.)
+      System.err.println("Error al mover la imagen: " + e.getMessage());
+      e.printStackTrace();
+    }
+  }
 }

@@ -40,7 +40,7 @@
             <div class="col-12 col-md-6">
                 <div class="fw-semibold fs-3 mb-2" th:text="${r.name}">Producto</div>
                 <div class="fs-6 text-secondary" th:text="|Marca: ${r.brand}|"></div>
-                <div  class="fs-6 text-secondary" th:text="|Cantidad: ${r.quantity}|">
+                <div class="fs-6 text-secondary" th:text="|Cantidad: ${r.quantity}|">
                 </div>
                 <div class="fs-6 text-secondary" th:text="|EAN: ${r.EAN}|"></div>
 
@@ -55,13 +55,9 @@
 
             <div class="col-12 col-md-3 d-flex justify-content-center justify-content-md-end">
                 <div class="rounded-4 border bg-light-subtle p-2" style="width:180px;height:180px;">
-                    <img th:if="${r.imageUrl != null}" th:src="@{'/user/request/' + ${r.id} + '/pic'}"
+                    <img th:src="@{'/user/request/' + ${r.id} + '/pic'}"
                         alt="Foto del producto" class="w-100 h-100 rounded-3 d-block bg-white"
                         style="object-fit: contain;" />
-                    <div th:if="${r.imageUrl == null}"
-                        class="rounded-3 bg-white d-flex align-items-center justify-content-center text-muted h-100 w-100">
-                        <span class="small">Sin foto</span>
-                    </div>
                 </div>
             </div>
         </div>

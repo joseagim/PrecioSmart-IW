@@ -9,8 +9,15 @@ VALUES (2, TRUE, 'USER', 'b',
 -- start id numbering from a value that is larger than any assigned above
 ALTER SEQUENCE "PUBLIC"."GEN" RESTART WITH 1024;
 
+INSERT INTO Supermarket (id, name, info) VALUES 
+(1, 'Mercadona', 'Supermercado de confianza'),
+(2, 'Carrefour', 'Supermercado de confianza'),
+(3, 'Lidl', 'Supermercado de confianza'),
+(4, 'Dia', 'Supermercado de confianza'),
+(5, 'Alcampo', 'Supermercado de confianza');
 
 
+/*
 INSERT INTO Product (id, ean, name, brand, quantity) VALUES
 (1, '8410000000012', 'Leche Semidesnatada', 'Alcampo', '1L'),
 (2, '8410000000013', 'Leche Entera', 'Alcampo', '1L'),
@@ -215,12 +222,9 @@ INSERT INTO Product (id, ean, name, brand, quantity) VALUES
 (201, '8410000000203', 'Alcohol Sanitario', 'Salud', '250ml'),
 (202, '8410000000204', 'Algodón en Zig-zag', 'Salud', '100g');
 
-INSERT INTO Supermarket (id, name, info) VALUES 
-(1, 'Mercadona', 'Supermercado de confianza'),
-(2, 'Carrefour', 'Supermercado de confianza'),
-(3, 'Lidl', 'Supermercado de confianza'),
-(4, 'Dia', 'Supermercado de confianza'),
-(5, 'Alcampo', 'Supermercado de confianza');
+
+
+
 INSERT INTO Product_Supermarket (id, price, date, product_id, supermarket_id) VALUES 
 (1, 1.5, '2024-06-01', 1, 1),
 (2, 1.6, '2024-06-01', 1, 2),
@@ -652,4 +656,6 @@ INSERT INTO Product_Cart (cart_id, product_id, quantity) VALUES 
 INSERT INTO Product_Cart (cart_id, product_id, quantity) VALUES 
 (2, 3, 2), -- 2 packs de refrescos
 (2, 4, 3); -- 3 de snacks
+
+*/
 

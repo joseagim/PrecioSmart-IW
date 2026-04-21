@@ -138,7 +138,7 @@ public class CartController {
         return "cart :: #totalesSupermercados";
     }
 
-    private List<Map<String,Object>> calcularTotalesPorSuper(Cart cart) {
+    private List<Map<String, Object>> calcularTotalesPorSuper(Cart cart) {
         List<Supermarket> supermarkets = entityManager
                 .createQuery("SELECT s FROM Supermarket s ORDER BY s.id", Supermarket.class)
                 .getResultList();
@@ -152,30 +152,29 @@ public class CartController {
             List<String> productosSugeridos = new ArrayList<>();
 
             for (ProductCart item : cart.getItems()) {
-                
+
                 Product p = item.getProduct();
                 ProductSupermarket ps = productController.productBySupermarket(p, s.getId());
-                
-                if(ps == null) {
+
+                if (ps == null) {
                     productosNoDisponibles.add(p.getName());
-                }
-                else {
+                } else {
                     boolean sugerencia = !p.getEAN().equals(ps.getProduct().getEAN());
-                   
+
                     float precio = ps.getPrice() * item.getQuantity();
-                    totalPrecio += precio;                    
+                    totalPrecio += precio;
 
                     if (sugerencia) {
                         productosNoDisponibles.add(p.getName());
-                        if (!prods.containsKey(ps.getProduct().getName())){
+                        if (!prods.containsKey(ps.getProduct().getName())) {
                             productosSugeridos.add(ps.getProduct().getName());
                         }
                     }
 
                     prods.put(ps.getProduct().getName(), ps.getPrice());
 
-                    if(productosSugeridos.contains(ps.getProduct().getName()) 
-                        && !sugerencia) {
+                    if (productosSugeridos.contains(ps.getProduct().getName())
+                            && !sugerencia) {
                         productosSugeridos.remove(ps.getProduct().getName());
                     }
                 }
@@ -307,7 +306,7 @@ public class CartController {
             entityManager.persist(newItem);
             cart.getItems().add(newItem);
         }
-        
+
         return Map.of("success", "Producto añadido al carrito");
     }
 
