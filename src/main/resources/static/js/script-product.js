@@ -11,44 +11,26 @@ if (form) {
         const hadNoCartSelector = !document.getElementById("cartId");
 
         const formData = new FormData(form);
-    
-        const url = form.getAttribute("action");
-        const method = (form.getAttribute("method") || "POST").toUpperCase();
 
         if (buyButton) {
             buyButton.disabled = true;
         }
 
-        go(url, method, formData, {})
+        go(form.action, "POST", formData)
             .then(response => {
-                const json = typeof response === "string" ? JSON.parse(response) : response;
+                const successMessage = response.success || "Producto anadido correctamente";
+                registroFeedback.querySelector("p").textContent = successMessage;
+                registroFeedback.classList.remove("d-none", "alert-danger");
+                registroFeedback.classList.add("alert-success");
 
-                if (!registroFeedback) {
-                    return;
-                }
-
-                if (json && json.error) {
-                    registroFeedback.querySelector("p").textContent = json.error;
-                    registroFeedback.classList.remove("d-none", "alert-success");
-                    registroFeedback.classList.add("alert-danger");
-                } else {
-                    
-                    const successMessage = (json && json.success) ? json.success : "Producto anadido correctamente";
-                   
-                    registroFeedback.querySelector("p").textContent = successMessage;
-                    registroFeedback.classList.remove("d-none", "alert-danger");
-                    registroFeedback.classList.add("alert-success");
-
-                    if (hadNoCartSelector) {
-                        window.location.reload();
-                    }
+                if (hadNoCartSelector) {
+                    window.location.reload();
                 }
             })
-            .catch(() => {
-                if (!registroFeedback) {
-                    return;
-                }
-                registroFeedback.querySelector("p").textContent = "Error al anadir el producto";
+            .catch(error => {
+                const json = JSON.parse(error.text);
+
+                registroFeedback.querySelector("p").textContent = json.error || "Error al anadir el producto";
                 registroFeedback.classList.remove("d-none", "alert-success");
                 registroFeedback.classList.add("alert-danger");
             })

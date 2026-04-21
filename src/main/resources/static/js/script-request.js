@@ -88,28 +88,14 @@ form.addEventListener("submit", function (e) {
     formData.append("ean", ean);
 
 
-    fetch("/user/request", {
-        method: "POST",
-        body: formData
-    })
-
-        .then(response => {
-            return response.json()
-                .then(data => ({ ok: response.ok, data }))
-                .catch(() => ({ ok: response.ok, data: { status: "error", message: "Respuesta no valida del servidor" } }));
-        })
-        .then(({ ok, data }) => {
-            if (!ok || data.status !== "ok") {
-                showMessage(errorBox, data.message || "Revisa los campos del formulario.");
-                return;
-            }
-
+    go("/user/request", "POST", formData)
+        .then(() => {
             window.location.replace("/user/request?success=true");
-           
         })
         .catch(error => {
-            console.error("Error:", error);
-            showMessage(errorBox, error.message || "Revisa los campos del formulario.");
+            const json = JSON.parse(error.text);
+
+            showMessage(errorBox, json.message || "Revisa los campos del formulario.");
         });
 
 });
