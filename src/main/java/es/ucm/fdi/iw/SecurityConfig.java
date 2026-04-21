@@ -54,7 +54,7 @@ public class SecurityConfig {
 			http.headers(header -> header.frameOptions(frameOptions -> frameOptions.sameOrigin()));
 		}
 
-		http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**", "/user/request/**"))
+		http.csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/login", "/register").anonymous()
 

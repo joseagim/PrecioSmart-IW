@@ -125,13 +125,13 @@ public class RequestController {
 
         User requester = (User) session.getAttribute("u");
         if (requester == null) {
-            return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Sesion no valida"));
+            return ResponseEntity.badRequest().body(Map.of("message", "Sesion no valida"));
         }
 
         RequestType requestType = parseType(type);
         if (requestType == null) {
             return ResponseEntity.badRequest()
-                    .body(Map.of("status", "error", "message", "Tipo de solicitud no valido"));
+                    .body(Map.of("message", "Tipo de solicitud no valido"));
         }
 
         String normalizedName = name == null ? "" : name.trim();
@@ -141,7 +141,7 @@ public class RequestController {
         String normalizedEan = ean == null ? "" : ean.trim();
 
         if (normalizedSupermarket.isEmpty() || normalizedEan.isEmpty() || price <= 0) {
-            return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "Faltan datos obligatorios"));
+            return ResponseEntity.badRequest().body(Map.of("message", "Faltan datos obligatorios"));
         }
 
         Request request = new Request();
@@ -156,11 +156,11 @@ public class RequestController {
 
             // Caso 1: Se solicita añadir un producto que ya existe
             if (existingProduct != null) {
-                return ResponseEntity.badRequest().body(Map.of("status", "error", "message", "El producto ya existe"));
+                return ResponseEntity.badRequest().body(Map.of("message", "El producto ya existe"));
             }
             if (normalizedName.isEmpty() || normalizedBrand.isEmpty() || normalizedQuantity.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("status", "error", "message",
-                        "Para un producto nuevo debes indicar nombre, marca y cantidad"));
+                return ResponseEntity.badRequest().body(
+                        Map.of("message", "Para un producto nuevo debes indicar nombre, marca y cantidad"));
             }
 
         } else {
@@ -177,7 +177,7 @@ public class RequestController {
              * no coincide con el producto a modificar
              */
             if (existingProduct == null) {
-                return ResponseEntity.badRequest().body(Map.of("status", "error", "message",
+                return ResponseEntity.badRequest().body(Map.of("message",
                         "El producto con ese EAN no existe"));
             } else {
                 Supermarket supermarketEntity = entityManager
@@ -196,13 +196,13 @@ public class RequestController {
                         .findFirst()
                         .isPresent();
 
-
                 if (existe && requestType == RequestType.ADD_IN_SUPER) {
                     return ResponseEntity.badRequest()
-                            .body(Map.of("status", "error", "message", "El producto ya existe en ese supermercado"));
+                            .body(Map.of("message", "El producto ya existe en ese supermercado"));
                 } else if (!existe && requestType == RequestType.MODIFY) {
-                    return ResponseEntity.badRequest().body(Map.of("status", "error", "message",
-                            "No existe este producto en el supermercado indicado, no se puede modificar"));
+                    return ResponseEntity.badRequest()
+                            .body(Map.of("message",
+                                    "No existe este producto en el supermercado indicado, no se puede modificar"));
                 }
 
                 normalizedName = existingProduct.getName();
@@ -231,7 +231,8 @@ public class RequestController {
 
         entityManager.persist(request);
 
-        return ResponseEntity.ok(Map.of("status", "ok", "message", "Solicitud guardada correctamente"));
+        return ResponseEntity.ok(
+                Map.of("message", "Solicitud guardada correctamente"));
     }
 
     private String savePhoto(MultipartFile photo, long id, String EAN,
