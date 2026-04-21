@@ -55,26 +55,26 @@ public class AdminController {
 
   private static final Logger log = LogManager.getLogger(AdminController.class);
 
-  @GetMapping("/mod/{requestType}")
+  @GetMapping({ "/mod/{requestType}", "/mod" })
   public String getRequest(@PathVariable(name = "requestType", required = false) String type, Model model) {
 
     model.addAttribute("users", entityManager.createQuery("select u from User u").getResultList());
     List<Request> requests = new ArrayList<>();
 
-    if (type == null || type == "pending") {
+    if (type == null || type.equals("pending")) {
 
       type = "pending";
       requests = entityManager.createNamedQuery("findByStatus", Request.class)
           .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.PENDING)
           .getResultList();
 
-    } else if (type == "accepted") {
+    } else if (type.equals("accepted")) {
 
       requests = entityManager.createNamedQuery("findByStatus", Request.class)
           .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.APPROVED)
           .getResultList();
 
-    } else if (type == "rejected") {
+    } else if (type.equals("rejected")) {
 
       requests = entityManager.createNamedQuery("findByStatus", Request.class)
           .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.REJECTED)
