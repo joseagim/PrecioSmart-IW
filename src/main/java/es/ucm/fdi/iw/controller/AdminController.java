@@ -1,5 +1,6 @@
 package es.ucm.fdi.iw.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,12 +16,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import es.ucm.fdi.iw.model.Topic;
 import es.ucm.fdi.iw.model.Lorem;
 import es.ucm.fdi.iw.model.Message;
 import es.ucm.fdi.iw.model.Request;
+import es.ucm.fdi.iw.model.RequestStatus;
 import es.ucm.fdi.iw.model.Transferable;
 import es.ucm.fdi.iw.model.User;
 import jakarta.persistence.EntityManager;
@@ -52,37 +55,63 @@ public class AdminController {
 
   private static final Logger log = LogManager.getLogger(AdminController.class);
 
-  @GetMapping("/mod")
-  public String getRequest(Model model) {
+  @GetMapping("/mod/{requestType}")
+  public String getRequest(@PathVariable(name = "requestType", required = false) String type, Model model) {
 
     model.addAttribute("users", entityManager.createQuery("select u from User u").getResultList());
+    List<Request> requests = new ArrayList<>();
 
-    List<Request> pending = entityManager.createNamedQuery("findByStatus", Request.class)
-        .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.PENDING)
-        .getResultList();
+    if (type == null || type == "pending") {
 
-    List<Request> accepted = entityManager.createNamedQuery("findByStatus", Request.class)
-        .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.APPROVED)
-        .getResultList();
+      type = "pending";
+      requests = entityManager.createNamedQuery("findByStatus", Request.class)
+          .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.PENDING)
+          .getResultList();
 
-    List<Request> rejected = entityManager.createNamedQuery("findByStatus", Request.class)
-        .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.REJECTED)
-        .getResultList();
+    } else if (type == "accepted") {
 
-    model.addAttribute("pendingRequests", pending);
-    model.addAttribute("acceptedRequests", accepted);
-    model.addAttribute("rejectedRequests", rejected);
+      requests = entityManager.createNamedQuery("findByStatus", Request.class)
+          .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.APPROVED)
+          .getResultList();
+
+    } else if (type == "rejected") {
+
+      requests = entityManager.createNamedQuery("findByStatus", Request.class)
+          .setParameter("status", es.ucm.fdi.iw.model.RequestStatus.REJECTED)
+          .getResultList();
+
+    } else {
+      // manejar error, type no es pending, ni accepted ni rejected
+    }
+
+    model.addAttribute("requests", requests);
+    model.addAttribute("type", type);
 
     return "admin";
   }
 
   @PostMapping("/mod/accept")
-  public ResponseEntity acceptRequest(Model model) {
-    return "";
+  public ResponseEntity acceptRequest(Model model, @RequestParam Long id) {
+    if (id == null) {
+      return ResponseEntity.badRequest().body("El ID de la solicitud es requerido");
+    }
+
+    Request request = entityManager.find(Request.class, id);
+    if (request == null) {
+      return ResponseEntity.badRequest().body("No se encontró la solicitud con el ID proporcionado");
+    }
+    if (request.getStatus() != RequestStatus.PENDING) {
+      return ResponseEntity.badRequest().body("La solicitud ya ha sido procesada");
+    }
+
+    request.setStatus(RequestStatus.APPROVED);
+    entityManager.merge(request);
+
+    return null;
   }
 
   @PostMapping("/mod/reject")
-  public String rejectRequest(Model model) {
+  public String rejectRequest(Model model, @RequestParam Long id) {
     return "";
   }
 

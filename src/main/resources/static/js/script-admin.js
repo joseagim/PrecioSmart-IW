@@ -2,6 +2,7 @@
 const radioButtons = document.querySelectorAll('input[name="type"]');
 const requestLists = {
     "0": document.querySelector("#pending-request-list"),
+    
     "1": document.querySelector("#accepted-request-list"),
     "2": document.querySelector("#rejected-request-list")
 };
@@ -23,13 +24,26 @@ radioButtons.forEach(radio => {
 showRequestList("0");
 
 // Pillar los datos del formulario y mandar el AJAX
-const acceptForm = document.querySelector("#accept-form");
-const rejectForm = document.querySelector("#reject-form");
+const acceptForms = document.querySelectorAll(".accept-form");
+const rejectForms = document.querySelectorAll(".reject-form");
 
-acceptForm.addEventListener("submit", (e) => {
-    e.preventDefault(); // para que no se envíe
-    go(acceptForm, "POST")
-    .then(data => {
-        
-    })
-})
+acceptForms.forEach(f => f.addEventListener("submit", handleRequestSubmit));
+rejectForms.forEach(f => f.addEventListener("submit", handleRequestSubmit));
+
+function handleRequestSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    const requestId = form.querySelector('input[name="id"]').value;
+    const action = form.classList.contains('accept-form') ? 'aceptar' : 'rechazar';
+
+    console.log(`Acción: ${action}, ID: ${requestId}`);
+
+    go(f.action, "POST", new URLSearchParams(FormData(f)))
+        .then(data => {
+            
+            const action = form.classList.contains('accept-form') ? 'aceptar' : 'rechazar';
+        })
+        .fail(data => {
+
+        })
+}
