@@ -17,68 +17,43 @@
             <div class="panel-xl mb-5">
 
                 <h2 class="h5 mb-3">Selecciona el tipo</h2>
-                <form id="admin-request-form" class="row g-3" method="get" enctype="multipart/form-data">
-                    <div class="col-12 mb-3">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="type" id="pending-request" value="0"
-                                checked>
-                            <label class="form-check-label" for="pending-request">Pendientes</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="type" id="accepted-request"
-                                value="1">
-                            <label class="form-check-label" for="accepted-request">Aceptadas</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="type" id="rejected-request" value="2">
-                            <label class="form-check-label" for="rejected-request">Rechazadas</label>
-                        </div>
+                <div class="col-12 mb-3">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="type" id="pending-request" value="pending"
+                            th:checked="${type == 'pending'}" onchange="window.location.href='/admin/mod/pending'">
+                        <label class="form-check-label" for="pending-request">Pendientes</label>
                     </div>
-                </form>
-
-                <!-- PENDING REQUESTS -->
-                <div id="pending-request-list" class="p-3 text-start">
-                    <div th:if="${pendingRequests.empty}">
-                        <h2 class="h5 mb-3">No hay solicitudes pendientes</h2>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="type" id="accepted-request" value="accepted"
+                            th:checked="${type == 'accepted'}" onchange="window.location.href='/admin/mod/accepted'">
+                        <label class="form-check-label" for="accepted-request">Aceptadas</label>
                     </div>
-                    <div th:each="pr : ${pendingRequests}">
-                        <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
-                            <div th:replace="~{fragments/request-info :: requestInfo(${pr})}"></div>
-                            <div class="d-flex gap-2 mt-3 ms-3">
-                                <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
-                                <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
-                            </div>
-                        </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="type" id="rejected-request" value="rejected"
+                            th:checked="${type == 'rejected'}" onchange="window.location.href='/admin/mod/rejected'">
+                        <label class="form-check-label" for="rejected-request">Rechazadas</label>
                     </div>
                 </div>
 
-                <!-- ACCEPTED REQUESTS -->
-                <div id="accepted-request-list" class="p-3 text-start">
-                    <div th:if="${acceptedRequests.empty}">
-                        <h2 class="h5 mb-3">No hay solicitudes aceptadas</h2>
+                <!-- REQUEST LIST -->
+                <div id="request-list" class="p-3 text-start">
+                    <div th:if="${requests.empty}">
+                        <h2 class="h5 mb-3">No hay solicitudes</h2>
                     </div>
-                    <div th:each="ar : ${acceptedRequests}">
+                    <div th:each="req : ${requests}">
                         <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
-                            <div th:replace="~{fragments/request-info :: requestInfo(${ar})}"></div>
-                            <div class="d-flex gap-2 mt-3 ms-3">
-                                <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
-                                <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- REJECTED REQUESTS -->
-                <div id="rejected-request-list" class="p-3 text-start">
-                    <div th:if="${rejectedRequests.empty}">
-                        <h2 class="h5 mb-3">No hay solicitudes rechazadas</h2>
-                    </div>
-                    <div th:each="rr : ${rejectedRequests}">
-                        <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
-                            <div th:replace="~{fragments/request-info :: requestInfo(${rr})}"></div>
-                            <div class="d-flex gap-2 mt-3 ms-3">
-                                <button class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
-                                <button class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
+                            <div th:replace="~{fragments/request-info :: requestInfo(${req})}"></div>
+                            <div class="d-flex gap-2 mt-3 ms-3" th:if="${type == 'pending'}">
+                                <form th:action="@{/admin/mod/accept}" method="POST" class="accept-form">
+                                    <input type="hidden" name="id" th:value="${req.id}">
+                                    <button type="submit"
+                                        class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
+                                </form>
+                                <form th:action="@{/admin/mod/reject}" method="POST" class="reject-form">
+                                    <input type="hidden" name="id" th:value="${req.id}">
+                                    <button type="submit"
+                                        class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -86,7 +61,7 @@
 
             </div>
         </div>
-        
+
         <script th:src="@{/js/script-admin.js}"></script>
 
     </main>
