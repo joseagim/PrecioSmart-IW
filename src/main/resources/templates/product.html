@@ -101,10 +101,11 @@
                                 <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
                                 <p class="text-muted mb-0 small">Ese producto no esta en ese supermercado.</p>
                             </div>
-                            <div
-                                th:if="${entry != null and entry.product != null and product != null and entry.product.id != product.id}">
-                                <h3 class="fs-5 mb-2 text-center"><b
-                                        th:text="${entry.supermarket.name}">Supermercado</b></h3>
+                            <div th:if="${entry != null and entry.product != null and 
+                                        product != null and entry.product.id != product.id}">
+                                <h3 class="fs-5 mb-2 text-center">
+                                    <b th:text="${entry.supermarket.name}">Supermercado</b>
+                                </h3>
                                 <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
                                 <div class="d-flex align-items-center gap-2 mb-3">
                                     <img class="rounded border" 
@@ -120,9 +121,12 @@
                                     class="btn btn-naranja btn-sm rounded-3 w-100">
                                     Comparar
                                 </a>
+                                <div>
+                                    <a th:href="@{/user/request}" class="btn btn-naranja btn-sm rounded-3 w-100">Añade el producto</a>
+                                </div>
                             </div>
-                            <div
-                                th:if="${entry != null and entry.product != null and product != null and entry.product.id == product.id}">
+                            <div th:if="${entry != null and entry.product != null and 
+                                        product != null and entry.product.id == product.id}">
                                 <h3 class="fs-5 mb-2 text-center"><b
                                         th:text="${entry.supermarket.name}">Supermercado</b></h3>
                                 <h5 class="mb-2"><span class="text-muted">Precio:</span> <b

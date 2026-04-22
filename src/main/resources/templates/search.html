@@ -38,6 +38,9 @@
             <div id="cuerpo-resultados" class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
                 <div th:if="${error}" class="panel-sm">
                     <span th:text="${error}"></span>
+                    <div>
+                        <a th:href="@{/user/request}" class="btn btn-naranja mt-3">Añadir producto</a>
+                    </div>
                 </div>
                 <div class="col" th:each="p : ${productos}">
                     <div class="card h-100 card-naranja shadow-sm">

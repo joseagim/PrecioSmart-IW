@@ -141,9 +141,12 @@
                         <div class="card-body">
                             <details>
                                 <summary class="d-flex justify-content-between align-items-center">
-                                    <h5 class="card-title fw-bold" th:text="${info.supermarket.name}">Supermercado</h5>
+                                    <div class="d-flex align-items-center">
+                                        <img class="svg-sm arrow-icon me-2" th:src="@{/img/svg/arrow-down.svg}" alt="Ampliar">
+                                        <h5 class="card-title fw-bold" th:text="${info.supermarket.name}">Supermercado</h5>
+                                    </div>
                                     <small class="text-danger d-block mb-2" th:if="${!info.completo}">
-                                        * Algunos de los productos seleccionados no están disponibles.
+                                        Algunos de los productos seleccionados no están disponibles.
                                     </small>
                                     <div class="d-flex align-items-center gap-2">
                                         <p class="card-text fs-5 fw-bold mb-0" 
