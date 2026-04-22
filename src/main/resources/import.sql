@@ -17,6 +17,7 @@ INSERT INTO Supermarket (name, info) VALUES
 ('Alcampo', 'Supermercado de confianza');
 
 
+
 INSERT INTO Product (ean, name, brand, quantity) VALUES
 ('8410000000012', 'Leche Semidesnatada', 'Alcampo', '1L'),
 ('8410000000013', 'Leche Entera', 'Alcampo', '1L'),
@@ -624,13 +625,7 @@ INSERT INTO Product_Supermarket (price, date, product_id, supermarket_id) VALUES
 (0.60, '2024-06-02', 199, 2),
 (0.75, '2024-06-02', 199, 3),
 (2.50, '2024-06-02', 200, 4),
-(2.80, '2024-06-02', 200, 5),
-(1.95, '2024-06-02', 201, 1),
-(2.10, '2024-06-02', 201, 2),
-(0.85, '2024-06-02', 202, 1),
-(0.85, '2024-06-02', 202, 3),
-(0.95, '2024-06-02', 202, 4);
-
+(2.80, '2024-06-02', 200, 5);
 
 -- Primer carrito: Compra Semanal Básica
 INSERT INTO Cart (name, date, user_id) 

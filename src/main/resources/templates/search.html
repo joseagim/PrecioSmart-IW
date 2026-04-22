@@ -58,6 +58,24 @@
                         </div>
                     </div>
                 </div>
+                <nav th:if="${productos.totalPages > 1}" aria-label="Navegación de productos" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        
+                        <li class="page-item" th:classappend="${productos.first} ? 'disabled'">
+                            <a class="page-link" th:href="@{/search(producto=${param.producto}, page=${productos.number - 1})}">&laquo;</a>
+                        </li>
+
+                        <li class="page-item" th:each="i : ${#numbers.sequence(1, productos.totalPages)}"
+                            th:classappend="${i == productos.number} ? 'active'">
+                            <a class="page-link" th:href="@{/search(producto=${param.producto}, page=${i})}" th:text="${i}">1</a>
+                        </li>
+
+                        <li class="page-item" th:classappend="${productos.last} ? 'disabled'">
+                            <a class="page-link" th:href="@{/search(producto=${param.producto}, page=${productos.number + 1})}">&raquo;</a>
+                        </li>
+                        
+                    </ul>
+                </nav>
             </div>
         </div>
     </main>

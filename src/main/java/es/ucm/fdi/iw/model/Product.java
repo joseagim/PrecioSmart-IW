@@ -26,7 +26,7 @@ import jakarta.persistence.NamedQueries;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @OneToMany(mappedBy = "product")

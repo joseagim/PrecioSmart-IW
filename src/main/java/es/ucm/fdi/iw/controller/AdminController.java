@@ -3,7 +3,6 @@ package es.ucm.fdi.iw.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,20 +22,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import es.ucm.fdi.iw.model.Topic;
-import es.ucm.fdi.iw.model.Lorem;
-import es.ucm.fdi.iw.model.Message;
 import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductSupermarket;
 import es.ucm.fdi.iw.model.Request;
 import es.ucm.fdi.iw.model.RequestStatus;
 import es.ucm.fdi.iw.model.Supermarket;
-import es.ucm.fdi.iw.model.Transferable;
-import es.ucm.fdi.iw.model.User;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -49,9 +40,6 @@ import jakarta.transaction.Transactional;
 @Controller
 @RequestMapping("admin")
 public class AdminController {
-
-  @Autowired
-  private PasswordEncoder passwordEncoder;
 
   @Autowired
   private EntityManager entityManager;
