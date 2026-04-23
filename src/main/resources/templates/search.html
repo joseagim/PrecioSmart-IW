@@ -31,7 +31,7 @@
                 </form>
 
                 <button class="btn btn-scan mt-3">
-                    <i class="bi bi-qr-code-scan me-2"></i>Escanear código de barras
+                    <img th:src="@{/img/svg/scan.svg}" class="svg-sm" alt="Escanear"> Escanear código de barras
                 </button>
             </div>
 
@@ -58,25 +58,25 @@
                         </div>
                     </div>
                 </div>
-                <nav th:if="${productos.totalPages > 1}" aria-label="Navegación de productos" class="mt-5">
-                    <ul class="pagination justify-content-center">
-                        
-                        <li class="page-item" th:classappend="${productos.first} ? 'disabled'">
-                            <a class="page-link" th:href="@{/search(producto=${param.producto}, page=${productos.number - 1})}">&laquo;</a>
-                        </li>
-
-                        <li class="page-item" th:each="i : ${#numbers.sequence(1, productos.totalPages)}"
-                            th:classappend="${i == productos.number} ? 'active'">
-                            <a class="page-link" th:href="@{/search(producto=${param.producto}, page=${i})}" th:text="${i}">1</a>
-                        </li>
-
-                        <li class="page-item" th:classappend="${productos.last} ? 'disabled'">
-                            <a class="page-link" th:href="@{/search(producto=${param.producto}, page=${productos.number + 1})}">&raquo;</a>
-                        </li>
-                        
-                    </ul>
-                </nav>
             </div>
+            <nav th:if="${productos.totalPages > 1}" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    
+                    <li class="page-item" th:classappend="${productos.first} ? 'disabled'">
+                        <a class="page-link" th:href="@{${url}(page=${productos.number})}">&laquo;</a>
+                    </li>
+
+                    <li class="page-item" th:each="i : ${#numbers.sequence(1, productos.totalPages)}"
+                        th:classappend="${i == productos.number + 1} ? 'active'">
+                        <a class="page-link" th:href="@{${url}(page=${i})}" th:text="${i}">1</a>
+                    </li>
+
+                    <li class="page-item" th:classappend="${productos.last} ? 'disabled'">
+                        <a class="page-link" th:href="@{${url}(page=${productos.number + 2})}">&raquo;</a>
+                    </li>
+                    
+                </ul>
+            </nav>
         </div>
     </main>
 

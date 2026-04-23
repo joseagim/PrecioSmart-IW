@@ -1,16 +1,19 @@
 package es.ucm.fdi.iw.controller;
 
 import es.ucm.fdi.iw.model.Product;
-import es.ucm.fdi.iw.model.ProductRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -19,7 +22,7 @@ import jakarta.transaction.Transactional;
 public class SearchController {
 
     @Autowired
-    private ProductRepository productRepository;
+    private EntityManager entityManager;
 
 
     @ModelAttribute
@@ -39,17 +42,32 @@ public class SearchController {
             @RequestParam(defaultValue = "1") int page,
             Model model) {
 
-        Pageable pageable = PageRequest.of(page, 15);
+        int pageSize = 15;
+        int offset = (page - 1) * pageSize;
 
         if (producto == null || producto.trim().isEmpty()) {
-            // Obtenemos una página de productos en lugar de la lista completa
-            Page<Product> todosLosProductos = productRepository.findAll(pageable);
+            // Obtener pageSize los productos a partir del offset
+            List<Product> productosList = entityManager
+                    .createQuery("SELECT p FROM Product p", Product.class)
+                    .setFirstResult(offset)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+
+            // Total de productos para numero de paginas
+            Long total = entityManager
+                    .createNamedQuery("Product.totalNum", Long.class)
+                    .getSingleResult();
+
+            // Objeto de paginacion para la vista
+            Page<Product> todosLosProductos = new PageImpl<>(productosList, PageRequest.of(page - 1, pageSize), total);
             
             model.addAttribute("productos", todosLosProductos);
+            model.addAttribute("url", "/search");
+
             return "search";
-        }
+        }   
+        model.addAttribute("url", "/search/" + producto);
         
-        // Al redirigir, pasamos el término de búsqueda para que el método searchProduct lo procese
         return "redirect:/search/" + producto;
     }
 
@@ -60,23 +78,46 @@ public class SearchController {
             @RequestParam(defaultValue = "1") int page, 
             Model model) {
 
-        Pageable pageable = PageRequest.of(page, 6);
+        int pageSize = 3;
+        int offset = (page - 1) * pageSize;
+
+        List<Product> productos = new ArrayList<>();
         
-        // Buscamos primero por EAN (suponiendo que EAN es único, devolverá 1 o 0 resultados)
-        Page<Product> productos = productRepository.findByEAN(producto, pageable);
+        // Busco por EAN
+        productos = entityManager
+                .createNamedQuery("Product.searchByEAN", Product.class)
+                .setParameter("EAN", producto)
+                .getResultList();
 
-        if (productos.isEmpty()) {
-            productos = productRepository.findByNameContainingIgnoreCase(producto, pageable);
+        long total;
+
+        if (productos.size() > 0) {
+            total = 1;
+        } else {
+            // Si no se encuentra por EAN, busco por nombre 
+            productos = entityManager
+                .createNamedQuery("Product.searchByName", Product.class)
+                .setParameter("name", "%" + producto + "%")
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
+                .getResultList();
+
+            total = entityManager
+                    .createNamedQuery("Product.totalNumName", Long.class)
+                    .setParameter("name", "%" + producto + "%")
+                    .getSingleResult();
         }
 
-        if (productos.getTotalElements() == 1) {
-            return "redirect:/product/" + productos.getContent().get(0).getId();
+        if (total == 1) {
+            return "redirect:/product/" + productos.get(0).getId();
         } 
-        else if (productos.getTotalElements() == 0) {
-            model.addAttribute("error", "No se han encontrado resultados para el producto: " + producto);
+        else if (total == 0) {
+            model.addAttribute("error", "No se han encontrado resultados para: " + producto);
         }
 
-        model.addAttribute("productos", productos);
+        Page<Product> productosPage = new PageImpl<>(productos, PageRequest.of(page - 1, pageSize), total);
+        model.addAttribute("productos", productosPage);
+        model.addAttribute("url", "/search/" + producto);
 
         return "search";
     }
