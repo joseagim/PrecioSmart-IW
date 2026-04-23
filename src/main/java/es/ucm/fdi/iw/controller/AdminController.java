@@ -154,7 +154,7 @@ public class AdminController {
         entityManager.persist(product);
         entityManager.persist(ps);
 
-        moveImage(request, product.getId());
+        copyImageToProduct(request, product.getId());
         break;
       }
       // añadir product supermarket
@@ -206,7 +206,7 @@ public class AdminController {
     return ResponseEntity.ok().body(Map.of("message", "Solicitud rechazada correctamente"));
   }
 
-  void moveImage(Request request, long productId) {
+  void copyImageToProduct(Request request, long productId) {
     // 1. Definimos la ruta base (donde vive 'iwdata')
     // Es buena práctica tener esto en una constante o configuración
     String baseDir = "iwdata";
@@ -219,22 +219,22 @@ public class AdminController {
     Path target = Paths.get(baseDir, "product", productId + ".jpg");
 
     try {
-      // 3. Verificamos si la imagen de la request existe antes de moverla
+      // 3. Verificamos si la imagen de la request existe antes de copiarla
       if (Files.exists(source)) {
 
         // 4. Aseguramos que la carpeta de destino existe (por si acaso)
         Files.createDirectories(target.getParent());
 
-        // 5. Movemos el archivo
+        // 5. Copiamos el archivo
         // REPLACE_EXISTING sirve para que, si ya había una foto vieja del producto, la
         // sobreescriba
-        Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
       } else
         throw new IOException("La imagen no existe");
     } catch (IOException e) {
       // Las operaciones de archivos siempre pueden fallar (permisos, disco lleno,
       // etc.)
-      System.err.println("Error al mover la imagen: " + e.getMessage());
+      System.err.println("Error al copiar la imagen: " + e.getMessage());
       e.printStackTrace();
     }
   }

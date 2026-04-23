@@ -235,11 +235,13 @@ public class RequestController {
         request.setDate(LocalDateTime.now());
         request.setUser(requester);
 
+        // Persistimos primero para obtener el ID autogenerado y usarlo en el nombre de la imagen.
+        entityManager.persist(request);
+        entityManager.flush();
+
         if (photo != null && !photo.isEmpty()) {
             request.setImageUrl(savePhoto(photo, requester.getId(), request.getId(), response));
         }
-
-        entityManager.persist(request);
 
         return ResponseEntity.ok(
                 Map.of("message", "Solicitud guardada correctamente"));

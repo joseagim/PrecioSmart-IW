@@ -13,40 +13,41 @@
         <div class="container py-5">
             <div id="product-info">
                 <div
-                    class="card w-100 h-auto d-flex flex-column flex-md-row shadow-lg border-0 rounded-4 overflow-hidden align-items-center align-items-md-start">
+                    class="card panel-xxl w-100 h-auto d-flex flex-column flex-md-row rounded-4 overflow-hidden align-items-center align-items-md-start">
 
-                    <div class="p-4 p-md-5 flex-shrink-0 bg-light" style="max-width: 260px;">
-                        <img class="img-fluid rounded-3" th:src="@{/product/{productoID}/pic(productoID=${product != null ? product.id : 0})}" alt="foto del producto">
+                    <div class="px-4 py-3 px-md-5 py-md-4 flex-shrink-0 bg-light" style="max-width: 300px;">
+                        <img class="img-fluid rounded-3"
+                            th:src="@{/product/{productoID}/pic(productoID=${product != null ? product.id : 0})}"
+                            alt="foto del producto">
                     </div>
 
-                    <div class="card-body text-start p-4 p-md-5">
+                    <div class="card-body text-start px-4 py-3 px-md-5 py-md-4">
                         <h1 id="product-title" class="card-title mb-4 fs-2 fw-bold"><b th:text="${product?.name}">Nombre
                                 del
                                 producto</b></h1>
                         <div class="d-flex flex-column">
                             <ul class="list-unstyled mb-3">
-                                <li class="my-2 pb-2 border-bottom border-light-subtle">
+                                <li class="my-2 pb-2 border-bottom border-subtle">
                                     <h4 class="fs-5 mb-0"><b class="text-secondary">Marca: </b><span
                                             th:text="${product?.brand}">-</span></h4>
                                 </li>
-                                <li class="my-2 pb-2 border-bottom border-light-subtle">
+                                <li class="my-2 pb-2 border-bottom border-subtle">
                                     <h4 class="fs-5 mb-0"><b class="text-secondary">Cantidad: </b><span
                                             th:text="${product?.quantity}">-</span></h4>
                                 </li>
-                                <li class="my-2">
-                                    <h4 class="fs-5 mb-0"><b class="text-secondary">Codigo EAN: </b><span
+                                <li class="my-2 pb-2 border-bottom border-subtle">
+                                    <h4 class="fs-5 mb-0"><b class="text-secondary ">Codigo EAN: </b><span
                                             th:text="${product?.EAN}">-</span></h4>
                                 </li>
                             </ul>
 
                             <div th:if="${u}">
-                                <form id="add-to-cart-form" 
-                                    th:action="@{/user/cart/add/{productId}(productId=${product != null ? product.id : 0})}" 
+                                <form id="add-to-cart-form"
+                                    th:action="@{/user/cart/add/{productId}(productId=${product != null ? product.id : 0})}"
                                     method="post"
                                     class="d-flex flex-wrap gap-3 mt-3 mb-1 justify-content-start align-items-center">
-                                    <button th:if="${carts != null and !#lists.isEmpty(carts)}" 
-                                        id="buy-button" type="submit"
-                                        th:attr="data-product-id=${product != null ? product.id : 0}"
+                                    <button th:if="${carts != null and !#lists.isEmpty(carts)}" id="buy-button"
+                                        type="submit" th:attr="data-product-id=${product != null ? product.id : 0}"
                                         class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Añadir
                                         al carrito
                                     </button>
@@ -59,18 +60,18 @@
                                     <div th:if="${carts != null and !#lists.isEmpty(carts)}"
                                         class="d-flex align-items-center gap-2">
                                         <label for="cartId" class="mb-0 fw-semibold text-secondary">Carrito</label>
-                                        <select id="cartId" name="cartId" class="form-select form-select-lg"
-                                            required>
+                                        <select id="cartId" name="cartId" class="form-select form-select-lg" required>
                                             <option value="" selected disabled hidden>Selecciona un carrito...</option>
-                                            <option th:each="c : ${carts}" th:value="${c.id}" th:text="${c.name}">Carrito
+                                            <option th:each="c : ${carts}" th:value="${c.id}" th:text="${c.name}">
+                                                Carrito
                                             </option>
                                         </select>
                                     </div>
 
                                     <div th:unless="${carts != null and !#lists.isEmpty(carts)}"
                                         class="d-flex align-items-center gap-2">
-                                        <button type="submit"
-                                            class="btn btn-naranja btn-md px-4 py-3 shadow-sm">Crear nuevo carrito y añadir
+                                        <button type="submit" class="btn btn-naranja btn-md px-4 py-3 shadow-sm">Crear
+                                            nuevo carrito y añadir
                                         </button>
                                     </div>
                                 </form>
@@ -79,7 +80,8 @@
                                 </div>
                             </div>
                             <div th:unless="${u}">
-                                <a th:href="@{/login}" class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Inicia sesión para crear un carrito</a>
+                                <a th:href="@{/login}" class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Inicia
+                                    sesión para crear un carrito</a>
                             </div>
                         </div>
                     </div>
@@ -89,27 +91,42 @@
 
         <div class="container pb-5 text-center">
             <div id="compare">
-                <div class="card w-100 p-4 p-md-5 border rounded-3 bg-white">
+                <div class="card panel-xxl w-100 p-4 p-md-5 rounded-3 bg-white">
                     <h3 class="mb-3 p-2 text-center text-black mb-5">Comparar precios por supermercado
                     </h3>
                     <ul class="list-unstyled d-flex flex-nowrap align-items-stretch my-0 gap-3">
-                        <li th:each="entry : ${result}" class="border rounded-3 p-3 text-start d-flex flex-column"
+                        <li th:each="entry : ${result}"
+                            class=" rounded-3 p-3 text-start d-flex flex-column border-products"
                             style="flex: 1 1 0; min-width: 0;">
                             <div th:if="${entry == null or entry.product == null}">
-                                <h3 class="fs-5 mb-2 text-center"><b
-                                        th:text="${entry.supermarket.name}">Supermercado</b></h3>
+                                <h3
+                                    class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
+                                    <img th:src="|/img/supermarkets/${#strings.toLowerCase(entry.supermarket.name)}.png|"
+                                        th:alt="${'Logo de ' + entry.supermarket.name}"
+                                        style="width: 40px; height: 40px  ; object-fit: contain;">
+                                    <b th:text="${entry.supermarket.name}">Supermercado</b>
+                                </h3>
                                 <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
                                 <p class="text-muted mb-0 small">Ese producto no esta en ese supermercado.</p>
+                                <div>
+                                    <a th:href="@{/user/request}"
+                                        th:text="|Añade el producto a ${entry.supermarket.name}|"
+                                        class="btn btn-naranja btn-sm rounded-3 w-100 mt-2">Añade el producto a este
+                                        supermercado</a>
+                                </div>
                             </div>
                             <div th:if="${entry != null and entry.product != null and 
                                         product != null and entry.product.id != product.id}">
-                                <h3 class="fs-5 mb-2 text-center">
+                                <h3
+                                    class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
+                                    <img th:src="|/img/supermarkets/${#strings.toLowerCase(entry.supermarket.name)}.png|"
+                                        th:alt="${'Logo de ' + entry.supermarket.name}"
+                                        style="width: 40px; height: 40px; object-fit: contain;">
                                     <b th:text="${entry.supermarket.name}">Supermercado</b>
                                 </h3>
                                 <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
                                 <div class="d-flex align-items-center gap-2 mb-3">
-                                    <img class="rounded border" 
-                                        th:src="@{/product/{productoID}/pic(productoID=${entry.product != null ? entry.product.id : 0})}"
+                                    <img th:src="@{/product/{productoID}/pic(productoID=${entry.product != null ? entry.product.id : 0})}"
                                         style="width: 48px; height: 48px; object-fit: cover;" alt="Producto similar">
                                     <div>
                                         <p class="text-muted fw-bold small mb-1">Producto similar:</p>
@@ -118,27 +135,49 @@
                                     </div>
                                 </div>
                                 <a th:href="@{/product/{productoID}(productoID=${entry.product.id})}"
-                                    class="btn btn-naranja btn-sm rounded-3 w-100">
+                                    class="btn btn-naranja btn-sm rounded-3 w-100 ">
                                     Comparar
                                 </a>
                                 <div>
-                                    <a th:href="@{/user/request}" class="btn btn-naranja btn-sm rounded-3 w-100">Añade el producto</a>
+                                    <a th:href="@{/user/request}"
+                                        th:text="|Añade el producto a ${entry.supermarket.name}|"
+                                        class="btn btn-naranja btn-sm rounded-3 w-100 mt-2">Añade el producto a este
+                                        supermercado</a>
                                 </div>
+
+
                             </div>
+
                             <div th:if="${entry != null and entry.product != null and 
                                         product != null and entry.product.id == product.id}">
-                                <h3 class="fs-5 mb-2 text-center"><b
-                                        th:text="${entry.supermarket.name}">Supermercado</b></h3>
+                                <h3
+                                    class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
+                                    <img th:src="|/img/supermarkets/${#strings.toLowerCase(entry.supermarket.name)}.png|"
+                                        th:alt="${'Logo de ' + entry.supermarket.name}"
+                                        style="width: 40px; height: 40px; object-fit: contain;">
+                                    <b th:text="${entry.supermarket.name}">Supermercado</b>
+                                </h3>
                                 <h5 class="mb-2"><span class="text-muted">Precio:</span> <b
                                         th:text="${entry.price} + ' €'">0,00 €</b></h5>
                                 <p class="small text-muted mb-0" th:if="${entry.date != null}"
                                     th:text="'Actualizado: ' + ${#temporals.format(entry.date, 'dd/MM/yyyy HH:mm')}">
                                     Actualizado: -</p>
                             </div>
+
+
                         </li>
                     </ul>
                     <p class="text-muted mb-0 mt-2" th:if="${#lists.isEmpty(result)}">No hay supermercados disponibles.
                     </p>
+                    <div>
+                        <h4 class="mb-3 p-2 text-center text-black mt-5">¿El precio actual no coincide con el que usted
+                            ve
+                            en el supermercado?</h2>
+                            <a th:href="@{/user/request}" class="btn btn-naranja btn-sm rounded-3 w-100 mt-2">Solicita
+                                una
+                                actualización de precio</a>
+
+                    </div>
                 </div>
             </div>
         </div>
