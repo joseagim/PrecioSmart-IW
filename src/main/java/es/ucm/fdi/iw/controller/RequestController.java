@@ -89,21 +89,26 @@ public class RequestController {
         return "view-request";
     }
 
-
     @Transactional
     @GetMapping("{id}/pic")
     public StreamingResponseBody getPic(@PathVariable long id) throws IOException {
         Request req = entityManager.find(Request.class, id);
         File f = null;
         if (req != null) {
-            if (req.getImageUrl() != null && !req.getImageUrl().isBlank()) {
-                File fromImageUrl = new File(req.getImageUrl());
-                if (fromImageUrl.exists()) {
-                    f = fromImageUrl;
-                }
-            }
-            if (f == null) {
+            if (req.getType() == RequestType.ADD) {
                 f = localData.getFile("request", req.getId() + ".jpg");
+            } else {
+                // Si no hay imagen específica para la solicitud, intentamos mostrar la imagen
+                // del producto si existe.
+                Product product = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
+                        .setParameter("EAN", req.getEAN())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
+
+                if (product != null) {
+                    f = localData.getFile("product", product.getId() + ".jpg");
+                }
             }
         }
 
@@ -111,7 +116,6 @@ public class RequestController {
                 (f != null && f.exists()) ? new FileInputStream(f) : defaultPic());
         return os -> FileCopyUtils.copy(in, os);
     }
-
 
     private static InputStream defaultPic() {
         return new BufferedInputStream(Objects.requireNonNull(
@@ -218,7 +222,6 @@ public class RequestController {
                 normalizedName = existingProduct.getName();
                 normalizedBrand = existingProduct.getBrand();
                 normalizedQuantity = existingProduct.getQuantity();
-             
 
             }
 
@@ -235,7 +238,8 @@ public class RequestController {
         request.setDate(LocalDateTime.now());
         request.setUser(requester);
 
-        // Persistimos primero para obtener el ID autogenerado y usarlo en el nombre de la imagen.
+        // Persistimos primero para obtener el ID autogenerado y usarlo en el nombre de
+        // la imagen.
         entityManager.persist(request);
         entityManager.flush();
 
