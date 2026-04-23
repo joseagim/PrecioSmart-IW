@@ -14,7 +14,7 @@
     <main class="flex-shrink-0">
         <div class="container">
             <h1 class="mt-5 mb-5">Administrar solicitudes</h1>
-            <div class="panel-xl mb-5">
+            <div class="panel-xl mb-5 ">
 
                 <h2 class="h5 mb-3">Selecciona el tipo</h2>
                 <div class="col-12 mb-3">
@@ -35,26 +35,32 @@
                     </div>
                 </div>
 
+                <div id="error-box" class="alert alert-danger d-none shadow-sm" role="alert"></div>
+                <div id="success-box" class="alert alert-success d-none shadow-sm" role="alert"></div>
+
                 <!-- REQUEST LIST -->
                 <div id="request-list" class="p-3 text-start">
                     <div th:if="${requests.empty}">
-                        <h2 class="h5 mb-3">No hay solicitudes</h2>
+                        <h2 class="h5 mb-3">No hay solicitudes que mostrar</h2>
                     </div>
-                    <div th:each="req : ${requests}">
-                        <div class="notification d-flex align-items-center justify-content-between p-3 mt-3 mb-3">
+
+                    <div th:each="req : ${requests}"
+                        class="request-item d-flex flex-row flex-nowrap align-items-center gap-3 mt-3 mb-3">
+                        <div class="notification p-3 flex-grow-1" style="min-width: 0;">
                             <div th:replace="~{fragments/request-info :: requestInfo(${req})}"></div>
-                            <div class="d-flex gap-2 mt-3 ms-3" th:if="${type == 'pending'}">
-                                <form th:action="@{/admin/mod/accept}" method="POST" class="accept-form">
-                                    <input type="hidden" name="id" th:value="${req.id}">
-                                    <button type="submit"
-                                        class="btn btn-success rounded-pill px-4 btn-aceptar">Aceptar</button>
-                                </form>
-                                <form th:action="@{/admin/mod/reject}" method="POST" class="reject-form">
-                                    <input type="hidden" name="id" th:value="${req.id}">
-                                    <button type="submit"
-                                        class="btn btn-danger rounded-pill px-4 btn-rechazar">Rechazar</button>
-                                </form>
-                            </div>
+                        </div>
+                        <div class="request-actions d-flex flex-column gap-2 align-items-stretch ms-auto align-self-center"
+                            style="width: 170px; flex: 0 0 170px;" th:if="${type == 'pending'}">
+                            <form th:action="@{/admin/mod/accept}" method="POST" class="accept-form">
+                                <input type="hidden" name="id" th:value="${req.id}">
+                                <button type="submit"
+                                    class="btn btn-success rounded-pill px-4 btn-aceptar w-100">Aceptar</button>
+                            </form>
+                            <form th:action="@{/admin/mod/reject}" method="POST" class="reject-form">
+                                <input type="hidden" name="id" th:value="${req.id}">
+                                <button type="submit"
+                                    class="btn btn-danger rounded-pill px-4 btn-rechazar w-100">Rechazar</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -67,60 +73,8 @@
     </main>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
-    <!-- Bloque de toggles: si no lo usas, está comentado. Para reactivar, elimina /* ... */ alrededor del código -->
-    <script>
-        /*
-        const toggles = document.querySelectorAll('.toggle');
-        toggles.forEach(toggle => {
-            toggle.addEventListener('click', (e) => {
-                e.preventDefault();
-                const form = e.target.parentElement;
-                go(form.action, 'POST').then((d) => {
-                    if (d.enabled) {
-                        e.target.classList.remove('btn-primary');
-                        e.target.classList.add('btn-danger');
-                        e.target.textContent = 'Deshabilitar';
-                    } else {
-                        e.target.classList.remove('btn-danger');
-                        e.target.classList.add('btn-primary');
-                        e.target.textContent = 'Habilitar';
-                    }
-                    console.log(d);
-                });
-            });
-        });
-        */
-    </script>
 
-    <!-- Bloque de mensajes / DataTable: comentado si no se usa. Reactivar quitando /* ... */ -->
-    <script type="module">
-        /*
-        import { DataTable } from "../js/simple-datatables-10.js"
-        let dt = null;
-        function refreshMessages() {
-            go('/admin/all-messages', 'GET').then((d) => {
-                if (dt) {
-                    dt.destroy();
-                    document.querySelector("#messages").innerHTML = '';
-                }
-                dt = new DataTable('#messages', {
-                    data: {
-                        headings: ['from', 'to', 'text'],
-                        data: d
-                    },
-                    searchable: true,
-                    paging: false
-                });
-                dt.on("datatable.selectrow", (rowIndex, event, focused) => {
-                    event.preventDefault();
-                    console.log("click en fila: ", dataTable.data[rowIndex]);
-                });
-            });
-        }
-        document.getElementById('refresh').addEventListener('click', refreshMessages);
-        refreshMessages();
-        */
-    </script>
+
 </body>
 
 </html>

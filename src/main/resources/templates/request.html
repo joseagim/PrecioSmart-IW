@@ -26,25 +26,25 @@
                         Solicitud guardada correctamente.
                     </div>
 
-                    <div class="card border-1 shadow-sm rounded-4 p-4 mb-4">
+                    <div class="card panel-xxl  shadow-sm p-4 mb-4 ">
                         <h2 class="h5 mb-3">Nueva solicitud</h2>
                         <form id="request-form" class="row g-3" method="post" enctype="multipart/form-data">
                             <div class="col-12 mb-3">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="type" id="mode_add" value="0"
                                         checked>
-                                    <label class="form-check-label" for="mode_add">Añadir producto nuevo</label>
+                                    <label class="form-check-label" for="mode_add">Añadir un producto nuevo</label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="type" id="mode_add_existing"
                                         value="1">
                                     <label class="form-check-label" for="mode_add_existing">Añadir producto existente en
-                                        supermercado nuevo</label>
+                                        un nuevo supermercado</label>
                                 </div>
 
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="type" id="mode_modify" value="2">
-                                    <label class="form-check-label" for="mode_modify">Modificar producto</label>
+                                    <label class="form-check-label" for="mode_modify">Modificar precio de un producto</label>
                                 </div>
                             </div>
 
@@ -102,7 +102,7 @@
                         </form>
                     </div>
 
-                    <div class="card border-1 shadow-sm rounded-4 p-4">
+                    <div class="card  panel-xxl shadow-sm p-4">
                         <h2 class="h5 mb-3">Solicitudes guardadas</h2>
                         <div id="request-list" class="d-grid gap-3">
                             <div th:if="${#lists.isEmpty(requests)}"

@@ -1,7 +1,6 @@
 const form = document.getElementById("request-form");
 const errorBox = document.getElementById("error-box");
 const successBox = document.getElementById("success-box");
-const requestList = document.getElementById("request-list");
 const typeRadios = document.querySelectorAll("input[name='type']");
 
 function showMessage(box, message) {
@@ -61,13 +60,11 @@ form.addEventListener("submit", function (e) {
     if (selectedType.value === "0") {
         if (!name || !brand || !quantity || !supermarket || !isValidEAN(ean) || Number.isNaN(price) || price <= 0 || !hasPhoto) {
             showMessage(errorBox, "Revisa los campos del formulario.");
-            e.preventDefault();
             return;
         }
     } else { // modify: solo ean, price, supermarket
         if (!supermarket || !isValidEAN(ean) || Number.isNaN(price) || price <= 0) {
             showMessage(errorBox, "Revisa los campos del formulario.");
-            e.preventDefault();
             return;
         }
     }
