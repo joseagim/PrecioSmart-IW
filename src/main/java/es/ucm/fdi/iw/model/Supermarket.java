@@ -6,9 +6,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 
 @Data
 @Entity
+@NamedQuery(name="Supermarket.searchByName", query="SELECT s FROM Supermarket s WHERE s.name = :name")
 public class Supermarket {
     
     @Id

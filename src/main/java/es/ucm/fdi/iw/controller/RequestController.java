@@ -89,19 +89,29 @@ public class RequestController {
         return "view-request";
     }
 
+
     @Transactional
     @GetMapping("{id}/pic")
     public StreamingResponseBody getPic(@PathVariable long id) throws IOException {
         Request req = entityManager.find(Request.class, id);
         File f = null;
-        if (req != null && req.getUser() != null && req.getEAN() != null) {
-            f = localData.getFile("request_user" + req.getUser().getId(), req.getEAN() + ".jpg");
+        if (req != null) {
+            if (req.getImageUrl() != null && !req.getImageUrl().isBlank()) {
+                File fromImageUrl = new File(req.getImageUrl());
+                if (fromImageUrl.exists()) {
+                    f = fromImageUrl;
+                }
+            }
+            if (f == null) {
+                f = localData.getFile("request", req.getId() + ".jpg");
+            }
         }
 
         InputStream in = new BufferedInputStream(
                 (f != null && f.exists()) ? new FileInputStream(f) : defaultPic());
         return os -> FileCopyUtils.copy(in, os);
     }
+
 
     private static InputStream defaultPic() {
         return new BufferedInputStream(Objects.requireNonNull(
@@ -208,7 +218,7 @@ public class RequestController {
                 normalizedName = existingProduct.getName();
                 normalizedBrand = existingProduct.getBrand();
                 normalizedQuantity = existingProduct.getQuantity();
-                request.setImageUrl(existingProduct.getImageUrl());
+             
 
             }
 
@@ -226,7 +236,7 @@ public class RequestController {
         request.setUser(requester);
 
         if (photo != null && !photo.isEmpty()) {
-            request.setImageUrl(savePhoto(photo, requester.getId(), request.getEAN(), response));
+            request.setImageUrl(savePhoto(photo, requester.getId(), request.getId(), response));
         }
 
         entityManager.persist(request);
@@ -235,11 +245,11 @@ public class RequestController {
                 Map.of("message", "Solicitud guardada correctamente"));
     }
 
-    private String savePhoto(MultipartFile photo, long id, String EAN,
+    private String savePhoto(MultipartFile photo, long id, long IDRequest,
             HttpServletResponse response) throws IOException {
 
         log.info("Updating photo for user {}", id);
-        File f = localData.getFile("request_user" + id, "" + EAN + ".jpg");
+        File f = localData.getFile("request", "" + IDRequest + ".jpg");
         if (photo.isEmpty()) {
             log.info("failed to upload photo: emtpy file?");
         } else {

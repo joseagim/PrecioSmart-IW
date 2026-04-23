@@ -21,6 +21,14 @@ import jakarta.persistence.NamedQueries;
         @NamedQuery(
             name = "Product.searchByEAN", 
             query = "SELECT p FROM Product p WHERE p.EAN = :EAN"
+        ),
+        @NamedQuery(
+            name = "Product.totalNum", 
+            query = "SELECT COUNT(p) FROM Product p"
+        ),
+        @NamedQuery(
+            name = "Product.totalNumName", 
+            query = "SELECT COUNT(p) FROM Product p WHERE LOWER(p.name) LIKE LOWER(:name)"
         )
 })
 public class Product {
@@ -36,5 +44,4 @@ public class Product {
     private String name;
     private String brand;
     private String quantity;
-    private String imageUrl;
 }

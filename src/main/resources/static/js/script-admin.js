@@ -36,14 +36,14 @@ function handleRequestSubmit(e) {
     const requestId = form.querySelector('input[name="id"]').value;
     const action = form.classList.contains('accept-form') ? 'aceptar' : 'rechazar';
 
-    console.log(`Acción: ${action}, ID: ${requestId}`);
-
-    go(f.action, "POST", new URLSearchParams(FormData(f)))
-        .then(data => {
-            
-            const action = form.classList.contains('accept-form') ? 'aceptar' : 'rechazar';
+    go(form.action, "POST", new URLSearchParams(new FormData(form)))
+        .then(() => {
+            const card = form.closest('.notification');
+            if (card) {
+                card.remove();
+            }
         })
-        .fail(data => {
-
+        .catch(() => {
+            alert(`No se pudo ${action} la solicitud ${requestId}`);
         })
 }

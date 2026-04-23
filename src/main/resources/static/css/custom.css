@@ -248,6 +248,13 @@
     margin-bottom: 15px;
 }
 
+details .arrow-icon {
+    transition: transform 0.3s ease;
+}
+
+details[open] .arrow-icon {
+    transform: rotate(180deg);
+}
 
 /*-- INDEX --*/
 

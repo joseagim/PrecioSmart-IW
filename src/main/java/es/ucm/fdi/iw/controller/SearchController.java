@@ -6,12 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.persistence.EntityManager;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -21,6 +23,7 @@ public class SearchController {
 
     @Autowired
     private EntityManager entityManager;
+
 
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
@@ -34,43 +37,87 @@ public class SearchController {
      */
 
     @GetMapping
-    public String search(@RequestParam(required = false) String producto, Model model, HttpServletRequest request) {
+    public String search(
+            @RequestParam(required = false) String producto, 
+            @RequestParam(defaultValue = "1") int page,
+            Model model) {
+
+        int pageSize = 15;
+        int offset = (page - 1) * pageSize;
+
         if (producto == null || producto.trim().isEmpty()) {
-            List<Product> todosLosProductos = entityManager
+            // Obtener pageSize los productos a partir del offset
+            List<Product> productosList = entityManager
                     .createQuery("SELECT p FROM Product p", Product.class)
+                    .setFirstResult(offset)
+                    .setMaxResults(pageSize)
                     .getResultList();
+
+            // Total de productos para numero de paginas
+            Long total = entityManager
+                    .createNamedQuery("Product.totalNum", Long.class)
+                    .getSingleResult();
+
+            // Objeto de paginacion para la vista
+            Page<Product> todosLosProductos = new PageImpl<>(productosList, PageRequest.of(page - 1, pageSize), total);
+            
             model.addAttribute("productos", todosLosProductos);
+            model.addAttribute("url", "/search");
+
             return "search";
-        }
+        }   
+        model.addAttribute("url", "/search/" + producto);
         
         return "redirect:/search/" + producto;
     }
 
     @GetMapping("/{product}")
     @Transactional
-    public String searchProduct(@PathVariable(name = "product") String producto, Model model) {
+    public String searchProduct(
+            @PathVariable(name = "product") String producto, 
+            @RequestParam(defaultValue = "1") int page, 
+            Model model) {
+
+        int pageSize = 3;
+        int offset = (page - 1) * pageSize;
 
         List<Product> productos = new ArrayList<>();
+        
+        // Busco por EAN
         productos = entityManager
                 .createNamedQuery("Product.searchByEAN", Product.class)
                 .setParameter("EAN", producto)
                 .getResultList();
 
-        if (productos.size() == 0){
+        long total;
+
+        if (productos.size() > 0) {
+            total = 1;
+        } else {
+            // Si no se encuentra por EAN, busco por nombre 
             productos = entityManager
                 .createNamedQuery("Product.searchByName", Product.class)
                 .setParameter("name", "%" + producto + "%")
+                .setFirstResult(offset)
+                .setMaxResults(pageSize)
                 .getResultList();
+
+            total = entityManager
+                    .createNamedQuery("Product.totalNumName", Long.class)
+                    .setParameter("name", "%" + producto + "%")
+                    .getSingleResult();
         }
 
-        if (productos.size() == 1) {
+        if (total == 1) {
             return "redirect:/product/" + productos.get(0).getId();
         } 
-        else if (productos.size() == 0) {
-            model.addAttribute("error", "No se han encontrado resultados para el producto: " + producto);
+        else if (total == 0) {
+            model.addAttribute("error", "No se han encontrado resultados para: " + producto);
         }
 
-        model.addAttribute("productos", productos);
+        Page<Product> productosPage = new PageImpl<>(productos, PageRequest.of(page - 1, pageSize), total);
+        model.addAttribute("productos", productosPage);
+        model.addAttribute("url", "/search/" + producto);
 
         return "search";
     }
