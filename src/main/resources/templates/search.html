@@ -59,22 +59,37 @@
                     </div>
                 </div>
             </div>
-            <nav th:if="${productos.totalPages > 1}" class="mt-5">
+            <nav th:if="${productos.totalPages > 1}" class="    mt-5">
                 <ul class="pagination justify-content-center">
                     
                     <li class="page-item" th:classappend="${productos.first} ? 'disabled'">
                         <a class="page-link" th:href="@{${url}(page=${productos.number})}">&laquo;</a>
                     </li>
 
-                    <li class="page-item" th:each="i : ${#numbers.sequence(1, productos.totalPages)}"
+                    <li class="page-item" th:classappend="${i == productos.number + 1} ? 'active'">
+                        <a class="page-link" th:href="@{${url}(page=${1})}">1</a>
+                    </li>
+
+                    <li class="page-item disabled" th:if="${productos.number + 1 > 3}">
+                        <span class="page-link">...</span>
+                    </li>
+
+                    <li class="page-item" th:each="i : ${#numbers.sequence(T(java.lang.Math).max(2, productos.number), T(java.lang.Math).min(productos.totalPages - 1, productos.number + 2))}"
                         th:classappend="${i == productos.number + 1} ? 'active'">
                         <a class="page-link" th:href="@{${url}(page=${i})}" th:text="${i}">1</a>
+                    </li>
+
+                    <li class="page-item disabled" th:if="${productos.number < productos.totalPages - 3}">
+                        <span class="page-link">...</span>
+                    </li>
+
+                    <li class="page-item" th:classappend="${i == productos.number + 1} ? 'active'">
+                        <a class="page-link" th:href="@{${url}(page=${productos.totalPages})}" th:text="${productos.totalPages}">99</a>
                     </li>
 
                     <li class="page-item" th:classappend="${productos.last} ? 'disabled'">
                         <a class="page-link" th:href="@{${url}(page=${productos.number + 2})}">&raquo;</a>
                     </li>
-                    
                 </ul>
             </nav>
         </div>

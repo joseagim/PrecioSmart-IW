@@ -159,72 +159,62 @@ public class RequestController {
         }
 
         Request request = new Request();
-        Product existingProduct;
+        String msg = null;
 
-        if (requestType == RequestType.ADD) {
-            existingProduct = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
-                    .setParameter("EAN", normalizedEan)
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
+        Product p = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
+                .setParameter("EAN", normalizedEan)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+        Supermarket s = entityManager.createNamedQuery("Supermarket.searchByName",Supermarket.class)
+                .setParameter("name", normalizedSupermarket)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
 
-            // Caso 1: Se solicita añadir un producto que ya existe
-            if (existingProduct != null) {
-                return ResponseEntity.badRequest().body(Map.of("message", "El producto ya existe"));
-            }
-            if (normalizedName.isEmpty() || normalizedBrand.isEmpty() || normalizedQuantity.isEmpty()) {
-                return ResponseEntity.badRequest().body(
-                        Map.of("message", "Para un producto nuevo debes indicar nombre, marca y cantidad"));
-            }
-
-        } else {
-            existingProduct = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
-                    .setParameter("EAN", normalizedEan)
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-
-            /*
-             * Caso 2: Se solicita añadir un producto ya existente en el supermercado
-             * solicitado que no existe
-             * Case 3 Se solicita modificar un producto existente, pero el EAN no existe o
-             * no coincide con el producto a modificar
-             */
-            if (existingProduct == null) {
-                return ResponseEntity.badRequest().body(Map.of("message",
-                        "El producto con ese EAN no existe"));
-            } else {
-                Supermarket supermarketEntity = entityManager
-                        .createQuery("SELECT s FROM Supermarket s WHERE LOWER(s.name) = LOWER(:name)",
-                                Supermarket.class)
-                        .setParameter("name", normalizedSupermarket)
+        if (requestType == RequestType.ADD){
+            if (p != null && s != null) {
+                ProductSupermarket ps = entityManager.createNamedQuery("ProductSupermarket.findProductSupermarket", ProductSupermarket.class)
+                        .setParameter("supermarketId", s.getId())
+                        .setParameter("productId", p.getId())
                         .getResultStream()
                         .findFirst()
                         .orElse(null);
-                boolean existe = supermarketEntity != null && entityManager.createQuery(
-                        "SELECT ps FROM ProductSupermarket ps WHERE ps.product.id = :productId AND ps.supermarket.id = :supermarketId",
-                        ProductSupermarket.class)
-                        .setParameter("productId", existingProduct.getId())
-                        .setParameter("supermarketId", supermarketEntity.getId())
+
+                normalizedName = p.getName();
+                if (ps != null) {
+                    requestType = RequestType.MODIFY;
+                    msg = "El producto " + p.getName() + ", ya existe en el supermercado " + s.getName() + ", se ha cambiado el tipo de solicitud a MODIFICAR para cambiar su precio.";
+                } else {
+                    requestType = RequestType.ADD_IN_SUPER;
+                    msg = "El producto " + p.getName() + " existe en la base de datos pero no existe en el supermercado " + s.getName() + ", se ha cambiado el tipo de solicitud a AÑADIR EN SUPERMERCADO para añadirlo.";
+                }
+            }
+        }
+        else {
+            if (p == null) {
+                return ResponseEntity.badRequest().body(Map.of("message", "No existe ningún producto con ese EAN, cambia el tipo de solicitud a AÑADIR para añadir el producto a la base de datos."));
+            }
+            else{
+                ProductSupermarket ps = entityManager.createNamedQuery("ProductSupermarket.findProductSupermarket", ProductSupermarket.class)
+                        .setParameter("supermarketId", s.getId())
+                        .setParameter("productId", p.getId())
                         .getResultStream()
                         .findFirst()
-                        .isPresent();
+                        .orElse(null);
 
-                if (existe && requestType == RequestType.ADD_IN_SUPER) {
-                    return ResponseEntity.badRequest()
-                            .body(Map.of("message", "El producto ya existe en ese supermercado"));
-                } else if (!existe && requestType == RequestType.MODIFY) {
-                    return ResponseEntity.badRequest()
-                            .body(Map.of("message",
-                                    "No existe este producto en el supermercado indicado, no se puede modificar"));
+                if (ps != null && requestType == RequestType.ADD_IN_SUPER) {
+                    requestType = RequestType.MODIFY;
+                    msg = "El producto " + p.getName() + ", ya existe en el supermercado " + s.getName() + ", se ha cambiado el tipo de solicitud a MODIFICAR para cambiar su precio.";
                 }
-
-                normalizedName = existingProduct.getName();
-                normalizedBrand = existingProduct.getBrand();
-                normalizedQuantity = existingProduct.getQuantity();
-
+                else if (ps == null && requestType == RequestType.MODIFY) {
+                    requestType = RequestType.ADD_IN_SUPER;
+                    msg = "El producto " + p.getName() + " no existe en el supermercado " + s.getName() + ", se ha cambiado el tipo de solicitud a AÑADIR EN SUPERMERCADO para añadirlo.";
+                }
+                normalizedName = p.getName();
+                normalizedBrand = p.getBrand();
+                normalizedQuantity = p.getQuantity();
             }
-
         }
 
         request.setName(normalizedName);
@@ -248,7 +238,7 @@ public class RequestController {
         }
 
         return ResponseEntity.ok(
-                Map.of("message", "Solicitud guardada correctamente"));
+                Map.of("message", (msg != null) ? msg : "Solicitud guardada correctamente"));
     }
 
     private String savePhoto(MultipartFile photo, long id, long IDRequest,

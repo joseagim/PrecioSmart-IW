@@ -162,21 +162,18 @@
                                 <p class="small text-muted mb-0" th:if="${entry.date != null}"
                                     th:text="'Actualizado: ' + ${#temporals.format(entry.date, 'dd/MM/yyyy HH:mm')}">
                                     Actualizado: -</p>
-                            </div>
-
-
+                            </div>  
                         </li>
                     </ul>
                     <p class="text-muted mb-0 mt-2" th:if="${#lists.isEmpty(result)}">No hay supermercados disponibles.
                     </p>
                     <div>
-                        <h4 class="mb-3 p-2 text-center text-black mt-5">¿El precio actual no coincide con el que usted
-                            ve
-                            en el supermercado?</h2>
-                            <a th:href="@{/user/request}" class="btn btn-naranja btn-sm rounded-3 w-100 mt-2">Solicita
-                                una
-                                actualización de precio</a>
-
+                        <h4 class="mb-3 p-2 text-center text-black mt-5">
+                            ¿El precio actual no coincide con el que usted ve en el supermercado?
+                        </h4>
+                        <a th:href="@{/user/request}" class="btn btn-naranja btn-sm rounded-3 w-100 mt-2">
+                            Solicita una actualización de precio
+                        </a>
                     </div>
                 </div>
             </div>

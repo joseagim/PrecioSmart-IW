@@ -86,8 +86,14 @@ form.addEventListener("submit", function (e) {
 
 
     go("/user/request", "POST", formData)
-        .then(() => {
-            window.location.replace("/user/request?success=true");
+        .then(response => {
+            const successBox = document.getElementById("success-box");
+            successBox.textContent = response.message;
+            successBox.classList.remove("d-none");
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 4000);
         })
         .catch(error => {
             const json = JSON.parse(error.text);
