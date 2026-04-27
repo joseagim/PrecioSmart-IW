@@ -8,7 +8,8 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "findByStatus", query = "SELECT r FROM Request r WHERE r.status = :status ORDER BY r.date DESC")
+        @NamedQuery(name = "Request.findByStatus", query = "SELECT r FROM Request r WHERE r.status = :status ORDER BY r.date DESC"),
+        @NamedQuery(name = "Request.findByUser", query = "SELECT r FROM Request r WHERE r.user.id = :uid ORDER BY r.date DESC")
 })
 public class Request {
 

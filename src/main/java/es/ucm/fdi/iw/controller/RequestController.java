@@ -68,10 +68,8 @@ public class RequestController {
     public String request(@RequestParam(required = false, defaultValue = "false") boolean success, Model model,
             HttpSession session) {
         User requester = (User) session.getAttribute("u");
-        List<Request> requests = entityManager
-                .createQuery("SELECT r FROM Request r WHERE r.user.id = :uid ORDER BY r.date DESC", Request.class)
-                .setParameter("uid", requester.getId())
-                .getResultList();
+        List<Request> requests = entityManager.createNamedQuery("Request.findByUser", Request.class)
+                .setParameter("uid", requester.getId()).getResultList();
 
         model.addAttribute("success", success);
         model.addAttribute("requests", requests);
@@ -161,20 +159,23 @@ public class RequestController {
         Request request = new Request();
         String msg = null;
 
-        Product p = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
+        Product p = entityManager.createNamedQuery(
+                "Product.searchByEAN", Product.class)
                 .setParameter("EAN", normalizedEan)
                 .getResultStream()
                 .findFirst()
                 .orElse(null);
-        Supermarket s = entityManager.createNamedQuery("Supermarket.searchByName",Supermarket.class)
+        Supermarket s = entityManager.createNamedQuery(
+                "Supermarket.searchByName", Supermarket.class)
                 .setParameter("name", normalizedSupermarket)
                 .getResultStream()
                 .findFirst()
                 .orElse(null);
 
-        if (requestType == RequestType.ADD){
+        if (requestType == RequestType.ADD) {
             if (p != null && s != null) {
-                ProductSupermarket ps = entityManager.createNamedQuery("ProductSupermarket.findProductSupermarket", ProductSupermarket.class)
+                ProductSupermarket ps = entityManager.createNamedQuery(
+                        "ProductSupermarket.findProductSupermarket", ProductSupermarket.class)
                         .setParameter("supermarketId", s.getId())
                         .setParameter("productId", p.getId())
                         .getResultStream()
@@ -184,19 +185,31 @@ public class RequestController {
                 normalizedName = p.getName();
                 if (ps != null) {
                     requestType = RequestType.MODIFY;
-                    msg = "El producto " + p.getName() + ", ya existe en el supermercado " + s.getName() + ", se ha cambiado el tipo de solicitud a MODIFICAR para cambiar su precio.";
+                    msg = "El producto " + p.getName() + ", ya existe en el supermercado "
+                            + s.getName()
+                            + ", se ha cambiado el tipo de solicitud a MODIFICAR para cambiar su precio.";
+
                 } else {
                     requestType = RequestType.ADD_IN_SUPER;
-                    msg = "El producto " + p.getName() + " existe en la base de datos pero no existe en el supermercado " + s.getName() + ", se ha cambiado el tipo de solicitud a AÑADIR EN SUPERMERCADO para añadirlo.";
+                    msg = "El producto " + p.getName()
+                            + " existe en la base de datos pero no existe en el supermercado "
+                            + s.getName()
+                            + ", se ha cambiado el tipo de solicitud a AÑADIR EN SUPERMERCADO para añadirlo.";
+
                 }
+                normalizedName = p.getName();
+                normalizedBrand = p.getBrand();
+                normalizedQuantity = p.getQuantity();
+
             }
-        }
-        else {
+        } else {
             if (p == null) {
-                return ResponseEntity.badRequest().body(Map.of("message", "No existe ningún producto con ese EAN, cambia el tipo de solicitud a AÑADIR para añadir el producto a la base de datos."));
-            }
-            else{
-                ProductSupermarket ps = entityManager.createNamedQuery("ProductSupermarket.findProductSupermarket", ProductSupermarket.class)
+                return ResponseEntity.badRequest().body(Map.of(
+                        "message", "No existe ningún producto con ese EAN, cambia el tipo de"
+                                + "solicitud a AÑADIR para añadir el producto a la base de datos."));
+            } else {
+                ProductSupermarket ps = entityManager.createNamedQuery(
+                        "ProductSupermarket.findProductSupermarket", ProductSupermarket.class)
                         .setParameter("supermarketId", s.getId())
                         .setParameter("productId", p.getId())
                         .getResultStream()
@@ -205,11 +218,13 @@ public class RequestController {
 
                 if (ps != null && requestType == RequestType.ADD_IN_SUPER) {
                     requestType = RequestType.MODIFY;
-                    msg = "El producto " + p.getName() + ", ya existe en el supermercado " + s.getName() + ", se ha cambiado el tipo de solicitud a MODIFICAR para cambiar su precio.";
-                }
-                else if (ps == null && requestType == RequestType.MODIFY) {
+                    msg = "El producto " + p.getName() + ", ya existe en el supermercado "
+                            + s.getName() + ", se ha cambiado el tipo de solicitud a MODIFICAR para cambiar su precio.";
+                } else if (ps == null && requestType == RequestType.MODIFY) {
                     requestType = RequestType.ADD_IN_SUPER;
-                    msg = "El producto " + p.getName() + " no existe en el supermercado " + s.getName() + ", se ha cambiado el tipo de solicitud a AÑADIR EN SUPERMERCADO para añadirlo.";
+                    msg = "El producto " + p.getName() + " no existe en el supermercado "
+                            + s.getName()
+                            + ", se ha cambiado el tipo de solicitud a AÑADIR EN SUPERMERCADO para añadirlo.";
                 }
                 normalizedName = p.getName();
                 normalizedBrand = p.getBrand();
