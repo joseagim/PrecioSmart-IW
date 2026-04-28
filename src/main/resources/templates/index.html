@@ -24,6 +24,23 @@
                         <img class="svg-sm" th:src="@{/img/svg/search.svg}" alt="buscar"> Ir al buscador de productos
                     </a>
                 </div>
+                <div>
+                    <input type="file" 
+                        id="barcode-input" 
+                        accept="image/*" 
+                        capture="environment" 
+                        style="display: none;" 
+                        onchange="subirYEscanear()">
+
+                    <button type="button" 
+                            onclick="document.getElementById('barcode-input').click()" 
+                            class="btn-scan">
+                        📷 Escanear Producto
+                    </button>
+                    <div id="loading" style="display: none; margin-top: 10px;">
+                        <p>Procesando imagen...</p>
+                    </div>
+                </div>
 
                 <div class="row row-cols-md-3 g-4 mt-5 justify-content-center">
 
@@ -108,6 +125,48 @@
                 </div>
             </div>
     </main>
+
+    <script>
+        function subirYEscanear() {
+            const fileInput = document.getElementById('barcode-input');
+            const loading = document.getElementById('loading');
+            
+            if (fileInput.files.length === 0) return;
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('imagen', file);
+
+            // Mostrar indicador de carga
+            loading.style.display = 'block';
+
+            fetch('/api/lector/leer', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('No se pudo leer el código o el servidor no responde');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.redirectUrl) {
+                    // Redirigir a la búsqueda que ya tienes implementada
+                    window.location.href = data.redirectUrl;
+                }
+            })
+            .catch(error => {
+                alert("Error: " + error.message);
+                console.error(error);
+            })
+            .finally(() => {
+                loading.style.display = 'none';
+                // Limpiar el input para permitir volver a escanear lo mismo si falló
+                fileInput.value = '';
+            });
+        }
+    </script>
 
     <th:block th:replace="~{fragments/footer.html :: footer}" />
 </body>
