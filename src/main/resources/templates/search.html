@@ -30,9 +30,36 @@
                     </div>
                 </form>
 
-                <button class="btn btn-scan mt-3">
-                    <img th:src="@{/img/svg/scan.svg}" class="svg-sm" alt="Escanear"> Escanear código de barras
-                </button>
+                <div>
+                    <input type="file" 
+                        id="barcode-input-capture" 
+                        accept="image/*" 
+                        capture="environment" 
+                        style="display: none;" 
+                        onchange="subirYEscanear(this)">
+                        
+                    <input type="file" 
+                        id="barcode-input-gallery" 
+                        accept="image/*" 
+                        style="display: none;" 
+                        onchange="subirYEscanear(this)">
+
+                    <div class="d-flex justify-content-center mt-3 gap-3">
+                        <button type="button" 
+                                onclick="document.getElementById('barcode-input-capture').click()" 
+                                class="btn-scan">
+                            📷 Escanear Producto
+                        </button>
+                        <button type="button" 
+                                onclick="document.getElementById('barcode-input-gallery').click()" 
+                                class="btn-scan">
+                            📷 Subir imagen
+                        </button>
+                    </div>
+                    <div id="loading" style="display: none; margin-top: 10px;">
+                        <p>Procesando imagen...</p>
+                    </div>
+                </div>
             </div>
 
             <div id="cuerpo-resultados" class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
@@ -66,7 +93,7 @@
                         <a class="page-link" th:href="@{${url}(page=${productos.number})}">&laquo;</a>
                     </li>
 
-                    <li class="page-item" th:classappend="${i == productos.number + 1} ? 'active'">
+                    <li class="page-item" th:classappend="${productos.number == 0} ? 'active'">
                         <a class="page-link" th:href="@{${url}(page=${1})}">1</a>
                     </li>
 
@@ -74,17 +101,20 @@
                         <span class="page-link">...</span>
                     </li>
 
-                    <li class="page-item" th:each="i : ${#numbers.sequence(T(java.lang.Math).max(2, productos.number), T(java.lang.Math).min(productos.totalPages - 1, productos.number + 2))}"
-                        th:classappend="${i == productos.number + 1} ? 'active'">
-                        <a class="page-link" th:href="@{${url}(page=${i})}" th:text="${i}">1</a>
-                    </li>
+                    <th:block th:if="${productos.totalPages > 2}">
+                        <li class="page-item" 
+                            th:each="i : ${#numbers.sequence(T(java.lang.Math).max(2, productos.number), T(java.lang.Math).min(productos.totalPages - 1, productos.number + 2))}"
+                            th:classappend="${i == productos.number + 1} ? 'active'">
+                            <a class="page-link" th:href="@{${url}(page=${i})}" th:text="${i}">i</a>
+                        </li>
+                    </th:block>
 
                     <li class="page-item disabled" th:if="${productos.number < productos.totalPages - 3}">
                         <span class="page-link">...</span>
                     </li>
 
-                    <li class="page-item" th:classappend="${i == productos.number + 1} ? 'active'">
-                        <a class="page-link" th:href="@{${url}(page=${productos.totalPages})}" th:text="${productos.totalPages}">99</a>
+                    <li class="page-item" th:classappend="${productos.number == productos.totalPages - 1} ? 'active'">
+                        <a class="page-link" th:href="@{${url}(page=${productos.totalPages})}" th:text="${productos.totalPages}">999</a>
                     </li>
 
                     <li class="page-item" th:classappend="${productos.last} ? 'disabled'">
@@ -95,8 +125,9 @@
         </div>
     </main>
 
-    <th:block th:replace="~{fragments/footer.html :: footer}" />
+    <script th:src="@{/js/script-scan.js}"></script>
 
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
    
 </body>
 

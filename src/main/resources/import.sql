@@ -219,7 +219,7 @@ INSERT INTO Product (ean, name, brand, quantity) VALUES
 ('8410000000202', 'Mascarillas Pack 10', 'Salud', '10u'),
 ('8410000000203', 'Alcohol Sanitario', 'Salud', '250ml'),
 ('8410000000204', 'Algodón en Zig-zag', 'Salud', '100g'),
-('84412779220107', 'Leche Semidesnatada', 'Solar', '1L');
+('8412779220107', 'Leche Semidesnatada', 'Solar', '1L');
 
 
 

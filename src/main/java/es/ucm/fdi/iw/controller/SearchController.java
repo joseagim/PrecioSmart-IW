@@ -78,7 +78,7 @@ public class SearchController {
             @RequestParam(defaultValue = "1") int page, 
             Model model) {
 
-        int pageSize = 3;
+        int pageSize = 6;
         int offset = (page - 1) * pageSize;
 
         List<Product> productos = new ArrayList<>();
