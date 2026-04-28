@@ -151,7 +151,7 @@
                             <div th:if="${entry != null and entry.product != null and 
                                         product != null and entry.product.id == product.id}">
                                 <h3
-                                    class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
+                                    class="fs-5 mb-2 d-flex flex-column flex-md-row align-items-center justify-content-center gap-2">
                                     <img th:src="|/img/supermarkets/${#strings.toLowerCase(entry.supermarket.name)}.png|"
                                         th:alt="${'Logo de ' + entry.supermarket.name}"
                                         style="width: 40px; height: 40px; object-fit: contain;">
