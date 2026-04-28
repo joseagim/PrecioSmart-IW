@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductSupermarket;
@@ -44,6 +47,9 @@ public class AdminController {
 
   @Autowired
   private EntityManager entityManager;
+
+  @Autowired
+  private SimpMessagingTemplate messagingTemplate;
 
   @ModelAttribute
   public void populateModel(HttpSession session, Model model) {
@@ -198,6 +204,17 @@ public class AdminController {
     entityManager.persist(product);
     entityManager.persist(ps);
 
+    // para convertir a json puede dar error
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      String json = mapper.writeValueAsString(
+        Map.of("tipo", "request", "resultado", "aceptada"));
+      messagingTemplate.convertAndSend("/user/" 
+        + request.getUser().getUsername() + "/queue/updates", json);
+    } catch (Exception e) {
+      log.warn("error serializando json", e);
+    }
+    
     return ResponseEntity.ok().body(Map.of("message", "Solicitud aceptada correctamente"));
 
   }

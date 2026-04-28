@@ -33,3 +33,12 @@ if (btnRechazar) {
         numSolicitudes++;
     });
 }
+
+const manejadorAnterior = ws.receive
+ws.receive = (m) => {
+    manejadorAnterior(m);
+
+    if (m.tipo === "request") {
+        console.log("peticion recibida correctamente");
+    }
+}
