@@ -2,18 +2,15 @@
 function subirYEscanear(inputElement) {
     const loading = document.getElementById('loading');
     
-    // Si no nos pasan el input (por si acaso), lo buscamos, pero ahora usamos inputElement
-    const fileInput = inputElement;
-    
-    if (!fileInput || fileInput.files.length === 0) return;
 
-    const file = fileInput.files[0];
+    const file = inputElement.files[0];
     loading.style.display = 'block';
 
     const img = new Image();
     const objectUrl = URL.createObjectURL(file);
     
     img.onload = function() {
+        //Pasar imagen a 800px para minimizar tamaño y mejorar rendimiento
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         const MAX_WIDTH = 800;
@@ -56,7 +53,7 @@ function subirYEscanear(inputElement) {
             })
             .finally(() => {
                 loading.style.display = 'none';
-                fileInput.value = ''; // Limpiamos el input que disparó el evento
+                inputElement.value = ''; // Limpiamos el input que disparó el evento
                 URL.revokeObjectURL(objectUrl);
             });
         }, 'image/jpeg', 0.7);

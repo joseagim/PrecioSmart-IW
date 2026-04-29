@@ -35,7 +35,7 @@ public class BarcodeReaderService {
             Result result = new MultiFormatReader().decode(bitmap, hints);
             return result.getText();
         } catch (NotFoundException e) {
-            return "No se detectó ningún código de barras.";
+            return "Error";
         }
     }
 }
