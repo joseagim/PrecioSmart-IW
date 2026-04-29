@@ -63,13 +63,6 @@ acceptCard.innerHTML=`<div class="d-flex flex-row justify-content-center align-i
                                         <span>${date}</span>
                                     </h4>
                                 </li>
-
-                                 <li class="pb-2">
-                                    <h4 class="mb-0">
-                                        <b class="text-black">Fecha: </b>
-                                        <span>${date}</span>
-                                    </h4>
-                                </li>
                             </ul>
                         </div>`;
 notifList.appendChild(acceptCard);
@@ -77,14 +70,13 @@ notifList.appendChild(acceptCard);
 
 const manejadorAnterior = ws.receive;
 ws.receive = (m) => {
-    const data = JSON.parse(m.body);
     manejadorAnterior(m);
-    if (data.tipo === "request") {
+    if (m.tipo === "request") {
         console.log("esto funciona");
-        if(data.resultado=="aceptada"){
-            createAcceptCard(data.nombre,data.fecha);
+        if(m.resultado=="aceptada"){
+            createAcceptCard(m.nombre,m.fecha);
         }else{
-            createRejectCard(data.nombre,data.motivo,data.fecha);
+            createRejectCard(m.nombre,m.motivo,m.fecha);
         }
     }
 }
