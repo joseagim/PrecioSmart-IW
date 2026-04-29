@@ -63,6 +63,13 @@ acceptCard.innerHTML=`<div class="d-flex flex-row justify-content-center align-i
                                         <span>${date}</span>
                                     </h4>
                                 </li>
+
+                                 <li class="pb-2">
+                                    <h4 class="mb-0">
+                                        <b class="text-black">Fecha: </b>
+                                        <span>${date}</span>
+                                    </h4>
+                                </li>
                             </ul>
                         </div>`;
 notifList.appendChild(acceptCard);
