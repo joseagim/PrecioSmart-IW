@@ -7,32 +7,32 @@ function createRejectCard(name,description,date){
 const rejectCard=document.createElement("div");
 rejectCard.className=classNameNotifCards;
 rejectCard.innerHTML=`<div class="d-flex flex-row justify-content-center align-items-center text-center">
-                            <h3 class="mb-0 d-flex flex-row">
-                                <b class="d-flex flex-row">Solicitud (nombre) <h3 class="ms-2" style="color: red;">rechazada</h3></b>
-                            </h3>
+                            <h4 class="mb-0 d-flex flex-row">
+                                <b class="d-flex flex-row">Solicitud <h4 class="ms-2" style="color: red;">rechazada</h4></b>
+                            </h4>
                         </div>
 
                         <div class="d-flex justify-content-start align-items-start mt-4">
-                            <ul class="list-unstyled d-flex flex-column gap-4">
+                            <ul class="list-unstyled d-flex flex-column align-items-start gap-3">
                                 <li class="pb-2">
-                                    <h4 class="mb-0">
+                                    <h5 class="mb-0">
                                         <b class="text-black">Nombre: </b>
                                         <span>${name}</span>
-                                    </h4>
+                                    </h5>
                                 </li>
 
                                 <li class="pb-2">
-                                    <h4 class="mb-0">
+                                    <h5 class="mb-0">
                                         <b class="text-black">Fecha: </b>
                                         <span>${date}</span>
-                                    </h4>
+                                    </h5>
                                 </li>
 
                                 <li>
-                                    <h4 class="mb-0">
+                                    <h5 class="mb-0">
                                         <b class="text-black">Motivo: </b>
                                         <span>${description}</span>
-                                    </h4>
+                                    </h5>
                                 </li>
                             </ul>
                         </div>`;
@@ -43,25 +43,25 @@ function createAcceptCard(name,date){
 const acceptCard=document.createElement("div");
 acceptCard.className=classNameNotifCards;
 acceptCard.innerHTML=`<div class="d-flex flex-row justify-content-center align-items-center text-center">
-                            <h3 class="mb-0 d-flex flex-row">
-                                <b class="d-flex flex-row">Solicitud<h3 class="ms-2" style="color: green;">aceptada</h3></b>
-                            </h3>
+                            <h4 class="mb-0 d-flex flex-row">
+                                <b class="d-flex flex-row">Solicitud<h4 class="ms-2" style="color: green;">aceptada</h3></b>
+                            </h4>
                         </div>
 
                         <div class="d-flex justify-content-start align-items-start mt-4">
-                            <ul class="list-unstyled d-flex flex-column gap-4">
+                            <ul class="list-unstyled d-flex flex-column align-items-start gap-3">
                                 <li class="pb-2">
-                                    <h4 class="mb-0">
+                                    <h5 class="mb-0">
                                         <b class="text-black">Nombre: </b>
                                         <span>${name}</span>
-                                    </h4>
+                                    </h5>
                                 </li>
 
                                 <li class="pb-2">
-                                    <h4 class="mb-0">
+                                    <h5 class="mb-0">
                                         <b class="text-black">Fecha: </b>
                                         <span>${date}</span>
-                                    </h4>
+                                    </h5>
                                 </li>
                             </ul>
                         </div>`;
