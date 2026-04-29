@@ -9,10 +9,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.format.DateTimeFormatter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -207,14 +209,15 @@ public class AdminController {
     // para convertir a json puede dar error
     try {
       ObjectMapper mapper = new ObjectMapper();
-      String json = mapper.writeValueAsString(
-        Map.of("tipo", "request", "resultado", "aceptada"));
-      messagingTemplate.convertAndSend("/user/" 
-        + request.getUser().getUsername() + "/queue/updates", json);
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+      String fecha=request.getDate().format(formatter);
+      String json = mapper.writeValueAsString(Map.of("nombre",request.getName(),"fecha",fecha,"tipo", "request", "resultado", "aceptada"));
+      messagingTemplate.convertAndSend("/user/"
+          + request.getUser().getUsername() + "/queue/updates", json);
     } catch (Exception e) {
       log.warn("error serializando json", e);
     }
-    
+
     return ResponseEntity.ok().body(Map.of("message", "Solicitud aceptada correctamente"));
 
   }
@@ -239,6 +242,16 @@ public class AdminController {
 
     request.setStatus(RequestStatus.REJECTED);
     entityManager.merge(request);
+
+    try {
+      ObjectMapper mapper=new ObjectMapper();
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+      String fecha=request.getDate().format(formatter);
+      String json=mapper.writeValueAsString(Map.of("nombre",request.getName(),"fecha",fecha,"tipo","request","resultado","rechazada","motivo","solicitud rechazada"));
+      messagingTemplate.convertAndSend("/user/"+request.getUser().getUsername()+"/queue/updates",json);
+    } catch (Exception e) {
+        log.warn("error serializando json", e);
+    }
 
     return ResponseEntity.ok().body(Map.of("message", "Solicitud rechazada correctamente"));
   }
