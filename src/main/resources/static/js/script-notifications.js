@@ -77,8 +77,8 @@ notifList.appendChild(acceptCard);
 
 const manejadorAnterior = ws.receive;
 ws.receive = (m) => {
-    manejadorAnterior(m);
     const data = JSON.parse(m.body);
+    manejadorAnterior(m);
     if (data.tipo === "request") {
         console.log("esto funciona");
         if(data.resultado=="aceptada"){
