@@ -68,15 +68,17 @@ acceptCard.innerHTML=`<div class="d-flex flex-row justify-content-center align-i
 notifList.appendChild(acceptCard);
 }
 
-const manejadorAnterior = ws.receive;
-ws.receive = (m) => {
-    manejadorAnterior(m);
-    if (m.tipo === "request") {
-        console.log("esto funciona");
-        if(m.resultado=="aceptada"){
-            createAcceptCard(m.nombre,m.fecha);
-        }else{
-            createRejectCard(m.nombre,m.motivo,m.fecha);
+document.addEventListener("DOMContentLoaded", () => {
+    const manejadorAnterior = ws.receive;
+    ws.receive = (m) => {
+        manejadorAnterior(m);
+        if (m.tipo === "request") {
+            console.log("esto funciona");
+            if(m.resultado=="aceptada"){
+                createAcceptCard(m.nombre,m.fecha);
+            }else{
+                createRejectCard(m.nombre,m.motivo,m.fecha);
+            }
         }
     }
-}
+});
