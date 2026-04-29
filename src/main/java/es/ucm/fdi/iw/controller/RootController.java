@@ -94,11 +94,10 @@ public class RootController {
                 .setParameter("email", normalizedEmail)
                 .getSingleResult();
 
-        if(existingEmail != null && existingEmail > 0) {
+        if (existingEmail != null && existingEmail > 0) {
             model.addAttribute("registerError", "Ese email ya está registrado");
             return "register";
         }
-        
 
         User user = new User();
         user.setUsername(normalizedUsername);
@@ -110,11 +109,6 @@ public class RootController {
 
         model.addAttribute("registerOk", "Usuario creado, ya puedes iniciar sesión");
         return "login";
-    }
-
-    @GetMapping("/user/notifications")
-    public String notifications(Model model, HttpServletRequest request) {
-        return "notifications";
     }
 
     @GetMapping("/faq")

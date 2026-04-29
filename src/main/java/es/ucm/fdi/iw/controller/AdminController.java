@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import es.ucm.fdi.iw.model.Notification;
 import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductSupermarket;
 import es.ucm.fdi.iw.model.Request;
@@ -206,6 +207,13 @@ public class AdminController {
     entityManager.persist(product);
     entityManager.persist(ps);
 
+    // Persistir notificación en BD
+    Notification notif = new Notification();
+    notif.setUser(request.getUser());
+    notif.setRequest(request);
+    notif.setCreatedAt(java.time.LocalDateTime.now());
+    entityManager.persist(notif);
+
     // para convertir a json puede dar error
     try {
       ObjectMapper mapper = new ObjectMapper();
@@ -242,6 +250,13 @@ public class AdminController {
 
     request.setStatus(RequestStatus.REJECTED);
     entityManager.merge(request);
+
+    // Persistir notificación en BD
+    Notification notif = new Notification();
+    notif.setUser(request.getUser());
+    notif.setRequest(request);
+    notif.setCreatedAt(java.time.LocalDateTime.now());
+    entityManager.persist(notif);
 
     try {
       ObjectMapper mapper=new ObjectMapper();
