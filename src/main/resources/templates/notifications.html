@@ -3,7 +3,7 @@
 
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
-    <title>PrecioSmart Notificaciones</title>
+    <title>PrecioSmart - Notificaciones</title>
 </head>
 
 <body class="d-flex flex-column h-100 text-center">
@@ -14,6 +14,77 @@
             <h1 class="mt-5 mb-5">Mis notificaciones</h1>
             <div class="panel-lg mb-5">
                 <div id="notification-list" class="p-3">
+                    <!-- listar las notis del model -->
+                    <div th:if="${#lists.isEmpty(notifications)}"
+                        class="rounded-4 border bg-light-subtle p-4 text-center text-muted">
+                        No tienes notificaciones todavia.
+                    </div>
+
+                    <div th:each="notification : ${notifications}">
+                        <div class="notification-item rounded-4 border bg-white p-3 mb-3 d-flex align-items-center gap-3">
+                            <img th:src="|/img/supermarkets/${#strings.toLowerCase(notification.request.supermarket)}.png|"
+                                th:alt="${'Logo de ' + notification.request.supermarket}"
+                                style="width: 56px; height: 56px; object-fit: contain;">
+
+                            <div class="flex-grow-1 text-start">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h3 class="fs-6 mb-1 fw-semibold">
+                                            <div class="mb-1">
+                                                <div th:switch="${notification.request.type.name()}">
+                                                    <div th:case="'ADD'"
+                                                        th:text="${'Tu solicitud de añadir el producto ' + notification.request.name + ' ' + (notification.request.status.name() == 'APPROVED' 
+                                                        ? 'ha sido aceptada' : (notification.request.status.name() == 'REJECTED' ? 'ha sido rechazada' : 'está pendiente'))}">
+                                                    </div>
+                                                    <div th:case="'ADD_IN_SUPER'"
+                                                        th:text="${'Tu solicitud de añadir el producto ' + notification.request.name + ' al supermercado ' + notification.request.supermarket + ' ' 
+                                                        + (notification.request.status.name() == 'APPROVED' ? 'ha sido aceptada' : (notification.request.status.name() == 'REJECTED' ? 'ha sido rechazada' : 'está pendiente'))}">
+                                                    </div>
+                                                    <div th:case="'MODIFY'"
+                                                        th:text="${'Tu solicitud de modificar el producto ' + notification.request.name + ' ' +  (notification.request.status.name() == 'APPROVED' ? 
+                                                        'ha sido aceptada' : (notification.request.status.name() == 'REJECTED' ? 'ha sido rechazada' : 'está pendiente'))}">
+                                                    </div>
+                                                    <div th:case="*"
+                                                        th:text="${'Tu solicitud sobre ' + notification.request.name + ' ' + (notification.request.status.name() == 'APPROVED' ? 'ha sido aceptada' : (notification.request.status.name() == 'REJECTED' ? 'ha sido rechazada' : 'está pendiente'))}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </h3>
+
+                                        <div class="small text-muted">
+                                            <span th:text="${notification.request.supermarket}">Supermercado</span>
+                                            ·
+                                            <span th:text="${notification.request.price} + ' €'">0,00 €</span>
+                                            ·
+                                            <span th:text="${notification.request.date} ">Fecha</span>
+                                        </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <span th:if="${notification.request.status.name() == 'APPROVED'}"
+                                            class="badge bg-success">Aceptada</span>
+                                        <span th:if="${notification.request.status.name() == 'REJECTED'}"
+                                            class="badge bg-danger">Rechazada</span>
+                                        <span th:if="${notification.request.status.name() == 'PENDING'}"
+                                            class="badge bg-secondary">Pendiente</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <form th:action="@{/user/notifications}" method="POST" class="mark-as-read-form">
+                                        <input type="hidden" name="id" th:value="${notification.id}">
+                                        <button type="submit" 
+                                                class="btn btn-success rounded-3 d-flex align-items-center justify-content-center" 
+                                                style="width: 40px; height: 40px;" 
+                                                title="Marcar como leído">
+                                            <i class="bi bi-check-lg fs-4"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
                 </div>
             </div>
         </div>

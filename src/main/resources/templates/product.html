@@ -3,7 +3,7 @@
 
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
-    <title>PrecioSmart Producto</title>
+    <title>PrecioSmart - Producto</title>
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -95,10 +95,11 @@
                     <h3 class="mb-3 p-2 text-center text-black mb-5">
                         Comparar precios por supermercado
                     </h3>
-                    <ul class="list-unstyled d-flex flex-wrap justify-content-center my-0 gap-3">
+                    <ul class="list-unstyled d-grid my-0 gap-3 pb-2"
+                        style="grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr);">
                         <li th:each="entry : ${result}"
-                            class=" rounded-3 p-3 text-start d-flex flex-column border-products"
-                            style="min-width: 280px; max-width: 280px;">
+                            class="rounded-3 p-3 text-start d-flex flex-column border-products"
+                            style="min-width: 0;">
                             <div th:if="${entry == null or entry.product == null}">
                                 <h3 class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
                                     <img th:src="|/img/supermarkets/${#strings.toLowerCase(entry.supermarket.name)}.png|"
@@ -150,7 +151,7 @@
 
                             <div th:if="${entry != null and entry.product != null and 
                                         product != null and entry.product.id == product.id}">
-                                <h3 class="fs-5 mb-2 d-flex align-items-center justify-content-center gap-2">
+                                <h3 class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
                                     <img th:src="|/img/supermarkets/${#strings.toLowerCase(entry.supermarket.name)}.png|"
                                         th:alt="${'Logo de ' + entry.supermarket.name}"
                                         style="width: 40px; height: 40px; object-fit: contain;">

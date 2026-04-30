@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import es.ucm.fdi.iw.model.Notification;
 import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductSupermarket;
 import es.ucm.fdi.iw.model.Request;
@@ -210,13 +212,22 @@ public class AdminController {
     try {
       ObjectMapper mapper = new ObjectMapper();
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-      String fecha=request.getDate().format(formatter);
-      String json = mapper.writeValueAsString(Map.of("nombre",request.getName(),"fecha",fecha,"tipo", "request", "resultado", "aceptada"));
+      String fecha = request.getDate().format(formatter);
+      String json = mapper.writeValueAsString(
+          Map.of("nombre", request.getName(), "fecha", fecha, "tipo", "request", "resultado", "aceptada"));
       messagingTemplate.convertAndSend("/user/"
           + request.getUser().getUsername() + "/queue/updates", json);
     } catch (Exception e) {
       log.warn("error serializando json", e);
     }
+
+    // crear noti para mandársela al usuario
+    Notification notification = new Notification();
+    notification.setUser(request.getUser());
+    notification.setRequest(request);
+    notification.setRead(false);
+    notification.setDate(LocalDateTime.now());
+    entityManager.persist(notification);
 
     return ResponseEntity.ok().body(Map.of("message", "Solicitud aceptada correctamente"));
 
@@ -244,14 +255,24 @@ public class AdminController {
     entityManager.merge(request);
 
     try {
-      ObjectMapper mapper=new ObjectMapper();
+      ObjectMapper mapper = new ObjectMapper();
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-      String fecha=request.getDate().format(formatter);
-      String json=mapper.writeValueAsString(Map.of("nombre",request.getName(),"fecha",fecha,"tipo","request","resultado","rechazada","motivo","solicitud rechazada"));
-      messagingTemplate.convertAndSend("/user/"+request.getUser().getUsername()+"/queue/updates",json);
+      String fecha = request.getDate().format(formatter);
+      String json = mapper.writeValueAsString(Map.of("nombre", request.getName(), "fecha", fecha, "tipo", "request",
+          "resultado", "rechazada", "motivo", "solicitud rechazada"));
+      messagingTemplate.convertAndSend("/user/" + request.getUser().getUsername() + "/queue/updates", json);
     } catch (Exception e) {
-        log.warn("error serializando json", e);
+      log.warn("error serializando json", e);
     }
+
+
+     // crear noti para mandársela al usuario
+    Notification notification = new Notification();
+    notification.setUser(request.getUser());
+    notification.setRequest(request);
+    notification.setRead(false);
+    notification.setDate(LocalDateTime.now());
+    entityManager.persist(notification);
 
     return ResponseEntity.ok().body(Map.of("message", "Solicitud rechazada correctamente"));
   }
