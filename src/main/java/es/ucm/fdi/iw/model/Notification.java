@@ -10,9 +10,9 @@ import lombok.Data;
 @Table(name = "notificacion")
 @NamedQueries({
     @NamedQuery(name = "Notification.findByUser",
-        query = "SELECT n FROM Notification n WHERE n.user.id = :uid ORDER BY n.createdAt DESC"),
-    @NamedQuery(name = "Notification.countUnreadByUser",
-        query = "SELECT COUNT(n) FROM Notification n WHERE n.user.id = :uid AND n.readByUser = false")
+        query = "SELECT n FROM Notification n WHERE n.user.id = :uid ORDER BY n.date DESC"),
+    @NamedQuery(name = "Notification.getUnreadByUser",
+        query = "SELECT n FROM Notification n WHERE n.user.id = :uid AND n.readByUser = false")
 })
 public class Notification {
 
@@ -30,5 +30,5 @@ public class Notification {
     private boolean readByUser = false;
 
     /** When the notification was created */
-    private LocalDateTime createdAt;
+    private LocalDateTime date;
 }

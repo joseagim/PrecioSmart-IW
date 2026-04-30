@@ -211,7 +211,7 @@ public class AdminController {
     Notification notif = new Notification();
     notif.setUser(request.getUser());
     notif.setRequest(request);
-    notif.setCreatedAt(java.time.LocalDateTime.now());
+    notif.setDate(java.time.LocalDateTime.now());
     entityManager.persist(notif);
 
     // para convertir a json puede dar error
@@ -255,7 +255,7 @@ public class AdminController {
     Notification notif = new Notification();
     notif.setUser(request.getUser());
     notif.setRequest(request);
-    notif.setCreatedAt(java.time.LocalDateTime.now());
+    notif.setDate(java.time.LocalDateTime.now());
     entityManager.persist(notif);
 
     try {

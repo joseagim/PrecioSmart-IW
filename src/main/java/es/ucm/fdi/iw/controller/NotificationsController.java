@@ -41,20 +41,21 @@ public class NotificationsController {
             return "redirect:/login";
         }
 
-        List<Notification> notifications = entityManager
-            .createNamedQuery("Notification.findByUser", Notification.class)
-            .setParameter("uid", u.getId())
-            .getResultList();
+        List<Notification> unreadByUser = entityManager
+                .createNamedQuery("Notification.getUnreadByUser", Notification.class)
+                .setParameter("uid", u.getId())
+                .getResultList();
+
+        model.addAttribute("notifications", unreadByUser);
 
         // Marcar todas como leídas
-        for (Notification n : notifications) {
-            if (!n.isReadByUser()) {
+        for (Notification n : unreadByUser) {
                 n.setReadByUser(true);
                 entityManager.merge(n);
-            }
         }
 
-        model.addAttribute("notifications", notifications);
+        
+
         return "notifications";
     }
 }
