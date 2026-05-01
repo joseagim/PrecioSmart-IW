@@ -8,7 +8,7 @@ function markNotificationAsRead(notificationId) {
     go(`${config.rootUrl}/user/notifications/${notificationId}/read`, "POST");
 }
 
-function createRejectCard(name, description, date) {
+function createRejectCard(name, date) {
     const rejectCard = document.createElement("div");
     rejectCard.className = classNameNotifCards;
     rejectCard.innerHTML = `<div class="d-flex flex-row justify-content-center align-items-center text-center">
@@ -30,13 +30,6 @@ function createRejectCard(name, description, date) {
                                     <h5 class="mb-0">
                                         <b class="text-black">Fecha: </b>
                                         <span>${date}</span>
-                                    </h5>
-                                </li>
-
-                                <li>
-                                    <h5 class="mb-0">
-                                        <b class="text-black">Motivo: </b>
-                                        <span>${description}</span>
                                     </h5>
                                 </li>
                             </ul>
@@ -88,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (m.resultado == "aceptada") {
                 createAcceptCard(m.nombre, m.fecha);
             } else {
-                createRejectCard(m.nombre, m.motivo, m.fecha);
+                createRejectCard(m.nombre, m.fecha);
             }
 
         }

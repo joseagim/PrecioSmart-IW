@@ -266,7 +266,7 @@ public class AdminController {
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
       String fecha = request.getDate().format(formatter);
       String json = mapper.writeValueAsString(Map.of("nombre", request.getName(), "fecha", fecha, "tipo", "request",
-          "resultado", "rechazada", "motivo", "solicitud rechazada", "notificationId", notif.getId()));
+          "resultado", "rechazada", "notificationId", notif.getId()));
       messagingTemplate.convertAndSend("/user/" + request.getUser().getUsername() + "/queue/updates", json);
     } catch (Exception e) {
       log.warn("error serializando json", e);
