@@ -1,12 +1,17 @@
 
 const classNameNotifCards = "notification d-flex flex-column p-4 mt-3 mb-3";
 const notifList = document.querySelector("#notification-list");
+const emptymsg = document.querySelector("#empty-msg");
 
+function markNotificationAsRead(notificationId) {
+    if (!notificationId) return;
+    go(`${config.rootUrl}/user/notifications/${notificationId}/read`, "POST");
+}
 
-function createRejectCard(name,description,date){
-const rejectCard=document.createElement("div");
-rejectCard.className=classNameNotifCards;
-rejectCard.innerHTML=`<div class="d-flex flex-row justify-content-center align-items-center text-center">
+function createRejectCard(name, description, date) {
+    const rejectCard = document.createElement("div");
+    rejectCard.className = classNameNotifCards;
+    rejectCard.innerHTML = `<div class="d-flex flex-row justify-content-center align-items-center text-center">
                             <h4 class="mb-0 d-flex flex-row">
                                 <b class="d-flex flex-row">Solicitud <h4 class="ms-2" style="color: red;">rechazada</h4></b>
                             </h4>
@@ -36,13 +41,13 @@ rejectCard.innerHTML=`<div class="d-flex flex-row justify-content-center align-i
                                 </li>
                             </ul>
                         </div>`;
-notifList.appendChild(rejectCard);
+    notifList.prepend(rejectCard);
 }
 
-function createAcceptCard(name,date){
-const acceptCard=document.createElement("div");
-acceptCard.className=classNameNotifCards;
-acceptCard.innerHTML=`<div class="d-flex flex-row justify-content-center align-items-center text-center">
+function createAcceptCard(name, date) {
+    const acceptCard = document.createElement("div");
+    acceptCard.className = classNameNotifCards;
+    acceptCard.innerHTML = `<div class="d-flex flex-row justify-content-center align-items-center text-center">
                             <h4 class="mb-0 d-flex flex-row">
                                 <b class="d-flex flex-row">Solicitud<h4 class="ms-2" style="color: green;">aceptada</h3></b>
                             </h4>
@@ -65,7 +70,7 @@ acceptCard.innerHTML=`<div class="d-flex flex-row justify-content-center align-i
                                 </li>
                             </ul>
                         </div>`;
-notifList.appendChild(acceptCard);
+    notifList.prepend(acceptCard);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -73,12 +78,20 @@ document.addEventListener("DOMContentLoaded", () => {
     ws.receive = (m) => {
         manejadorAnterior(m);
         if (m.tipo === "request") {
-            console.log("esto funciona");
-            if(m.resultado=="aceptada"){
-                createAcceptCard(m.nombre,m.fecha);
-            }else{
-                createRejectCard(m.nombre,m.motivo,m.fecha);
+
+            // Ocultar el mensaje de "no hay notificaciones"
+            if (emptymsg) {
+                emptymsg.style.display = "none";
             }
+
+            markNotificationAsRead(m.notificationId);
+            if (m.resultado == "aceptada") {
+                createAcceptCard(m.nombre, m.fecha);
+            } else {
+                createRejectCard(m.nombre, m.motivo, m.fecha);
+            }
+
         }
     }
 });
+

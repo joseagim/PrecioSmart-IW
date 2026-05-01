@@ -213,13 +213,15 @@ public class AdminController {
     notif.setRequest(request);
     notif.setDate(java.time.LocalDateTime.now());
     entityManager.persist(notif);
+    entityManager.flush(); // asegurar que el ID está asignado
 
     // para convertir a json puede dar error
     try {
       ObjectMapper mapper = new ObjectMapper();
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-      String fecha=request.getDate().format(formatter);
-      String json = mapper.writeValueAsString(Map.of("nombre",request.getName(),"fecha",fecha,"tipo", "request", "resultado", "aceptada"));
+      String fecha = request.getDate().format(formatter);
+      String json = mapper.writeValueAsString(Map.of("nombre", request.getName(), "fecha", fecha, "tipo", "request",
+          "resultado", "aceptada", "notificationId", notif.getId()));
       messagingTemplate.convertAndSend("/user/"
           + request.getUser().getUsername() + "/queue/updates", json);
     } catch (Exception e) {
@@ -257,15 +259,17 @@ public class AdminController {
     notif.setRequest(request);
     notif.setDate(java.time.LocalDateTime.now());
     entityManager.persist(notif);
+    entityManager.flush(); // asegurar que el ID está asignado
 
     try {
-      ObjectMapper mapper=new ObjectMapper();
+      ObjectMapper mapper = new ObjectMapper();
       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-      String fecha=request.getDate().format(formatter);
-      String json=mapper.writeValueAsString(Map.of("nombre",request.getName(),"fecha",fecha,"tipo","request","resultado","rechazada","motivo","solicitud rechazada"));
-      messagingTemplate.convertAndSend("/user/"+request.getUser().getUsername()+"/queue/updates",json);
+      String fecha = request.getDate().format(formatter);
+      String json = mapper.writeValueAsString(Map.of("nombre", request.getName(), "fecha", fecha, "tipo", "request",
+          "resultado", "rechazada", "motivo", "solicitud rechazada", "notificationId", notif.getId()));
+      messagingTemplate.convertAndSend("/user/" + request.getUser().getUsername() + "/queue/updates", json);
     } catch (Exception e) {
-        log.warn("error serializando json", e);
+      log.warn("error serializando json", e);
     }
 
     return ResponseEntity.ok().body(Map.of("message", "Solicitud rechazada correctamente"));
