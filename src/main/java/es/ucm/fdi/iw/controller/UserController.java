@@ -2,6 +2,7 @@ package es.ucm.fdi.iw.controller;
 
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.model.Message;
+import es.ucm.fdi.iw.model.Notification;
 import es.ucm.fdi.iw.model.Transferable;
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.User.Role;
@@ -70,7 +71,7 @@ public class UserController {
 
   @ModelAttribute
   public void populateModel(HttpSession session, Model model) {
-    for (String name : new String[] { "u", "url", "ws", "topics"}) {
+    for (String name : new String[] { "u", "url", "ws", "topics" }) {
       model.addAttribute(name, session.getAttribute(name));
     }
   }
@@ -270,9 +271,17 @@ public class UserController {
   @ResponseBody
   public String checkUnread(HttpSession session) {
     long userId = ((User) session.getAttribute("u")).getId();
-    long unread = entityManager.createNamedQuery("Message.countUnread", Long.class)
-        .setParameter("userId", userId)
+    /*
+     * long unread = entityManager.createNamedQuery("Message.countUnread",
+     * Long.class)
+     * .setParameter("userId", userId)
+     * .getSingleResult();
+     * session.setAttribute("unread", unread);
+     */
+    long unread = entityManager.createNamedQuery("Notification.countUnread", Long.class)
+        .setParameter("uid", userId)
         .getSingleResult();
+
     session.setAttribute("unread", unread);
     return "{\"unread\": " + unread + "}";
   }

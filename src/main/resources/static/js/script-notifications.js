@@ -116,9 +116,16 @@ function handleMarkAsReadSubmit(e) {
 
     go(form.action, "POST", new URLSearchParams(new FormData(form)))
         .then((response) => {
-            const notificationItem = form.closest('.notification');
+            console.log("Has leido la noti");
+            const notificationItem = form.closest('.notification-item');
+            console.log(notificationItem);
+            // eliminar el div de la noti y restar 1 al contador de no leídas
             if (notificationItem) {
                 notificationItem.remove();
+                let p = document.querySelector("#nav-unread");
+                if (p && p.textContent > 0) {
+                    p.textContent = p.textContent - 1;
+                }
             }
         })
         .catch((error) => {

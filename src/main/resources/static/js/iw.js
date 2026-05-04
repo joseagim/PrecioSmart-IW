@@ -17,7 +17,7 @@ const ws = {
         console.log(text);
         let p = document.querySelector("#nav-unread");
         if (p) {
-            p.textContent = +p.textContent + 1;
+            p.textContent = + p.textContent + 1;
         }
     },
 

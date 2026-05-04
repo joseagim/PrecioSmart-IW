@@ -265,8 +265,7 @@ public class AdminController {
       log.warn("error serializando json", e);
     }
 
-
-     // crear noti para mandársela al usuario
+    // crear noti para mandársela al usuario
     Notification notification = new Notification();
     notification.setUser(request.getUser());
     notification.setRequest(request);
