@@ -48,12 +48,12 @@
                         <button type="button" 
                                 onclick="document.getElementById('barcode-input-capture').click()" 
                                 class="btn-scan solo-movil">
-                            📷 Escanear Producto
+                             <img th:src="@{/img/svg/scan.svg}" class="svg-sm" alt="Escanear"> Escanear código de barras
                         </button>
                         <button type="button" 
                                 onclick="document.getElementById('barcode-input-gallery').click()" 
                                 class="btn-scan">
-                            📷 Subir imagen
+                                 <img th:src="@{/img/svg/scan.svg}" class="svg-sm" alt="Escanear"> Subir imagen de código EAN
                         </button>
                     </div>
                     <div id="loading" style="display: none; margin-top: 10px;">
@@ -90,11 +90,11 @@
                 <ul class="pagination justify-content-center">
                     
                     <li class="page-item" th:classappend="${productos.first} ? 'disabled'">
-                        <a class="page-link" th:href="@{${url}(page=${productos.number})}">&laquo;</a>
+                        <a class="page-link" th:href="@{${paginationUrl}(page=${productos.number})}">&laquo;</a>
                     </li>
 
                     <li class="page-item" th:classappend="${productos.number == 0} ? 'active'">
-                        <a class="page-link" th:href="@{${url}(page=${1})}">1</a>
+                        <a class="page-link" th:href="@{${paginationUrl}(page=${1})}">1</a>
                     </li>
 
                     <li class="page-item disabled" th:if="${productos.number + 1 > 3}">
@@ -105,7 +105,7 @@
                         <li class="page-item" 
                             th:each="i : ${#numbers.sequence(T(java.lang.Math).max(2, productos.number), T(java.lang.Math).min(productos.totalPages - 1, productos.number + 2))}"
                             th:classappend="${i == productos.number + 1} ? 'active'">
-                            <a class="page-link" th:href="@{${url}(page=${i})}" th:text="${i}">i</a>
+                            <a class="page-link" th:href="@{${paginationUrl}(page=${i})}" th:text="${i}">i</a>
                         </li>
                     </th:block>
 
@@ -114,11 +114,11 @@
                     </li>
 
                     <li class="page-item" th:classappend="${productos.number == productos.totalPages - 1} ? 'active'">
-                        <a class="page-link" th:href="@{${url}(page=${productos.totalPages})}" th:text="${productos.totalPages}">999</a>
+                        <a class="page-link" th:href="@{${paginationUrl}(page=${productos.totalPages})}" th:text="${productos.totalPages}">999</a>
                     </li>
 
                     <li class="page-item" th:classappend="${productos.last} ? 'disabled'">
-                        <a class="page-link" th:href="@{${url}(page=${productos.number + 2})}">&raquo;</a>
+                        <a class="page-link" th:href="@{${paginationUrl}(page=${productos.number + 2})}">&raquo;</a>
                     </li>
                 </ul>
             </nav>

@@ -32,6 +32,7 @@ public class SearchController {
     }
 
     /**
+     * /**
      * Landing page for a product
      */
 
@@ -61,15 +62,15 @@ public class SearchController {
             Page<Product> todosLosProductos = new PageImpl<>(productosList, PageRequest.of(page - 1, pageSize), total);
 
             model.addAttribute("productos", todosLosProductos);
-            model.addAttribute("url", "/search");
+            model.addAttribute("paginationUrl", "/search");
 
             return "search";
         }
-        model.addAttribute("url", "/search/" + producto);
+       // model.addAttribute("url", "/search/" + producto);
 
         return "redirect:/search/" + producto;
-      
-       //return "search/" + producto;
+
+        // return "search/" + producto;
     }
 
     @GetMapping("/{product}")
@@ -117,7 +118,7 @@ public class SearchController {
 
         Page<Product> productosPage = new PageImpl<>(productos, PageRequest.of(page - 1, pageSize), total);
         model.addAttribute("productos", productosPage);
-        model.addAttribute("url", "/search/" + producto);
+                model.addAttribute("paginationUrl", "/search/" + producto);
 
         return "search";
     }

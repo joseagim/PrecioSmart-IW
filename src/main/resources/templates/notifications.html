@@ -41,7 +41,7 @@
                                                         + (notification.request.status.name() == 'APPROVED' ? 'ha sido aceptada' : (notification.request.status.name() == 'REJECTED' ? 'ha sido rechazada' : 'está pendiente'))}">
                                                     </div>
                                                     <div th:case="'MODIFY'"
-                                                        th:text="${'Tu solicitud de modificar el producto ' + notification.request.name + ' ' +  (notification.request.status.name() == 'APPROVED' ? 
+                                                        th:text="${'Tu solicitud de modificar el precio del producto ' + notification.request.name + ' ' +  (notification.request.status.name() == 'APPROVED' ? 
                                                         'ha sido aceptada' : (notification.request.status.name() == 'REJECTED' ? 'ha sido rechazada' : 'está pendiente'))}">
                                                     </div>
                                                     <div th:case="*"
@@ -56,7 +56,7 @@
                                             ·
                                             <span th:text="${notification.request.price} + ' €'">0,00 €</span>
                                             ·
-                                            <span th:text="${notification.request.date} ">Fecha</span>
+                                            <span th:text="${#temporals.format(notification.request.date, 'dd/MM/yyyy HH:mm')}">Fecha</span>
                                         </div>
                                         </div>
                                     </div>

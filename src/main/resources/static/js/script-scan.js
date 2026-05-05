@@ -1,5 +1,5 @@
-// Añadimos el parámetro 'inputElement'
-function subirYEscanear(inputElement) {
+// Añadimos un callback opcional para reutilizar el escaneo en distintas pantallas.
+function subirYEscanear(inputElement, onScanned) {
     const loading = document.getElementById('loading');
     
 
@@ -43,6 +43,11 @@ function subirYEscanear(inputElement) {
                 return response.json();
             })
             .then(data => {
+                if (typeof onScanned === 'function' && data.ean) {
+                    onScanned(data.ean, data);
+                    return;
+                }
+
                 if (data.redirectUrl) {
                     window.location.href = data.redirectUrl;
                 }
