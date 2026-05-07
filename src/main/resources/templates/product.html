@@ -95,11 +95,10 @@
                     <h3 class="mb-3 p-2 text-center text-black mb-5">
                         Comparar precios por supermercado
                     </h3>
-                    <ul class="list-unstyled d-grid my-0 gap-3 pb-2"
-                        style="grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr);">
+                    <ul class="list-unstyled d-flex flex-wrap justify-content-center my-0 gap-3">
                         <li th:each="entry : ${result}"
                             class="rounded-3 p-3 text-start d-flex flex-column border-products"
-                            style="min-width: 0;">
+                            style="min-width: 280px; max-width: 280px;">
                             <div th:if="${entry == null or entry.product == null}">
                                 <h3 class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
                                     <img th:src="|/img/supermarkets/${#strings.toLowerCase(entry.supermarket.name)}.png|"
