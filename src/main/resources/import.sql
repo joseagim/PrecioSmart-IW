@@ -19,12 +19,12 @@ INSERT INTO Supermarket (name, info) VALUES
 
 
 INSERT INTO Product (ean, name, brand, quantity) VALUES
-('8410000000012', 'Leche Semidesnatada', 'Alcampo', '1L'),
-('8410000000013', 'Leche Entera', 'Alcampo', '1L'),
-('8410000000003', 'Arroz Integral 1kg', 'SOS', '1kg'),
-('8410000000004', 'Pasta Penne 500g', 'Pasta', '500g'),
-('8410000000005', 'Tomate Frito Receta Artesana', 'Artesano', '400g'),
-('8410000000006', 'Aceite de Oliva Virgen 1L', 'Hacendado', '1L'),
+('8410544198552', 'Leche Semidesnatada', 'Auchan', '1L'),
+('8410544198545', 'Leche Entera', 'Auchan', '1L'),
+('8410830001016', 'Arroz Integral 1kg', 'SOS', '1kg'),
+('8410069021908', 'Pasta Plumas 500g', 'Gallo', '500g'),
+('8480000171313', 'Tomate Frito Receta Artesana', 'Hacendado', '300g'),
+('8414807539458', 'Aceite de Oliva Virgen 1L', 'Hacendado', '1L'),
 ('8410000000007', 'Atún en Aceite de Oliva', 'Calvo', 'Pack 3'),
 ('8410000000008', 'Pan de Molde Sin Corteza', 'Bimbo', '450g'),
 ('8410000000009', 'Huevos Camperos L', 'Granja', '12u'),
@@ -32,8 +32,8 @@ INSERT INTO Product (ean, name, brand, quantity) VALUES
 ('8410000000011', 'Manzana Fuji Bolsa', 'Fruta', '1.5kg'),
 ('8410000000014', 'Plátano de Canarias', 'Extra', '1kg'),
 ('8410000000015', 'Pollo Entero de Corral', 'Cárnico', '2kg'),
-('84100000000016', 'Filetes de Merluza', 'Pescado', '400g'),
-('8410000000017', 'Coca-Cola Original', 'Coca-Cola', '2L'),
+('8410000000016', 'Filetes de Merluza', 'Pescado', '400g'),
+('2000000096770', 'Coca-Cola Original', 'Coca-Cola', '2L'),
 ('8410000000020', 'Refresco de Naranja', 'Fanta', '2L'),
 ('8410000000021', 'Galletas Digestive', 'Fontaneda', '800g'),
 ('8410000000022', 'Café en Grano Natural', 'Marcilla', '500g'),
@@ -219,18 +219,18 @@ INSERT INTO Product (ean, name, brand, quantity) VALUES
 ('8410000000202', 'Mascarillas Pack 10', 'Salud', '10u'),
 ('8410000000203', 'Alcohol Sanitario', 'Salud', '250ml'),
 ('8410000000204', 'Algodón en Zig-zag', 'Salud', '100g'),
-('8412779220107', 'Leche Semidesnatada', 'Solar', '1L');
+('8412779220107', 'Leche Semidesnatada', 'Solar', '1L'),
+('8410297111150', 'Leche Semidesnatada', 'Asturiana', '1.5L'), -- 202
+('4335619153592', 'Leche Semidesnatada', 'Milbona', '1L'),
+('8410014478764', 'ColaCao', 'Colacao', '760g'),
+('8410014492036', 'ColaCao Grande', 'Colacao', '4,5kg');
 
 
 
 
 INSERT INTO Product_Supermarket (price, date, product_id, supermarket_id) VALUES 
-(1.5, '2024-06-01', 1, 1),
-(1.6, '2024-06-01', 1, 2),
-(1.4, '2024-06-01', 1, 3),
-(1.4, '2024-06-01', 1, 4),
+(1.5, '2024-06-01', 1, 5),
 (1.4, '2024-06-01', 2, 5),
-(1.4, '2024-06-01', 2, 1),
 (1.19, '2024-06-02', 3, 3),
 (0.95, '2024-06-02', 4, 2),
 (0.89, '2024-06-02', 4, 4),
@@ -626,7 +626,18 @@ INSERT INTO Product_Supermarket (price, date, product_id, supermarket_id) VALUES
 (0.60, '2024-06-02', 199, 2),
 (0.75, '2024-06-02', 199, 3),
 (2.50, '2024-06-02', 200, 4),
-(2.80, '2024-06-02', 200, 5);
+(2.80, '2024-06-02', 200, 5),
+(2.05, '2024-06-02', 202, 1),
+(2.15, '2024-06-02', 202, 2),
+(1.99, '2024-06-02', 202, 4),
+(2.20, '2024-06-02', 202, 5),
+(1.85, '2024-06-02', 203, 3),
+(5, '2024-06-02', 204, 1),
+(4.5, '2024-06-02', 204, 2),
+(20, '2024-06-02', 205, 4);
+    
+
+
 
 -- Primer carrito: Compra Semanal Básica
 INSERT INTO Cart (name, date, user_id) 

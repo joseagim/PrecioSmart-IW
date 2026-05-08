@@ -271,13 +271,7 @@ public class UserController {
   @ResponseBody
   public String checkUnread(HttpSession session) {
     long userId = ((User) session.getAttribute("u")).getId();
-    /*
-     * long unread = entityManager.createNamedQuery("Message.countUnread",
-     * Long.class)
-     * .setParameter("userId", userId)
-     * .getSingleResult();
-     * session.setAttribute("unread", unread);
-     */
+
     long unread = entityManager.createNamedQuery("Notification.countUnread", Long.class)
         .setParameter("uid", userId)
         .getSingleResult();

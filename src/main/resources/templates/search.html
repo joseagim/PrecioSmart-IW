@@ -91,7 +91,7 @@
                     
                     <li class="page-item" th:classappend="${productos.first} ? 'disabled'">
                         <a class="page-link" th:href="@{${paginationUrl}(page=${productos.number})}">&laquo;</a>
-                    </li>
+                    </li>      
 
                     <li class="page-item" th:classappend="${productos.number == 0} ? 'active'">
                         <a class="page-link" th:href="@{${paginationUrl}(page=${1})}">1</a>

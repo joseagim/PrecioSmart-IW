@@ -208,14 +208,15 @@ public class AdminController {
     entityManager.persist(product);
     entityManager.persist(ps);
 
-    // para convertir a json puede dar error
-    try {
-      messagingTemplate.convertAndSend("/user/" + request.getUser().getUsername() + "/queue/updates",
-          buildRequestNotificationJson(request, "aceptada", null));
+       try {
+      ObjectMapper mapper = new ObjectMapper();
+      String json = mapper.writeValueAsString(
+        Map.of("tipo", "request", "resultado", "aceptada"));
+      messagingTemplate.convertAndSend("/user/" 
+        + request.getUser().getUsername() + "/queue/updates", json);
     } catch (Exception e) {
       log.warn("error serializando json", e);
     }
-
     // crear noti para mandársela al usuario
     Notification notification = new Notification();
     notification.setUser(request.getUser());
@@ -250,8 +251,11 @@ public class AdminController {
     entityManager.merge(request);
 
     try {
-      messagingTemplate.convertAndSend("/user/" + request.getUser().getUsername() + "/queue/updates",
-          buildRequestNotificationJson(request, "rechazada", "solicitud rechazada"));
+      ObjectMapper mapper = new ObjectMapper();
+      String json = mapper.writeValueAsString(
+        Map.of("tipo", "request", "resultado", "rechazada"));
+      messagingTemplate.convertAndSend("/user/" 
+        + request.getUser().getUsername() + "/queue/updates", json);
     } catch (Exception e) {
       log.warn("error serializando json", e);
     }
@@ -267,26 +271,7 @@ public class AdminController {
     return ResponseEntity.ok().body(Map.of("message", "Solicitud rechazada correctamente"));
   }
 
-  private String buildRequestNotificationJson(Request request, String resultado, String motivo) throws Exception {
-    ObjectMapper mapper = new ObjectMapper();
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    String fecha = request.getDate().format(formatter);
 
-    Map<String, Object> payload = new java.util.LinkedHashMap<>();
-    payload.put("tipo", "request");
-    payload.put("resultado", resultado);
-    payload.put("nombre", request.getName());
-    payload.put("requestType", request.getType() != null ? request.getType().name() : null);
-    payload.put("supermarket", request.getSupermarket());
-    payload.put("precio", request.getPrice());
-    payload.put("fecha", fecha);
-    payload.put("hora", request.getDate().format(DateTimeFormatter.ofPattern("HH:mm")));
-    if (motivo != null) {
-      payload.put("motivo", motivo);
-    }
-
-    return mapper.writeValueAsString(payload);
-  }
 
   void copyImageToProduct(Request request, long productId) {
     // 1. Definimos la ruta base (donde vive 'iwdata')

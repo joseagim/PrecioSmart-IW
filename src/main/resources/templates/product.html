@@ -132,6 +132,8 @@
                                         <p class="text-muted fw-bold small mb-1">Producto similar:</p>
                                         <p class="text-muted small mb-0" th:text="${entry.product.name}">Nombre del
                                             producto</p>
+                                        <p class="text-muted small mb-0" th:text="${entry.product.brand}">Marca del
+                                            producto</p>
                                     </div>
                                 </div>
                                 <a th:href="@{/product/{productoID}(productoID=${entry.product.id})}"

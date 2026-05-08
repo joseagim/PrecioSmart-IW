@@ -15,13 +15,19 @@
             <div class="panel-lg mb-5">
                 <div id="notification-list" class="p-3">
                     <!-- listar las notis del model -->
+
+                    <div id="error-box" class=" d-none rounded-4 border bg-light-subtle p-4 text-center text-muted">
+                        No tienes notificaciones todavia.
+                    </div>
+
                     <div th:if="${#lists.isEmpty(notifications)}"
                         class="rounded-4 border bg-light-subtle p-4 text-center text-muted">
                         No tienes notificaciones todavia.
                     </div>
 
                     <div th:each="notification : ${notifications}">
-                        <div class="notification-item rounded-4 border bg-white p-3 mb-3 d-flex align-items-center gap-3">
+                        <div
+                            class="notification-item rounded-4 border bg-white p-3 mb-3 d-flex align-items-center gap-3">
                             <img th:src="|/img/supermarkets/${#strings.toLowerCase(notification.request.supermarket)}.png|"
                                 th:alt="${'Logo de ' + notification.request.supermarket}"
                                 style="width: 56px; height: 56px; object-fit: contain;">
@@ -56,35 +62,34 @@
                                             ·
                                             <span th:text="${notification.request.price} + ' €'">0,00 €</span>
                                             ·
-                                            <span th:text="${#temporals.format(notification.request.date, 'dd/MM/yyyy HH:mm')}">Fecha</span>
+                                            <span
+                                                th:text="${#temporals.format(notification.request.date, 'dd/MM/yyyy HH:mm')}">Fecha</span>
                                         </div>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <span th:if="${notification.request.status.name() == 'APPROVED'}"
-                                            class="badge bg-success">Aceptada</span>
-                                        <span th:if="${notification.request.status.name() == 'REJECTED'}"
-                                            class="badge bg-danger">Rechazada</span>
-                                        <span th:if="${notification.request.status.name() == 'PENDING'}"
-                                            class="badge bg-secondary">Pendiente</span>
                                     </div>
                                 </div>
+
                                 <div>
-                                    <form th:action="@{/user/notifications}" method="POST" class="mark-as-read-form">
-                                        <input type="hidden" name="id" th:value="${notification.id}">
-                                        <button type="submit" 
-                                                class="btn btn-success rounded-3 d-flex align-items-center justify-content-center" 
-                                                style="width: 40px; height: 40px;" 
-                                                title="Marcar como leído">
-                                            <i class="bi bi-check-lg fs-4"></i>
-                                        </button>
-                                    </form>
+                                    <span th:if="${notification.request.status.name() == 'APPROVED'}"
+                                        class="badge bg-success">Aceptada</span>
+                                    <span th:if="${notification.request.status.name() == 'REJECTED'}"
+                                        class="badge bg-danger">Rechazada</span>
+                                    <span th:if="${notification.request.status.name() == 'PENDING'}"
+                                        class="badge bg-secondary">Pendiente</span>
                                 </div>
                             </div>
+                            <div>
+                                <form th:action="@{/user/notifications}" method="POST" class="mark-as-read-form">
+                                    <input type="hidden" name="id" th:value="${notification.id}">
+                                    <button type="submit"
+                                        class="btn btn-success rounded-3 d-flex align-items-center justify-content-center"
+                                        style="width: 40px; height: 40px;" title="Marcar como leído">
+                                        <i class="bi bi-check-lg fs-4"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                        
                     </div>
+
                 </div>
             </div>
         </div>
