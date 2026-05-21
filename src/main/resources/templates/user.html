@@ -30,13 +30,12 @@
                     </p>
 
                 </th:block>
-                <th:block th:unless="${u.hasRole('USER')}">
+                <th:block th:unless="${u.hasRole('ADMIN')}">
                     <p class="fs-5 fw-light text-white">
                         Ya puedes empezar a ahorrar tiempo y esfuerzo.
                     </p>
-
                     <p class="fs-6 fw-light text-white">
-                        Accede a tus carritos personalizados, solicita nuevos productos y gestiona tu lista de deseos.
+                        Accede a tus carritos personalizados, solicita nuevos productos y gestiona tus notificaciones.
                     </p>
                 </th:block>
 
