@@ -24,7 +24,6 @@ public class SearchController {
     @Autowired
     private EntityManager entityManager;
 
-
     @ModelAttribute
     public void populateModel(HttpSession session, Model model) {
         for (String name : new String[] { "u", "url", "ws", "topics" }) {
@@ -33,12 +32,13 @@ public class SearchController {
     }
 
     /**
+     * /**
      * Landing page for a product
      */
 
     @GetMapping
     public String search(
-            @RequestParam(required = false) String producto, 
+            @RequestParam(required = false) String producto,
             @RequestParam(defaultValue = "1") int page,
             Model model) {
 
@@ -60,29 +60,31 @@ public class SearchController {
 
             // Objeto de paginacion para la vista
             Page<Product> todosLosProductos = new PageImpl<>(productosList, PageRequest.of(page - 1, pageSize), total);
-            
+
             model.addAttribute("productos", todosLosProductos);
-            model.addAttribute("url", "/search");
+            model.addAttribute("paginationUrl", "/search");
 
             return "search";
-        }   
-        model.addAttribute("url", "/search/" + producto);
-        
+        }
+       // model.addAttribute("url", "/search/" + producto);
+
         return "redirect:/search/" + producto;
+
+        // return "search/" + producto;
     }
 
     @GetMapping("/{product}")
     @Transactional
     public String searchProduct(
-            @PathVariable(name = "product") String producto, 
-            @RequestParam(defaultValue = "1") int page, 
+            @PathVariable(name = "product") String producto,
+            @RequestParam(defaultValue = "1") int page,
             Model model) {
 
-        int pageSize = 3;
+        int pageSize = 6;
         int offset = (page - 1) * pageSize;
 
         List<Product> productos = new ArrayList<>();
-        
+
         // Busco por EAN
         productos = entityManager
                 .createNamedQuery("Product.searchByEAN", Product.class)
@@ -94,13 +96,13 @@ public class SearchController {
         if (productos.size() > 0) {
             total = 1;
         } else {
-            // Si no se encuentra por EAN, busco por nombre 
+            // Si no se encuentra por EAN, busco por nombre
             productos = entityManager
-                .createNamedQuery("Product.searchByName", Product.class)
-                .setParameter("name", "%" + producto + "%")
-                .setFirstResult(offset)
-                .setMaxResults(pageSize)
-                .getResultList();
+                    .createNamedQuery("Product.searchByName", Product.class)
+                    .setParameter("name", "%" + producto + "%")
+                    .setFirstResult(offset)
+                    .setMaxResults(pageSize)
+                    .getResultList();
 
             total = entityManager
                     .createNamedQuery("Product.totalNumName", Long.class)
@@ -110,14 +112,13 @@ public class SearchController {
 
         if (total == 1) {
             return "redirect:/product/" + productos.get(0).getId();
-        } 
-        else if (total == 0) {
+        } else if (total == 0) {
             model.addAttribute("error", "No se han encontrado resultados para: " + producto);
         }
 
         Page<Product> productosPage = new PageImpl<>(productos, PageRequest.of(page - 1, pageSize), total);
         model.addAttribute("productos", productosPage);
-        model.addAttribute("url", "/search/" + producto);
+                model.addAttribute("paginationUrl", "/search/" + producto);
 
         return "search";
     }

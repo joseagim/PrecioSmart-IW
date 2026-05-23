@@ -1,35 +1,52 @@
-const notificationsList = document.querySelector("#notification-list");
-const btnAceptar = document.querySelector("#btn-aceptar");
-const btnRechazar = document.querySelector("#btn-rechazar");
+/*
+const manejadorAnterior = ws.receive
+ws.receive = (m) => {
+    manejadorAnterior(m);
 
-const className = "notification d-flex align-items-center p-4 mt-3 mb-3";
-
-let numSolicitudes = 1;
-
-if (btnAceptar) {
-    btnAceptar.addEventListener("click", () => {
-        const div = document.createElement("div");
-        div.className = className;
-        div.innerHTML = `
-            <div>
-                <p class="m-0">✅ Tu solicitud (#${numSolicitudes}) ha sido aceptada</p>
-            </div>
-        `;
-        notificationsList.appendChild(div);
-        numSolicitudes++;
-    });
+    if (m.tipo === "request") {
+        console.log("peticion recibida correctamente");
+    }
 }
+*/
+const markAsReadForms = document.querySelectorAll(".mark-as-read-form");
 
-if (btnRechazar) {
-    btnRechazar.addEventListener("click", () => {
-        const div = document.createElement("div");
-        div.className = className;
-        div.innerHTML = `
-            <div>
-                <p class="m-0">❌ Tu solicitud (#${numSolicitudes}) ha sido rechazada</p>
-            </div>
-        `;
-        notificationsList.appendChild(div);
-        numSolicitudes++;
-    });
+markAsReadForms.forEach((f) => f.addEventListener("submit", handleMarkAsReadSubmit));
+
+function handleMarkAsReadSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+
+    go(form.action, "POST", new URLSearchParams(new FormData(form)))
+        .then(response => {
+            console.log("Has leido la noti");
+            const notificationItem = form.closest('.notification-item');
+            console.log(notificationItem);
+            // eliminar el div de la noti y restar 1 al contador de no leídas
+            if (notificationItem) {
+                notificationItem.remove();
+                let p = document.querySelector(".notification-item");
+
+                if (!p || p == null) {
+                    p = document.getElementById("error-box");
+                    p.classList.remove("d-none")
+                }
+                p = document.querySelector("#nav-unread");
+                if (p && p.textContent > 0) {
+                    p.textContent = p.textContent - 1;
+                }
+            }
+        })
+        .catch((error) => {
+            let message = `No se pudo aceptar la solicitud`;
+            try {
+                const json = JSON.parse(error.text || "{}");
+                if (json.message) {
+                    message = json.message;
+                }
+            } catch (_) {
+                message = "Failed parsing json at notification";
+            }
+            console.log(message);
+        }
+        )
 }

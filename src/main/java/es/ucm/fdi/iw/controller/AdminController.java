@@ -9,11 +9,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,10 +27,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import es.ucm.fdi.iw.model.Notification;
 import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductSupermarket;
 import es.ucm.fdi.iw.model.Request;
 import es.ucm.fdi.iw.model.RequestStatus;
+import es.ucm.fdi.iw.model.RequestType;
 import es.ucm.fdi.iw.model.Supermarket;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpSession;
@@ -43,6 +51,9 @@ public class AdminController {
 
   @Autowired
   private EntityManager entityManager;
+
+  @Autowired
+  private SimpMessagingTemplate messagingTemplate;
 
   @ModelAttribute
   public void populateModel(HttpSession session, Model model) {
@@ -62,19 +73,19 @@ public class AdminController {
     if (type == null || type.equals("pending")) {
 
       type = "pending";
-      requests = entityManager.createNamedQuery("findByStatus", Request.class)
+      requests = entityManager.createNamedQuery("Request.findByStatus", Request.class)
           .setParameter("status", RequestStatus.PENDING)
           .getResultList();
 
     } else if (type.equals("accepted")) {
 
-      requests = entityManager.createNamedQuery("findByStatus", Request.class)
+      requests = entityManager.createNamedQuery("Request.findByStatus", Request.class)
           .setParameter("status", RequestStatus.APPROVED)
           .getResultList();
 
     } else if (type.equals("rejected")) {
 
-      requests = entityManager.createNamedQuery("findByStatus", Request.class)
+      requests = entityManager.createNamedQuery("Request.findByStatus", Request.class)
           .setParameter("status", RequestStatus.REJECTED)
           .getResultList();
 
@@ -94,26 +105,32 @@ public class AdminController {
 
     // si no hay id
     if (id == null) {
-      return ResponseEntity.badRequest().body(Map.of("message", "El ID de la solicitud es requerido"));
+      return ResponseEntity.badRequest().body(Map.of("message",
+          "El ID de la solicitud es requerido"));
     }
 
     Request request = entityManager.find(Request.class, id);
+
     // si no existe la request
     if (request == null) {
-      return ResponseEntity.badRequest().body(Map.of("message", "No se encontró la solicitud con el ID proporcionado"));
+      return ResponseEntity.badRequest().body(Map.of("message",
+          "No se encontró la solicitud con el ID proporcionado"));
     }
     // si la request no está pendiente
     if (request.getStatus() != RequestStatus.PENDING) {
-      return ResponseEntity.badRequest().body(Map.of("message", "La solicitud ya ha sido procesada"));
+      return ResponseEntity.badRequest().body(Map.of("message",
+          "La solicitud ya ha sido procesada"));
     }
 
-    Product product = entityManager.createNamedQuery("Product.searchByEAN", Product.class)
-      .setParameter("EAN", request.getEAN())
+    Product product = entityManager.createNamedQuery("Product.searchByEAN",
+        Product.class)
+        .setParameter("EAN", request.getEAN())
         .getResultStream()
         .findFirst()
         .orElse(null);
 
-    Supermarket supermarket = entityManager.createNamedQuery("Supermarket.searchByName", Supermarket.class)
+    Supermarket supermarket = entityManager.createNamedQuery("Supermarket.searchByName",
+        Supermarket.class)
         .setParameter("name", request.getSupermarket())
         .getSingleResult();
 
@@ -123,88 +140,138 @@ public class AdminController {
           .body(Map.of("message", "No se encontró el supermercado con el nombre proporcionado"));
     }
 
-    // aceptamos la request según su tipo
-    switch (request.getType()) {
-      // añadir product y product supermarket
-      case ADD: {
-        // el producto ya existe
-        if (product != null) {
-          return ResponseEntity.badRequest().body(Map.of("message", "El producto ya existe"));
-        }
-
-        // el producto no existe, lo creamos
-        product = new Product();
-        product.setEAN(request.getEAN());
-        product.setName(request.getName());
-        product.setBrand(request.getBrand());
-        product.setQuantity(request.getQuantity());
-
-        // añadimos el precio en el super
-        ProductSupermarket ps = new ProductSupermarket();
-        ps.setProduct(product);
-        ps.setSupermarket(supermarket);
-        ps.setPrice(request.getPrice());
-        ps.setDate(request.getDate());
-
-        // ponemos la request como aceptada
-        request.setStatus(RequestStatus.APPROVED);
-
-        // guardamos en la bbdd
-        entityManager.merge(request);
-        entityManager.persist(product);
-        entityManager.persist(ps);
-
-        copyImageToProduct(request, product.getId());
-        break;
+    // AÑADIR NUEVO PRODUCTO
+    if (request.getType() == RequestType.ADD) {
+      // el producto ya existe
+      if (product != null) {
+        return ResponseEntity.badRequest().body(Map.of("message", "El producto ya existe"));
       }
-      // añadir product supermarket
-      case ADD_IN_SUPER: {
 
-          // el producto no existe
-          if (product == null) {
-            return ResponseEntity.badRequest().body(Map.of("message", "El producto no existe"));
-          }
+      // el producto no existe, lo creamos
+      product = new Product();
+      product.setEAN(request.getEAN());
+      product.setName(request.getName());
+      product.setBrand(request.getBrand());
+      product.setQuantity(request.getQuantity());
 
-        break;
+      // añadimos el precio en el super
+      ProductSupermarket ps = new ProductSupermarket();
+      ps.setProduct(product);
+      ps.setSupermarket(supermarket);
+      ps.setPrice(request.getPrice());
+      ps.setDate(request.getDate());
+
+      entityManager.persist(product);
+      copyImageToProduct(request, product.getId());
+    }
+    // AÑADIR/MODIFICAR PRODUCTO EN SUPER
+    else if (request.getType() == RequestType.ADD_IN_SUPER ||
+        request.getType() == RequestType.MODIFY) {
+      // el producto no existe
+      if (product == null) {
+        return ResponseEntity.badRequest().body(Map.of("message", "El producto no existe"));
       }
-      // añadir product supermarket
-      case MODIFY: {
+      // miro si existe el product supermarket
+      List<ProductSupermarket> matches = entityManager
+          .createNamedQuery("ProductSupermarket.findProductSupermarket", ProductSupermarket.class)
+          .setParameter("supermarketId", supermarket.getId())
+          .setParameter("productId", product.getId())
+          .setMaxResults(1)
+          .getResultList();
 
-            // el producto no existe
-            if (product == null) {
-              return ResponseEntity.badRequest().body(Map.of("message", "El producto no existe"));
-            }
+      ProductSupermarket ps = matches.isEmpty() ? null : matches.getFirst();
 
-        break;
+      // si ya existe
+      if (ps != null && request.getType() == RequestType.ADD_IN_SUPER) {
+        return ResponseEntity.badRequest().body(Map.of("message",
+            "El producto ya existe ese supermercado"));
+      } else if (ps == null && request.getType() == RequestType.MODIFY) {
+        return ResponseEntity.badRequest().body(Map.of("message",
+            "El producto no existe en este supermecado"));
       }
-      default: {
-
-      }
+    } else {
+      return ResponseEntity.badRequest()
+          .body(Map.of("message", "El tipo de la solicitud no es válido"));
     }
 
+    ProductSupermarket ps = new ProductSupermarket();
+    ps.setProduct(product);
+    ps.setSupermarket(supermarket);
+    ps.setPrice(request.getPrice());
+    ps.setDate(request.getDate());
+
+    // ponemos la request como aceptada
+    request.setStatus(RequestStatus.APPROVED);
+
+    // guardamos en la bbdd
+    entityManager.merge(request);
+    entityManager.persist(product);
+    entityManager.persist(ps);
+
+       try {
+      ObjectMapper mapper = new ObjectMapper();
+      String json = mapper.writeValueAsString(
+        Map.of("tipo", "request", "resultado", "aceptada"));
+      messagingTemplate.convertAndSend("/user/" 
+        + request.getUser().getUsername() + "/queue/updates", json);
+    } catch (Exception e) {
+      log.warn("error serializando json", e);
+    }
+    // crear noti para mandársela al usuario
+    Notification notification = new Notification();
+    notification.setUser(request.getUser());
+    notification.setRequest(request);
+    notification.setRead(false);
+    notification.setDate(LocalDateTime.now());
+    entityManager.persist(notification);
+
     return ResponseEntity.ok().body(Map.of("message", "Solicitud aceptada correctamente"));
+
   }
 
   @PostMapping("/mod/reject")
   @Transactional
   public ResponseEntity<Map<String, String>> rejectRequest(Model model, @RequestParam Long id) {
     if (id == null) {
-      return ResponseEntity.badRequest().body(Map.of("message", "El ID de la solicitud es requerido"));
+      return ResponseEntity.badRequest().body(Map.of("message",
+          "El ID de la solicitud es requerido"));
     }
 
     Request request = entityManager.find(Request.class, id);
     if (request == null) {
-      return ResponseEntity.badRequest().body(Map.of("message", "No se encontró la solicitud con el ID proporcionado"));
+      return ResponseEntity.badRequest().body(Map.of("message",
+          "No se encontró la solicitud con el ID proporcionado"));
     }
     if (request.getStatus() != RequestStatus.PENDING) {
-      return ResponseEntity.badRequest().body(Map.of("message", "La solicitud ya ha sido procesada"));
+      return ResponseEntity.badRequest().body(Map.of("message",
+          "La solicitud ya ha sido procesada"));
     }
 
     request.setStatus(RequestStatus.REJECTED);
     entityManager.merge(request);
 
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      String json = mapper.writeValueAsString(
+        Map.of("tipo", "request", "resultado", "rechazada"));
+      messagingTemplate.convertAndSend("/user/" 
+        + request.getUser().getUsername() + "/queue/updates", json);
+    } catch (Exception e) {
+      log.warn("error serializando json", e);
+    }
+
+    // crear noti para mandársela al usuario
+    Notification notification = new Notification();
+    notification.setUser(request.getUser());
+    notification.setRequest(request);
+    notification.setRead(false);
+    notification.setDate(LocalDateTime.now());
+    entityManager.persist(notification);
+
     return ResponseEntity.ok().body(Map.of("message", "Solicitud rechazada correctamente"));
   }
+
+
 
   void copyImageToProduct(Request request, long productId) {
     // 1. Definimos la ruta base (donde vive 'iwdata')

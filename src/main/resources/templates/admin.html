@@ -3,7 +3,7 @@
 
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
-    <title>IW: Admin</title>
+    <title>PrecioSmart - Admin</title>
     <link rel="stylesheet" th:href="@{/css/simple-datatables-10.css}" href="/css/simple-datatables-10.css"
         type="text/css" />
 </head>
@@ -39,9 +39,9 @@
                 <div id="success-box" class="alert alert-success d-none shadow-sm" role="alert"></div>
 
                 <!-- REQUEST LIST -->
-                <div id="request-list" class="p-3 text-start">
-                    <div th:if="${requests.empty}">
-                        <h2 class="h5 mb-3">No hay solicitudes que mostrar</h2>
+                <div id="request-list" class="p-3 text-start ">
+                    <div th:if="${requests.empty}" class="rounded-4 border bg-light-subtle p-4 text-center text-muted">
+                        No hay solicitudes que mostrar.
                     </div>
 
                     <div th:each="req : ${requests}"

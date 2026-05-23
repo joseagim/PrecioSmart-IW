@@ -112,11 +112,7 @@ public class RootController {
         return "login";
     }
 
-    @GetMapping("/user/notifications")
-    public String notifications(Model model, HttpServletRequest request) {
-        return "notifications";
-    }
-
+  
     @GetMapping("/faq")
     public String faq(Model model, HttpServletRequest request) {
         return "faq";
