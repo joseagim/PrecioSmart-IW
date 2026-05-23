@@ -114,6 +114,7 @@ public class SearchController {
             return "redirect:/product/" + productos.get(0).getId();
         } else if (total == 0) {
             model.addAttribute("error", "No se han encontrado resultados para: " + producto);
+            model.addAttribute("name", producto);
         }
 
         Page<Product> productosPage = new PageImpl<>(productos, PageRequest.of(page - 1, pageSize), total);

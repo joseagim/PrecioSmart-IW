@@ -65,14 +65,42 @@ public class RequestController {
 
     @Transactional
     @GetMapping
-    public String request(@RequestParam(required = false, defaultValue = "false") boolean success, Model model,
-            HttpSession session) {
+    public String request(@RequestParam(required = false, defaultValue = "false") boolean success,
+            @RequestParam(value = "EAN", required = false) String EANparam,
+            @RequestParam(value = "supermarket", required = false) String supermarket,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "type", required = false) String type,
+            Model model, HttpSession session) {
+
         User requester = (User) session.getAttribute("u");
         List<Request> requests = entityManager.createNamedQuery("Request.findByUser", Request.class)
                 .setParameter("uid", requester.getId()).getResultList();
 
         model.addAttribute("success", success);
         model.addAttribute("requests", requests);
+
+
+        if(EANparam == null || EANparam.isBlank()) {
+            EANparam = "";
+        }
+        
+        model.addAttribute("ean", EANparam);
+
+        if (supermarket == null || supermarket.isBlank()) {
+            supermarket = "";
+        }
+
+        model.addAttribute("supermarket", supermarket);
+
+        if (name == null || name.isBlank()) {
+            name = "";
+        }
+
+        model.addAttribute("name", name);
+
+        // Keep an optional default for which radio to mark on the form
+        model.addAttribute("defaultType", type != null ? type : "");
+
         return "request";
     }
 
