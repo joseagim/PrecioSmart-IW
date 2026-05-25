@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <th:block th:replace="~{fragments/head :: header}" />
+    <title>PrecioSmart - Producto</title>
+</head>
+
+<body class="d-flex flex-column h-100">
+    <header th:replace="~{fragments/nav.html :: nav}"></header>
+
+    <main class="flex-shrink-0 bg-light-subtle">
+        <div class="container py-5">
+            <div id="product-info">
+                <div class="card panel-xxl w-100 h-auto d-flex flex-column flex-md-row rounded-4 overflow-hidden align-items-center align-items-md-start">
+                    <form th:action="@{/admin/supermarkets/edit}"
+                        method="post" enctype="multipart/form-data"
+                        class="d-flex flex-wrap gap-3 mt-3 mb-1 justify-content-start align-items-center">
+
+                        <input type="hidden" name="supermarketID" th:value="${supermarket.id}">
+
+                        <div class="px-4 py-3 px-md-5 py-md-4 flex-shrink-0 bg-light" style="max-width: 300px;">
+                            <img class="img-fluid rounded-3 position-relative"
+                                th:src="@{/admin/supermarkets/{supermarketID}/pic(supermarketID=${supermarket != null ? supermarket.id : 0})}"
+                                alt="foto del supermercado">
+                        </div>
+
+                        <div class="card-body text-start px-4 py-3 px-md-5 py-md-4">
+                            <input name="name" type="text" class="card-title mb-4 fs-2 fw-bold form-control form-control-lg mb-4" 
+                                    placeholder="Nombre del supermercado"
+                                    th:value="${supermarket != null ? supermarket.name : ''}" required>
+                            
+                            <input name="info" type="text" class="fs-5 mb-5 my-2 pb-2 form-control form-control-lg" 
+                                    placeholder="Información del supermercado"
+                                    th:value="${supermarket != null ? supermarket.info : ''}" required>
+
+                            <input class="form-control form-control-sm mb-3" type="file" name="photo"
+                                accept="image/jpeg,image/png">
+                            
+                            <button type="submit" class="btn btn-naranja btn-md px-4 py-3 shadow-sm">
+                                Guardar información
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/footer.html :: footer}" />
+</body>
+
+</html>

@@ -3,36 +3,64 @@ package es.ucm.fdi.iw.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Objects;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+<<<<<<< Updated upstream
+=======
+import java.time.LocalDateTime;
+>>>>>>> Stashed changes
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+<<<<<<< Updated upstream
+=======
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+>>>>>>> Stashed changes
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+<<<<<<< Updated upstream
+=======
+import es.ucm.fdi.iw.LocalData;
+import es.ucm.fdi.iw.controller.UserController.NoEsTuPerfilException;
+import es.ucm.fdi.iw.model.Notification;
+>>>>>>> Stashed changes
 import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductSupermarket;
 import es.ucm.fdi.iw.model.Request;
 import es.ucm.fdi.iw.model.RequestStatus;
 import es.ucm.fdi.iw.model.RequestType;
 import es.ucm.fdi.iw.model.Supermarket;
+import es.ucm.fdi.iw.model.User;
+import es.ucm.fdi.iw.model.User.Role;
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -51,6 +79,9 @@ public class AdminController {
   @Autowired
   private SimpMessagingTemplate messagingTemplate;
 
+  @Autowired
+  private LocalData localData;
+
   @ModelAttribute
   public void populateModel(HttpSession session, Model model) {
     for (String name : new String[] { "u", "url", "ws", "topics" }) {
@@ -59,6 +90,19 @@ public class AdminController {
   }
 
   private static final Logger log = LogManager.getLogger(AdminController.class);
+
+  @GetMapping
+  public String admin(HttpSession session, Model model) {
+
+      User user = (User) session.getAttribute("u");
+      if (user == null) {
+          return "redirect:/login";
+      }
+      if (!user.hasRole(Role.ADMIN)) {
+          return "index";
+      }
+      return "admin";
+  }
 
   @GetMapping({ "/mod/{requestType}", "/mod" })
   public String getRequest(@PathVariable(name = "requestType", required = false) String type, Model model) {
@@ -91,6 +135,7 @@ public class AdminController {
 
     model.addAttribute("requests", requests);
     model.addAttribute("type", type);
+    model.addAttribute("admin", "requests");
 
     return "admin";
   }
@@ -214,7 +259,19 @@ public class AdminController {
     } catch (Exception e) {
       log.warn("error serializando json", e);
     }
+<<<<<<< Updated upstream
     
+=======
+    // crear noti para mandársela al usuario
+    Notification notification = new Notification();
+    notification.setUser(request.getUser());
+    notification.setRequest(request);
+    notification.setRead(false);
+    notification.setDate(LocalDateTime.now());
+    entityManager.persist(notification);
+    model.addAttribute("admin", "requests");
+
+>>>>>>> Stashed changes
     return ResponseEntity.ok().body(Map.of("message", "Solicitud aceptada correctamente"));
 
   }
@@ -240,6 +297,28 @@ public class AdminController {
     request.setStatus(RequestStatus.REJECTED);
     entityManager.merge(request);
 
+<<<<<<< Updated upstream
+=======
+    try {
+      ObjectMapper mapper = new ObjectMapper();
+      String json = mapper.writeValueAsString(
+        Map.of("tipo", "request", "resultado", "rechazada"));
+      messagingTemplate.convertAndSend("/user/" 
+        + request.getUser().getUsername() + "/queue/updates", json);
+    } catch (Exception e) {
+      log.warn("error serializando json", e);
+    }
+
+    // crear noti para mandársela al usuario
+    Notification notification = new Notification();
+    notification.setUser(request.getUser());
+    notification.setRequest(request);
+    notification.setRead(false);
+    notification.setDate(LocalDateTime.now());
+    entityManager.persist(notification);
+    model.addAttribute("admin", "requests");
+
+>>>>>>> Stashed changes
     return ResponseEntity.ok().body(Map.of("message", "Solicitud rechazada correctamente"));
   }
 
@@ -274,5 +353,128 @@ public class AdminController {
       System.err.println("Error al copiar la imagen: " + e.getMessage());
       e.printStackTrace();
     }
+  }
+
+
+  //SUPERMERCADOS:
+
+  @GetMapping({ "/supermarkets" })
+  public String getSupermarkets(@RequestParam(defaultValue = "1") int page, Model model) {
+
+    int pageSize = 3;
+    int offset = (page - 1) * pageSize;
+
+    List<Supermarket> supermarketList = entityManager
+                    .createQuery("SELECT s FROM Supermarket s", Supermarket.class)
+                    .setFirstResult(offset)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+    Long total = entityManager
+                    .createNamedQuery("Supermarket.totalNum", Long.class)
+                    .getSingleResult();
+
+    
+    Page<Supermarket> todosLosSupermercados = new PageImpl<>(supermarketList, PageRequest.of(page - 1, pageSize), total);
+    
+    model.addAttribute("supermarkets", todosLosSupermercados);
+    model.addAttribute("admin", "supermarkets");
+    model.addAttribute("paginationUrl", "/admin/supermarkets");
+
+    return "admin";
+  }
+
+  @GetMapping({ "/supermarkets/{supermarketID}" })
+  public String editSupermarket(@PathVariable(name = "supermarketID") Long supermarketID, Model model) {
+
+    if (supermarketID == null || supermarketID <= 0) {
+        return "error";
+    }
+
+    Supermarket supermarket = entityManager.find(Supermarket.class, supermarketID);
+    if (supermarket == null) {
+        return "error";
+    }
+
+    model.addAttribute("supermarket", supermarket);
+
+    return "supermarket";
+  }
+
+  @Transactional
+  @PostMapping("/supermarkets/edit")
+  public String editarSupermarket(
+          @RequestParam Long supermarketID,
+          @RequestParam String name,
+          @RequestParam String info,
+          @RequestParam(required = false, defaultValue = "") MultipartFile photo,
+          HttpServletResponse response,
+          HttpSession session,
+          Model model) {
+
+    if (supermarketID == null || supermarketID <= 0) {
+      return "error";
+    }
+
+    Supermarket supermarket = entityManager.find(Supermarket.class, supermarketID);
+    if (supermarket == null) {
+      return "error";
+    }
+
+    supermarket.setName(name.trim());
+    supermarket.setInfo(info.trim());
+    entityManager.persist(supermarket);
+
+    if (photo != null && !photo.isEmpty()) {
+      try {
+        setSupermarketPic(photo, supermarketID, response, session, model);
+      } catch (Exception e) {
+        log.warn("Error", e);
+      }
+    }
+
+    return "redirect:/admin/supermarkets/" + supermarketID;
+  }
+
+  private static InputStream SupermarketDefaultPic() {
+      return new BufferedInputStream(Objects.requireNonNull(
+          AdminController.class.getClassLoader().getResourceAsStream(
+              "static/img/default-supermarket-pic.jpg")));
+  }
+
+  @GetMapping("/supermarkets/{supermercadoID}/pic")
+  public StreamingResponseBody getSupermarketPic(@PathVariable long supermercadoID) throws IOException {
+      File f = localData.getFile("supermarket", "" + supermercadoID + ".jpg");
+      InputStream in = new BufferedInputStream(f.exists() ? new FileInputStream(f) : AdminController.SupermarketDefaultPic());
+      return os -> FileCopyUtils.copy(in, os);
+  }
+
+  public String setSupermarketPic(MultipartFile photo, long supermercadoID,
+      HttpServletResponse response, HttpSession session, Model model) throws IOException {
+
+      Supermarket target = entityManager.find(Supermarket.class, supermercadoID);
+      model.addAttribute("supermarket", target);
+
+      // check permissions
+      User requester = (User) session.getAttribute("u");
+      if (requester.getId() != target.getId() &&
+          !requester.hasRole(Role.ADMIN)) {
+        throw new NoEsTuPerfilException();
+      }
+
+      log.info("Updating photo for supermarket {}", supermercadoID);
+      File f = localData.getFile("supermarket", "" + supermercadoID + ".jpg");
+      if (photo.isEmpty()) {
+        log.info("failed to upload photo: emtpy file?");
+      } else {
+        try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(f))) {
+            byte[] bytes = photo.getBytes();
+            stream.write(bytes);
+            log.info("Uploaded photo for {} into {}!", supermercadoID, f.getAbsolutePath());
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            log.warn("Error uploading " + supermercadoID + " ", e);
+        }
+      }
+      return "{\"status\":\"photo uploaded correctly\"}";
   }
 }

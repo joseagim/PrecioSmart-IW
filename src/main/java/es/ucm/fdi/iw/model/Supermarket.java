@@ -7,10 +7,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.NamedQueries;
 
 @Data
 @Entity
-@NamedQuery(name="Supermarket.searchByName", query="SELECT s FROM Supermarket s WHERE s.name = :name")
+@NamedQueries({
+        @NamedQuery(
+            name="Supermarket.searchByName", 
+            query="SELECT s FROM Supermarket s WHERE s.name = :name"
+        ),
+        @NamedQuery(
+            name = "Supermarket.totalNum", 
+            query = "SELECT COUNT(s) FROM Supermarket s"
+        )
+})
 public class Supermarket {
     
     @Id

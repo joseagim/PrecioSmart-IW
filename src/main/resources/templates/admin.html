@@ -13,6 +13,7 @@
 
     <main class="flex-shrink-0">
         <div class="container">
+<<<<<<< Updated upstream
             <h1 class="mt-5 mb-5">Administrar solicitudes</h1>
             <div class="panel-xl mb-5 ">
 
@@ -65,6 +66,19 @@
                     </div>
                 </div>
 
+=======
+            <div th:if="${admin == null}" class="d-flex flex-column align-items-center justify-content-center gap-4 mt-5">
+                <h2>Panel de Administración</h2>
+                <a href="/admin/mod" class="btn btn-naranja rounded-pill px-4 mt-4"><h3>Gestionar Requests</h3></a>
+                <a href="/admin/supermarkets" class="btn btn-naranja rounded-pill px-4 mt-4"><h3>Gestionar Supermercados</h3></a>
+                <a href="/admin/users" class="btn btn-naranja rounded-pill px-4 mt-4"><h3>Gestionar Usuarios</h3></a>
+            </div>
+            <div th:if="${admin=='requests'}">
+                <div th:replace="~{fragments/admin_mod.html :: adminMod(${requests}, ${type})}"></div>
+            </div>
+            <div th:if="${admin=='supermarkets'}">
+                <div th:replace="~{fragments/admin_supers.html :: adminSupers(${supermarkets})}"></div>
+>>>>>>> Stashed changes
             </div>
         </div>
 

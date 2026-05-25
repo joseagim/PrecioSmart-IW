@@ -99,11 +99,17 @@
                             class=" rounded-3 p-3 text-start d-flex flex-column border-products"
                             style="flex: 1 1 0; min-width: 0;">
                             <div th:if="${entry == null or entry.product == null}">
+<<<<<<< Updated upstream
                                 <h3
                                     class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
                                     <img th:src="|/img/supermarkets/${#strings.toLowerCase(entry.supermarket.name)}.png|"
                                         th:alt="${'Logo de ' + entry.supermarket.name}"
                                         style="width: 40px; height: 40px  ; object-fit: contain;">
+=======
+                                <h3 class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
+                                    <img th:src="@{/admin/supermarkets/{supermercadoID}/pic(supermercadoID=${entry.supermarket != null ? entry.supermarket.id : 0})}" 
+                                        th:alt="${'Logo de ' + entry.supermarket.name}" style="width: 40px; height: 40px  ; object-fit: contain;">
+>>>>>>> Stashed changes
                                     <b th:text="${entry.supermarket.name}">Supermercado</b>
                                 </h3>
                                 <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
@@ -119,9 +125,8 @@
                                         product != null and entry.product.id != product.id}">
                                 <h3
                                     class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
-                                    <img th:src="|/img/supermarkets/${#strings.toLowerCase(entry.supermarket.name)}.png|"
-                                        th:alt="${'Logo de ' + entry.supermarket.name}"
-                                        style="width: 40px; height: 40px; object-fit: contain;">
+                                    <img th:src="@{/admin/supermarkets/{supermercadoID}/pic(supermercadoID=${entry.supermarket != null ? entry.supermarket.id : 0})}" 
+                                        th:alt="${'Logo de ' + entry.supermarket.name}" style="width: 40px; height: 40px  ; object-fit: contain;">
                                     <b th:text="${entry.supermarket.name}">Supermercado</b>
                                 </h3>
                                 <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
@@ -150,11 +155,17 @@
 
                             <div th:if="${entry != null and entry.product != null and 
                                         product != null and entry.product.id == product.id}">
+<<<<<<< Updated upstream
                                 <h3
                                     class="fs-5 mb-2 d-flex flex-column flex-md-row align-items-center justify-content-center gap-2">
                                     <img th:src="|/img/supermarkets/${#strings.toLowerCase(entry.supermarket.name)}.png|"
                                         th:alt="${'Logo de ' + entry.supermarket.name}"
                                         style="width: 40px; height: 40px; object-fit: contain;">
+=======
+                                <h3 class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
+                                    <img th:src="@{/admin/supermarkets/{supermercadoID}/pic(supermercadoID=${entry.supermarket != null ? entry.supermarket.id : 0})}" 
+                                        th:alt="${'Logo de ' + entry.supermarket.name}" style="width: 40px; height: 40px  ; object-fit: contain;">
+>>>>>>> Stashed changes
                                     <b th:text="${entry.supermarket.name}">Supermercado</b>
                                 </h3>
                                 <h5 class="mb-2"><span class="text-muted">Precio:</span> <b
