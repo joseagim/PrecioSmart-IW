@@ -20,6 +20,16 @@ import jakarta.persistence.NamedQueries;
             name = "Supermarket.totalNum", 
             query = "SELECT COUNT(s) FROM Supermarket s"
         )
+        ,
+        @NamedQuery(
+            name = "Supermarket.findAllOrdered",
+            query = "SELECT s FROM Supermarket s ORDER BY s.name"
+        )
+        ,
+        @NamedQuery(
+            name = "Supermarket.findByNames",
+            query = "SELECT s FROM Supermarket s WHERE s.name IN :names"
+        )
 })
 public class Supermarket {
     

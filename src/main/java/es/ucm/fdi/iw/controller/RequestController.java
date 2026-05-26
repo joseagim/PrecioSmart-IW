@@ -79,11 +79,10 @@ public class RequestController {
         model.addAttribute("success", success);
         model.addAttribute("requests", requests);
 
-
-        if(EANparam == null || EANparam.isBlank()) {
+        if (EANparam == null || EANparam.isBlank()) {
             EANparam = "";
         }
-        
+
         model.addAttribute("ean", EANparam);
 
         if (supermarket == null || supermarket.isBlank()) {
@@ -100,6 +99,11 @@ public class RequestController {
 
         // Keep an optional default for which radio to mark on the form
         model.addAttribute("defaultType", type != null ? type : "");
+
+        // lista de supermercados para el select del formulario (named query)
+        List<Supermarket> supermarkets = entityManager.createNamedQuery("Supermarket.findAllOrdered", Supermarket.class)
+                .getResultList();
+        model.addAttribute("supermarkets", supermarkets);
 
         return "request";
     }

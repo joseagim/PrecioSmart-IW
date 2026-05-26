@@ -58,7 +58,9 @@ public class SecurityConfig {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/login", "/register").anonymous()
 
-						.requestMatchers("/search/**", "/product/{id}", "/admin/supermarkets/{id}/pic", "/faq", "/authors", "/css/**", "/js/**", "/img/**", "/", "/error")
+						.requestMatchers(
+								"/search/**", "/product/*", "/product/*/pic", "/admin/supermarkets/*/pic", "/faq",
+								"/authors", "/css/**", "/js/**", "/img/**", "/", "/error")
 						.permitAll()
 
 						.requestMatchers("/api/**").permitAll() // <-- public api access

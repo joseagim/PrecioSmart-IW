@@ -28,7 +28,7 @@
                     <div th:each="notification : ${notifications}">
                         <div
                             class="notification-item rounded-4 border bg-white p-3 mb-3 d-flex align-items-center gap-3">
-                            <img th:src="|/img/supermarkets/${#strings.toLowerCase(notification.request.supermarket)}.png|"
+                            <img th:src="@{/admin/supermarkets/picByName/{name}(name=${notification.request.supermarket})}"
                                 th:alt="${'Logo de ' + notification.request.supermarket}"
                                 style="width: 56px; height: 56px; object-fit: contain;">
 

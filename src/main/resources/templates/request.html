@@ -76,11 +76,11 @@
                                 <label for="supermarket" class="form-label">Supermercado</label>
                                 <select id="supermarket" name="supermarket" class="form-select form-select-lg" required>
                                     <option value="" th:selected="${#strings.isEmpty(supermarket)}">Selecciona...</option>
-                                    <option value="Mercadona" th:selected="${supermarket == 'Mercadona'}">Mercadona</option>
-                                    <option value="Carrefour" th:selected="${supermarket == 'Carrefour'}">Carrefour</option>
-                                    <option value="Lidl" th:selected="${supermarket == 'Lidl'}">Lidl</option>
-                                    <option value="Dia" th:selected="${supermarket == 'Dia'}">Dia</option>
-                                    <option value="Alcampo" th:selected="${supermarket == 'Alcampo'}">Alcampo</option>
+                                    <option th:each="s : ${supermarkets}"
+                                            th:value="${s.name}"
+                                            th:text="${s.name}"
+                                            th:selected="${s.name == supermarket}">
+                                    </option>
                                 </select>
                             </div>
 
