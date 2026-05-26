@@ -85,14 +85,14 @@ public class AdminController {
   @GetMapping
   public String admin(HttpSession session, Model model) {
 
-      User user = (User) session.getAttribute("u");
-      if (user == null) {
-          return "redirect:/login";
-      }
-      if (!user.hasRole(Role.ADMIN)) {
-          return "index";
-      }
-      return "admin";
+    User user = (User) session.getAttribute("u");
+    if (user == null) {
+      return "redirect:/login";
+    }
+    if (!user.hasRole(Role.ADMIN)) {
+      return "index";
+    }
+    return "admin";
   }
 
   @GetMapping({ "/mod/{requestType}", "/mod" })
@@ -240,12 +240,12 @@ public class AdminController {
     entityManager.persist(product);
     entityManager.persist(ps);
 
-       try {
+    try {
       ObjectMapper mapper = new ObjectMapper();
       String json = mapper.writeValueAsString(
-        Map.of("tipo", "request", "resultado", "aceptada"));
-      messagingTemplate.convertAndSend("/user/" 
-        + request.getUser().getUsername() + "/queue/updates", json);
+          Map.of("tipo", "request", "resultado", "aceptada"));
+      messagingTemplate.convertAndSend("/user/"
+          + request.getUser().getUsername() + "/queue/updates", json);
     } catch (Exception e) {
       log.warn("error serializando json", e);
     }
@@ -284,9 +284,9 @@ public class AdminController {
     try {
       ObjectMapper mapper = new ObjectMapper();
       String json = mapper.writeValueAsString(
-        Map.of("tipo", "request", "resultado", "rechazada"));
-      messagingTemplate.convertAndSend("/user/" 
-        + request.getUser().getUsername() + "/queue/updates", json);
+          Map.of("tipo", "request", "resultado", "rechazada"));
+      messagingTemplate.convertAndSend("/user/"
+          + request.getUser().getUsername() + "/queue/updates", json);
     } catch (Exception e) {
       log.warn("error serializando json", e);
     }
@@ -300,8 +300,6 @@ public class AdminController {
     entityManager.persist(notification);
     return ResponseEntity.ok().body(Map.of("message", "Solicitud rechazada correctamente"));
   }
-
-
 
   void copyImageToProduct(Request request, long productId) {
     // 1. Definimos la ruta base (donde vive 'iwdata')
@@ -336,8 +334,7 @@ public class AdminController {
     }
   }
 
-
-  //SUPERMERCADOS:
+  // SUPERMERCADOS:
 
   @GetMapping({ "/supermarkets" })
   public String getSupermarkets(@RequestParam(defaultValue = "1") int page, Model model) {
@@ -346,17 +343,17 @@ public class AdminController {
     int offset = (page - 1) * pageSize;
 
     List<Supermarket> supermarketList = entityManager
-                    .createQuery("SELECT s FROM Supermarket s", Supermarket.class)
-                    .setFirstResult(offset)
-                    .setMaxResults(pageSize)
-                    .getResultList();
+        .createQuery("SELECT s FROM Supermarket s", Supermarket.class)
+        .setFirstResult(offset)
+        .setMaxResults(pageSize)
+        .getResultList();
     Long total = entityManager
-                    .createNamedQuery("Supermarket.totalNum", Long.class)
-                    .getSingleResult();
+        .createNamedQuery("Supermarket.totalNum", Long.class)
+        .getSingleResult();
 
-    
-    Page<Supermarket> todosLosSupermercados = new PageImpl<>(supermarketList, PageRequest.of(page - 1, pageSize), total);
-    
+    Page<Supermarket> todosLosSupermercados = new PageImpl<>(supermarketList, PageRequest.of(page - 1, pageSize),
+        total);
+
     model.addAttribute("supermarkets", todosLosSupermercados);
     model.addAttribute("admin", "supermarkets");
     model.addAttribute("paginationUrl", "/admin/supermarkets");
@@ -368,15 +365,14 @@ public class AdminController {
   public String supermarket(@PathVariable(name = "supermarketID") Long supermarketID, Model model) {
 
     if (supermarketID == null) {
-        return "error";
-    }
-    else if(supermarketID == 0){
+      return "error";
+    } else if (supermarketID == 0) {
       return "supermarket";
     }
 
     Supermarket supermarket = entityManager.find(Supermarket.class, supermarketID);
     if (supermarket == null) {
-        return "error";
+      return "error";
     }
 
     model.addAttribute("supermarket", supermarket);
@@ -387,13 +383,13 @@ public class AdminController {
   @Transactional
   @PostMapping("/supermarkets/edit")
   public String editarSupermarket(
-          @RequestParam Long supermarketID,
-          @RequestParam String name,
-          @RequestParam String info,
-          @RequestParam(required = false, defaultValue = "") MultipartFile photo,
-          HttpServletResponse response,
-          HttpSession session,
-          Model model) {
+      @RequestParam Long supermarketID,
+      @RequestParam String name,
+      @RequestParam String info,
+      @RequestParam(required = false, defaultValue = "") MultipartFile photo,
+      HttpServletResponse response,
+      HttpSession session,
+      Model model) {
 
     if (supermarketID == null || supermarketID <= 0) {
       return "error";
@@ -421,12 +417,12 @@ public class AdminController {
   @Transactional
   @PostMapping("/supermarkets/create")
   public String crearSupermarket(
-          @RequestParam String name,
-          @RequestParam String info,
-          @RequestParam(required = false, defaultValue = "") MultipartFile photo,
-          HttpServletResponse response,
-          HttpSession session,
-          Model model) {
+      @RequestParam String name,
+      @RequestParam String info,
+      @RequestParam(required = false, defaultValue = "") MultipartFile photo,
+      HttpServletResponse response,
+      HttpSession session,
+      Model model) {
 
     User requester = (User) session.getAttribute("u");
     if (!requester.hasRole(Role.ADMIN)) {
@@ -446,50 +442,64 @@ public class AdminController {
         log.warn("Error", e);
       }
     }
-    
+
     return "redirect:/admin/supermarkets";
   }
 
   private static InputStream SupermarketDefaultPic() {
-      return new BufferedInputStream(Objects.requireNonNull(
-          AdminController.class.getClassLoader().getResourceAsStream(
-              "static/img/default-supermarket-pic.jpg")));
+    return new BufferedInputStream(Objects.requireNonNull(
+        AdminController.class.getClassLoader().getResourceAsStream(
+            "static/img/default-supermarket-pic.jpg")));
   }
 
   @GetMapping("/supermarkets/{supermercadoID}/pic")
   public StreamingResponseBody getSupermarketPic(@PathVariable long supermercadoID) throws IOException {
-      File f = localData.getFile("supermarket", "" + supermercadoID + ".jpg");
-      InputStream in = new BufferedInputStream(f.exists() ? new FileInputStream(f) : AdminController.SupermarketDefaultPic());
-      return os -> FileCopyUtils.copy(in, os);
+    File f = localData.getFile("supermarket", "" + supermercadoID + ".jpg");
+    InputStream in = new BufferedInputStream(
+        f.exists() ? new FileInputStream(f) : AdminController.SupermarketDefaultPic());
+    return os -> FileCopyUtils.copy(in, os);
+  }
+
+  @GetMapping("/supermarkets/picByName/{name}")
+  public StreamingResponseBody getSupermarketPicByName(@PathVariable String name) throws IOException {
+    List<Supermarket> found = entityManager.createNamedQuery("Supermarket.searchByName", Supermarket.class)
+        .setParameter("name", name)
+        .setMaxResults(1)
+        .getResultList();
+    long id = found.get(0).getId();
+    File f = localData.getFile("supermarket", "" + id + ".jpg");
+    InputStream in = new BufferedInputStream(
+        f.exists() ? new FileInputStream(f) : AdminController.SupermarketDefaultPic());
+    return os -> FileCopyUtils.copy(in, os);
   }
 
   public String setSupermarketPic(MultipartFile photo, long supermercadoID,
       HttpServletResponse response, HttpSession session, Model model) throws IOException {
 
-      Supermarket target = entityManager.find(Supermarket.class, supermercadoID);
-      model.addAttribute("supermarket", target);
+    Supermarket target = entityManager.find(Supermarket.class, supermercadoID);
+    model.addAttribute("supermarket", target);
 
-      // check permissions
-      User requester = (User) session.getAttribute("u");
-      if (requester.getId() != target.getId() &&
-          !requester.hasRole(Role.ADMIN)) {
-        throw new NoEsTuPerfilException();
-      }
+    // check permissions
+    User requester = (User) session.getAttribute("u");
+    if (requester.getId() != target.getId() &&
+        !requester.hasRole(Role.ADMIN)) {
+      throw new NoEsTuPerfilException();
+    }
 
-      log.info("Updating photo for supermarket {}", supermercadoID);
-      File f = localData.getFile("supermarket", "" + supermercadoID + ".jpg");
-      if (photo.isEmpty()) {
-        log.info("failed to upload photo: emtpy file?");
-      } else {
-        try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(f))) {
-            byte[] bytes = photo.getBytes();
-            stream.write(bytes);
-            log.info("Uploaded photo for {} into {}!", supermercadoID, f.getAbsolutePath());
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            log.warn("Error uploading " + supermercadoID + " ", e);
-        }
+    log.info("Updating photo for supermarket {}", supermercadoID);
+    File f = localData.getFile("supermarket", "" + supermercadoID + ".jpg");
+    if (photo.isEmpty()) {
+      log.info("failed to upload photo: emtpy file?");
+    } else {
+      try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(f))) {
+        byte[] bytes = photo.getBytes();
+        stream.write(bytes);
+        log.info("Uploaded photo for {} into {}!", supermercadoID, f.getAbsolutePath());
+      } catch (Exception e) {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        log.warn("Error uploading " + supermercadoID + " ", e);
       }
-      return "{\"status\":\"photo uploaded correctly\"}";
+    }
+    return "{\"status\":\"photo uploaded correctly\"}";
   }
 }
