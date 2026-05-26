@@ -12,8 +12,7 @@
     <main class="flex-shrink-0 bg-light-subtle">
         <div class="container py-5">
             <div id="product-info">
-                <div
-                    class="card panel-xxl w-100 h-auto d-flex flex-column flex-md-row rounded-4 overflow-hidden align-items-center align-items-md-start">
+                <div class="card panel-xxl w-100 h-auto d-flex flex-column flex-md-row rounded-4 overflow-hidden align-items-center align-items-md-start">
 
                     <div class="px-4 py-3 px-md-5 py-md-4 flex-shrink-0 bg-light" style="max-width: 300px;">
                         <img class="img-fluid rounded-3"
@@ -40,57 +39,64 @@
                                             th:text="${product?.EAN}">-</span></h4>
                                 </li>
                             </ul>
-
-                            <div th:if="${u}">
-                                <form id="add-to-cart-form"
-                                    th:action="@{/user/cart/add/{productId}(productId=${product != null ? product.id : 0})}"
-                                    method="post"
-                                    class="d-flex flex-wrap gap-3 mt-3 mb-1 justify-content-start align-items-center">
-                                    <button th:if="${carts != null and !#lists.isEmpty(carts)}" id="buy-button"
-                                        type="submit" th:attr="data-product-id=${product != null ? product.id : 0}"
-                                        class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Añadir
-                                        al carrito
-                                    </button>
-                                    <div class="d-flex align-items-center gap-2">
-                                        <label for="cantidad" class="mb-0 fw-semibold text-secondary">Cant.</label>
-                                        <input class="form-control text-center rounded-3" type="number" id="cantidad"
-                                            name="cantidad" style="width: 5.2em;" min="1" value="1">
-                                    </div>
-
-                                    <div th:if="${carts != null and !#lists.isEmpty(carts)}"
-                                        class="d-flex align-items-center gap-2">
-                                        <label for="cartId" class="mb-0 fw-semibold text-secondary">Carrito</label>
-                                        <select id="cartId" name="cartId" class="form-select form-select-lg" required>
-                                            <option value="" selected disabled hidden>Selecciona un carrito...</option>
-                                            <option th:each="c : ${carts}" th:value="${c.id}" th:text="${c.name}">
-                                                Carrito
-                                            </option>
-                                        </select>
-                                    </div>
-
-                                    <div th:unless="${carts != null and !#lists.isEmpty(carts)}"
-                                        class="d-flex align-items-center gap-2">
-                                        <button type="submit" class="btn btn-naranja btn-md px-4 py-3 shadow-sm">Crear
-                                            nuevo carrito y añadir
+                            <div th:if="${edit == null or !edit}">
+                                <div th:if="${u}">
+                                    <form id="add-to-cart-form"
+                                        th:action="@{/user/cart/add/{productId}(productId=${product != null ? product.id : 0})}"
+                                        method="post"
+                                        class="d-flex flex-wrap gap-3 mt-3 mb-1 justify-content-start align-items-center">
+                                        <button th:if="${carts != null and !#lists.isEmpty(carts)}" id="buy-button"
+                                            type="submit" th:attr="data-product-id=${product != null ? product.id : 0}"
+                                            class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Añadir
+                                            al carrito
                                         </button>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <label for="cantidad" class="mb-0 fw-semibold text-secondary">Cant.</label>
+                                            <input class="form-control text-center rounded-3" type="number" id="cantidad"
+                                                name="cantidad" style="width: 5.2em;" min="1" value="1">
+                                        </div>
+
+                                        <div th:if="${carts != null and !#lists.isEmpty(carts)}"
+                                            class="d-flex align-items-center gap-2">
+                                            <label for="cartId" class="mb-0 fw-semibold text-secondary">Carrito</label>
+                                            <select id="cartId" name="cartId" class="form-select form-select-lg" required>
+                                                <option value="" selected disabled hidden>Selecciona un carrito...</option>
+                                                <option th:each="c : ${carts}" th:value="${c.id}" th:text="${c.name}">
+                                                    Carrito
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div th:unless="${carts != null and !#lists.isEmpty(carts)}"
+                                            class="d-flex align-items-center gap-2">
+                                            <button type="submit" class="btn btn-naranja btn-md px-4 py-3 shadow-sm">Crear
+                                                nuevo carrito y añadir
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <div id="registroFeedback" class="alert d-none mt-3" role="alert">
+                                        <p class="mb-0"></p>
                                     </div>
-                                </form>
-                                <div id="registroFeedback" class="alert d-none mt-3" role="alert">
-                                    <p class="mb-0"></p>
+                                </div>
+                                <div th:unless="${u}">
+                                    <a th:href="@{/login}" class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Inicia
+                                        sesión para crear un carrito</a>
                                 </div>
                             </div>
-                            <div th:unless="${u}">
-                                <a th:href="@{/login}" class="btn btn-naranja px-4 py-3 text-nowrap rounded-3">Inicia
-                                    sesión para crear un carrito</a>
-                            </div>
                         </div>
+                    </div>
+                    <div th:if="${u.hasRole('ADMIN') and (edit == null or !edit)}">
+                        <a th:href="@{/product/{productoID}/edit(productoID=${product.id})}" 
+                            class="btn btn-naranja mt-auto btn-comparar">
+                            <img th:src="@{/img/svg/edit.svg}" class="svg-md" alt="Editar">
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="container pb-5 text-center">
-            <div id="compare">
+            <div id="compare" th:if="${edit == null or !edit}">
                 <div class="card panel-xxl w-100 p-4 p-md-5 rounded-3 bg-white">
                     <h3 class="mb-3 p-2 text-center text-black mb-5">
                         Comparar precios por supermercado
@@ -144,8 +150,6 @@
                                         class="btn btn-naranja btn-sm rounded-3 w-100 mt-2">Añade el producto a este
                                         supermercado</a>
                                 </div>
-
-
                             </div>
 
                             <div th:if="${entry != null and entry.product != null and 
@@ -175,6 +179,28 @@
                         </a>
                     </div>
                 </div>
+            </div>
+            <div th:unless="${edit == null or !edit}">
+                <ul class="list-unstyled d-flex flex-wrap justify-content-center my-0 gap-3">
+                    <li th:each="entry : ${result}">
+                        <div th:if="${entry != null and entry.product != null and 
+                                    product != null and entry.product.id == product.id}"
+                            class="rounded-3 p-3 text-start d-flex flex-column border-products"
+                            style="min-width: 280px; max-width: 280px;">
+                            <h3 class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
+                                <img th:src="@{/admin/supermarkets/{supermercadoID}/pic(supermercadoID=${entry.supermarket != null ? entry.supermarket.id : 0})}" 
+                                    th:alt="${'Logo de ' + entry.supermarket.name}" style="width: 40px; height: 40px  ; object-fit: contain;">
+                                <b th:text="${entry.supermarket.name}">Supermercado</b>
+                            </h3>
+                            <h5 class="mb-2"><span class="text-muted">Precio:</span> <b
+                                    th:text="${entry.price} + ' €'">0,00 €</b></h5>
+                            <p class="small text-muted mb-0" th:if="${entry.date != null}"
+                                th:text="'Actualizado: ' + ${#temporals.format(entry.date, 'dd/MM/yyyy HH:mm')}">
+                                Actualizado: -</p>
+                            
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
 

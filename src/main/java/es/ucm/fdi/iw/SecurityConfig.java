@@ -58,12 +58,12 @@ public class SecurityConfig {
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers("/login", "/register").anonymous()
 
-						.requestMatchers("/search/**", "/product/**", "/faq", "/authors", "/css/**", "/js/**", "/img/**", "/", "/error")
+						.requestMatchers("/search/**", "/product/{id}", "/admin/supermarkets/{id}/pic", "/faq", "/authors", "/css/**", "/js/**", "/img/**", "/", "/error")
 						.permitAll()
 
 						.requestMatchers("/api/**").permitAll() // <-- public api access
 
-						.requestMatchers("/admin/**").hasRole("ADMIN") // <-- administration
+						.requestMatchers("/admin/**", "/product/{id}/edit").hasRole("ADMIN") // <-- administration
 
 						.requestMatchers("/user/**").hasAnyRole("USER", "ADMIN") // <-- logged-in users
 						.anyRequest().authenticated())

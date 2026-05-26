@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -42,8 +43,11 @@ public class ProductController {
     }
 
     @Transactional
-    @GetMapping("/{productoID}")
-    public String product(@PathVariable(name = "productoID") Long productoID, Model model, HttpSession session) {
+    @GetMapping({ "/{productoID}", "/{productoID}/edit" })
+    public String product(@PathVariable(name = "productoID") Long productoID, 
+                Model model, 
+                HttpSession session,
+                HttpServletRequest request) {
         // validar el id del producto
         if (productoID == null || productoID <= 0) {
             return "error";
@@ -53,6 +57,10 @@ public class ProductController {
         if (product == null) {
             return "error";
         }
+
+        String uri = request.getRequestURI();
+        boolean isEdit = uri.endsWith("/edit");
+        model.addAttribute("edit", isEdit);
 
         List<Supermarket> supermarkets = entityManager
                 .createQuery("SELECT s FROM Supermarket s ORDER BY s.id", Supermarket.class)
