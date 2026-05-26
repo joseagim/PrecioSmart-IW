@@ -17,7 +17,7 @@
                         method="post" enctype="multipart/form-data"
                         class="d-flex flex-wrap gap-3 mt-3 mb-1 justify-content-start align-items-center">
 
-                        <input type="hidden" name="supermarketID" th:value="${supermarket.id}">
+                        <input type="hidden" name="supermarketID" th:value="${supermarket != null ? supermarket.id : 0}">
 
                         <div class="px-4 py-3 px-md-5 py-md-4 flex-shrink-0 bg-light" style="max-width: 300px;">
                             <img class="img-fluid rounded-3 position-relative"
@@ -37,8 +37,11 @@
                             <input class="form-control form-control-sm mb-3" type="file" name="photo"
                                 accept="image/jpeg,image/png">
                             
-                            <button type="submit" class="btn btn-naranja btn-md px-4 py-3 shadow-sm">
+                            <button th:if="${supermarket != null}" type="submit" class="btn btn-naranja btn-md px-4 py-3 shadow-sm">
                                 Guardar información
+                            </button>
+                            <button th:unless="${supermarket != null}" type="submit" th:formaction="@{/admin/supermarkets/create}" class="btn btn-naranja btn-md px-4 py-3 shadow-sm">
+                                Crear Supermercado
                             </button>
                         </div>
                     </form>

@@ -9,6 +9,9 @@
     <div th:fragment="adminSupers (supermarkets)">
 
         <h1 class="mt-5 mb-5">Administrar supermercados</h1>
+        <a th:href="@{/admin/supermarkets/0}" class="btn btn-naranja mt-auto btn-comparar">
+            Crear
+        </a>
         <div class="panel-xl mb-5 row row-cols-1 row-cols-md-3 g-4 justify-content-center">
 
             <div class="col" th:each="s : ${supermarkets}">

@@ -365,10 +365,13 @@ public class AdminController {
   }
 
   @GetMapping({ "/supermarkets/{supermarketID}" })
-  public String editSupermarket(@PathVariable(name = "supermarketID") Long supermarketID, Model model) {
+  public String supermarket(@PathVariable(name = "supermarketID") Long supermarketID, Model model) {
 
-    if (supermarketID == null || supermarketID <= 0) {
+    if (supermarketID == null) {
         return "error";
+    }
+    else if(supermarketID == 0){
+      return "supermarket";
     }
 
     Supermarket supermarket = entityManager.find(Supermarket.class, supermarketID);
@@ -412,8 +415,39 @@ public class AdminController {
         log.warn("Error", e);
       }
     }
+    return "redirect:/admin/supermarkets";
+  }
 
-    return "redirect:/admin/supermarkets/" + supermarketID;
+  @Transactional
+  @PostMapping("/supermarkets/create")
+  public String crearSupermarket(
+          @RequestParam String name,
+          @RequestParam String info,
+          @RequestParam(required = false, defaultValue = "") MultipartFile photo,
+          HttpServletResponse response,
+          HttpSession session,
+          Model model) {
+
+    User requester = (User) session.getAttribute("u");
+    if (!requester.hasRole(Role.ADMIN)) {
+      throw new NoEsTuPerfilException();
+    }
+
+    Supermarket supermarket = new Supermarket();
+
+    supermarket.setName(name.trim());
+    supermarket.setInfo(info.trim());
+    entityManager.persist(supermarket);
+
+    if (photo != null && !photo.isEmpty()) {
+      try {
+        setSupermarketPic(photo, supermarket.getId(), response, session, model);
+      } catch (Exception e) {
+        log.warn("Error", e);
+      }
+    }
+    
+    return "redirect:/admin/supermarkets";
   }
 
   private static InputStream SupermarketDefaultPic() {
