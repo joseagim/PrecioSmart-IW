@@ -314,7 +314,7 @@ details[open] .arrow-icon {
     color: #ff9f43;
     border-radius: 12px;
     padding: 10px;
-    width: 100%;
+    width: 50%;
     font-weight: bold;
 }
 
@@ -328,6 +328,18 @@ details[open] .arrow-icon {
     border-radius: 15px;
     border: 2px solid var(--amarillo-naranja);
 }
+
+.solo-movil {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .solo-movil {
+        display: inline-block;
+    }
+}
+
+
 /*-- NAVBAR --*/
 .nav-link {
     color: rgb(255, 255, 255) !important;

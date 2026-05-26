@@ -15,20 +15,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-<<<<<<< Updated upstream
-=======
 import java.time.LocalDateTime;
->>>>>>> Stashed changes
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-<<<<<<< Updated upstream
-=======
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
->>>>>>> Stashed changes
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -45,12 +39,9 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-<<<<<<< Updated upstream
-=======
 import es.ucm.fdi.iw.LocalData;
 import es.ucm.fdi.iw.controller.UserController.NoEsTuPerfilException;
 import es.ucm.fdi.iw.model.Notification;
->>>>>>> Stashed changes
 import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductSupermarket;
 import es.ucm.fdi.iw.model.Request;
@@ -249,8 +240,7 @@ public class AdminController {
     entityManager.persist(product);
     entityManager.persist(ps);
 
-    // para convertir a json puede dar error
-    try {
+       try {
       ObjectMapper mapper = new ObjectMapper();
       String json = mapper.writeValueAsString(
         Map.of("tipo", "request", "resultado", "aceptada"));
@@ -259,9 +249,6 @@ public class AdminController {
     } catch (Exception e) {
       log.warn("error serializando json", e);
     }
-<<<<<<< Updated upstream
-    
-=======
     // crear noti para mandársela al usuario
     Notification notification = new Notification();
     notification.setUser(request.getUser());
@@ -269,9 +256,6 @@ public class AdminController {
     notification.setRead(false);
     notification.setDate(LocalDateTime.now());
     entityManager.persist(notification);
-    model.addAttribute("admin", "requests");
-
->>>>>>> Stashed changes
     return ResponseEntity.ok().body(Map.of("message", "Solicitud aceptada correctamente"));
 
   }
@@ -297,8 +281,6 @@ public class AdminController {
     request.setStatus(RequestStatus.REJECTED);
     entityManager.merge(request);
 
-<<<<<<< Updated upstream
-=======
     try {
       ObjectMapper mapper = new ObjectMapper();
       String json = mapper.writeValueAsString(
@@ -316,11 +298,10 @@ public class AdminController {
     notification.setRead(false);
     notification.setDate(LocalDateTime.now());
     entityManager.persist(notification);
-    model.addAttribute("admin", "requests");
-
->>>>>>> Stashed changes
     return ResponseEntity.ok().body(Map.of("message", "Solicitud rechazada correctamente"));
   }
+
+
 
   void copyImageToProduct(Request request, long productId) {
     // 1. Definimos la ruta base (donde vive 'iwdata')

@@ -31,18 +31,19 @@
                             <div class="col-12 mb-3">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="type" id="mode_add" value="0"
-                                        checked>
+                                        th:checked="${defaultType == '' or defaultType == null or defaultType == '0'}">
                                     <label class="form-check-label" for="mode_add">Añadir un producto nuevo</label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="type" id="mode_add_existing"
-                                        value="1">
+                                        value="1" th:checked="${defaultType == '1'}">
                                     <label class="form-check-label" for="mode_add_existing">Añadir producto existente en
                                         un nuevo supermercado</label>
                                 </div>
 
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="type" id="mode_modify" value="2">
+                                    <input class="form-check-input" type="radio" name="type" id="mode_modify" value="2"
+                                        th:checked="${defaultType == '2'}">
                                     <label class="form-check-label" for="mode_modify">Modificar precio de un producto</label>
                                 </div>
                             </div>
@@ -50,7 +51,7 @@
                             <div class="col-md-6 add-only d-none">
                                 <label for="name" class="form-label">Nombre</label>
                                 <input id="name" name="name" class="form-control form-control-lg" type="text"
-                                    maxlength="60">
+                                    maxlength="60" th:value="${name}">
                             </div>
 
                             <div class="col-md-6 add-only d-none">
@@ -74,19 +75,19 @@
                             <div class="col-md-3">
                                 <label for="supermarket" class="form-label">Supermercado</label>
                                 <select id="supermarket" name="supermarket" class="form-select form-select-lg" required>
-                                    <option value="">Selecciona...</option>
-                                    <option value="Mercadona">Mercadona</option>
-                                    <option value="Carrefour">Carrefour</option>
-                                    <option value="Lidl">Lidl</option>
-                                    <option value="Dia">Dia</option>
-                                    <option value="Alcampo">Alcampo</option>
+                                    <option value="" th:selected="${#strings.isEmpty(supermarket)}">Selecciona...</option>
+                                    <option value="Mercadona" th:selected="${supermarket == 'Mercadona'}">Mercadona</option>
+                                    <option value="Carrefour" th:selected="${supermarket == 'Carrefour'}">Carrefour</option>
+                                    <option value="Lidl" th:selected="${supermarket == 'Lidl'}">Lidl</option>
+                                    <option value="Dia" th:selected="${supermarket == 'Dia'}">Dia</option>
+                                    <option value="Alcampo" th:selected="${supermarket == 'Alcampo'}">Alcampo</option>
                                 </select>
                             </div>
 
                             <div class="col-md-6">
                                 <label for="ean" class="form-label">Codigo EAN</label>
                                 <input id="ean" name="ean" class="form-control form-control-lg" type="text"
-                                    minlength="8" maxlength="13" required>
+                                    minlength="8" maxlength="13" required th:value="${ean}">
                             </div>
 
                             <div class="col-md-6 add-only d-none">

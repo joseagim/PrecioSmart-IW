@@ -3,7 +3,7 @@
 
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
-    <title>IW: Admin</title>
+    <title>PrecioSmart - Admin</title>
     <link rel="stylesheet" th:href="@{/css/simple-datatables-10.css}" href="/css/simple-datatables-10.css"
         type="text/css" />
 </head>
@@ -13,60 +13,6 @@
 
     <main class="flex-shrink-0">
         <div class="container">
-<<<<<<< Updated upstream
-            <h1 class="mt-5 mb-5">Administrar solicitudes</h1>
-            <div class="panel-xl mb-5 ">
-
-                <h2 class="h5 mb-3">Selecciona el tipo</h2>
-                <div class="col-12 mb-3">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="type" id="pending-request" value="pending"
-                            th:checked="${type == 'pending'}" onchange="window.location.href='/admin/mod/pending'">
-                        <label class="form-check-label" for="pending-request">Pendientes</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="type" id="accepted-request" value="accepted"
-                            th:checked="${type == 'accepted'}" onchange="window.location.href='/admin/mod/accepted'">
-                        <label class="form-check-label" for="accepted-request">Aceptadas</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="type" id="rejected-request" value="rejected"
-                            th:checked="${type == 'rejected'}" onchange="window.location.href='/admin/mod/rejected'">
-                        <label class="form-check-label" for="rejected-request">Rechazadas</label>
-                    </div>
-                </div>
-
-                <div id="error-box" class="alert alert-danger d-none shadow-sm" role="alert"></div>
-                <div id="success-box" class="alert alert-success d-none shadow-sm" role="alert"></div>
-
-                <!-- REQUEST LIST -->
-                <div id="request-list" class="p-3 text-start">
-                    <div th:if="${requests.empty}">
-                        <h2 class="h5 mb-3">No hay solicitudes que mostrar</h2>
-                    </div>
-
-                    <div th:each="req : ${requests}"
-                        class="request-item d-flex flex-row flex-nowrap align-items-center gap-3 mt-3 mb-3">
-                        <div class="notification p-3 flex-grow-1" style="min-width: 0;">
-                            <div th:replace="~{fragments/request-info :: requestInfo(${req})}"></div>
-                        </div>
-                        <div class="request-actions d-flex flex-column gap-2 align-items-stretch ms-auto align-self-center"
-                            style="width: 170px; flex: 0 0 170px;" th:if="${type == 'pending'}">
-                            <form th:action="@{/admin/mod/accept}" method="POST" class="accept-form">
-                                <input type="hidden" name="id" th:value="${req.id}">
-                                <button type="submit"
-                                    class="btn btn-success rounded-pill px-4 btn-aceptar w-100">Aceptar</button>
-                            </form>
-                            <form th:action="@{/admin/mod/reject}" method="POST" class="reject-form">
-                                <input type="hidden" name="id" th:value="${req.id}">
-                                <button type="submit"
-                                    class="btn btn-danger rounded-pill px-4 btn-rechazar w-100">Rechazar</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-=======
             <div th:if="${admin == null}" class="d-flex flex-column align-items-center justify-content-center gap-4 mt-5">
                 <h2>Panel de Administración</h2>
                 <a href="/admin/mod" class="btn btn-naranja rounded-pill px-4 mt-4"><h3>Gestionar Requests</h3></a>
@@ -78,7 +24,6 @@
             </div>
             <div th:if="${admin=='supermarkets'}">
                 <div th:replace="~{fragments/admin_supers.html :: adminSupers(${supermarkets})}"></div>
->>>>>>> Stashed changes
             </div>
         </div>
 

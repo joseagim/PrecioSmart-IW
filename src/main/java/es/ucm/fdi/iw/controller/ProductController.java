@@ -164,42 +164,5 @@ public class ProductController {
         return os -> FileCopyUtils.copy(in, os);
     }
 
-    /**
-     * Uploads a profile pic for a product
-     * 
-     * @param id
-     * @return
-     * @throws IOException
-     */
-    @PostMapping("{productoID}/pic")
-    @ResponseBody
-    public String setPic(@RequestParam("photo") MultipartFile photo, @PathVariable long productoID,
-        HttpServletResponse response, HttpSession session, Model model) throws IOException {
-
-        Product target = entityManager.find(Product.class, productoID);
-        model.addAttribute("product", target);
-
-        // check permissions
-        User requester = (User) session.getAttribute("u");
-        if (requester.getId() != target.getId() &&
-            !requester.hasRole(Role.ADMIN)) {
-        throw new NoEsTuPerfilException();
-        }
-
-        log.info("Updating photo for product {}", productoID);
-        File f = localData.getFile("product", "" + productoID + ".jpg");
-        if (photo.isEmpty()) {
-        log.info("failed to upload photo: emtpy file?");
-        } else {
-        try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(f))) {
-            byte[] bytes = photo.getBytes();
-            stream.write(bytes);
-            log.info("Uploaded photo for {} into {}!", productoID, f.getAbsolutePath());
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            log.warn("Error uploading " + productoID + " ", e);
-        }
-        }
-        return "{\"status\":\"photo uploaded correctly\"}";
-    }
+ 
 }

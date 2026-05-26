@@ -28,7 +28,7 @@ public class BarcodeController {
             String codigoEan = barcodeService.decodeBarcode(file.getInputStream());
             
             // Si ZXing no encuentra nada, devolvemos un error claro
-            if (codigoEan.contains("No se detectó")) {
+            if (codigoEan.contains("Error")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                     .body(Map.of("error", "No se reconoce ningún código"));
             }

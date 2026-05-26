@@ -105,7 +105,7 @@ def main(credentials_file, db_file_root, data_file_root):
               c.put(f)
           print("Uploading data files ... ")
           c.put("iwdata.zip")
-          c.run(f"unzip iwdata.zip -d {data_file_root} && rm iwdata.zip")
+          c.run(f"unzip -o iwdata.zip -d {data_file_root} && rm iwdata.zip")
           print("Uploading jar file ... ")            
           c.put(jar_path)
           print(f"All files uploaded. Killing previous servers ...")

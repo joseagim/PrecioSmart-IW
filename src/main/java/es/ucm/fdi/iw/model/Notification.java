@@ -1,10 +1,16 @@
 package es.ucm.fdi.iw.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
+@NamedQueries({
+        @NamedQuery(name = "Notification.findUnread", query = "SELECT n FROM Notification n WHERE n.user.id = :uid AND n.read = false"),
+        @NamedQuery(name = "Notification.countUnread", query = "SELECT COUNT(n) FROM Notification n WHERE n.user.id = :uid AND n.read = false")
+})
 @Table(name = "notificacion")
 public class Notification {
 
@@ -18,5 +24,7 @@ public class Notification {
     @ManyToOne
     private Request request;
 
+    private boolean read;
+    private LocalDateTime date;
 
 }

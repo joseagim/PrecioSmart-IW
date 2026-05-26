@@ -3,7 +3,7 @@
 
 <head>
     <th:block th:replace="~{fragments/head :: header}" />
-    <title>PrecioSmart Producto</title>
+    <title>PrecioSmart - Producto</title>
 </head>
 
 <body class="d-flex flex-column h-100">
@@ -92,30 +92,23 @@
         <div class="container pb-5 text-center">
             <div id="compare">
                 <div class="card panel-xxl w-100 p-4 p-md-5 rounded-3 bg-white">
-                    <h3 class="mb-3 p-2 text-center text-black mb-5">Comparar precios por supermercado
+                    <h3 class="mb-3 p-2 text-center text-black mb-5">
+                        Comparar precios por supermercado
                     </h3>
-                    <ul class="list-unstyled d-flex flex-nowrap align-items-stretch my-0 gap-3">
+                    <ul class="list-unstyled d-flex flex-wrap justify-content-center my-0 gap-3">
                         <li th:each="entry : ${result}"
-                            class=" rounded-3 p-3 text-start d-flex flex-column border-products"
-                            style="flex: 1 1 0; min-width: 0;">
+                            class="rounded-3 p-3 text-start d-flex flex-column border-products"
+                            style="min-width: 280px; max-width: 280px;">
                             <div th:if="${entry == null or entry.product == null}">
-<<<<<<< Updated upstream
-                                <h3
-                                    class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
-                                    <img th:src="|/img/supermarkets/${#strings.toLowerCase(entry.supermarket.name)}.png|"
-                                        th:alt="${'Logo de ' + entry.supermarket.name}"
-                                        style="width: 40px; height: 40px  ; object-fit: contain;">
-=======
                                 <h3 class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
                                     <img th:src="@{/admin/supermarkets/{supermercadoID}/pic(supermercadoID=${entry.supermarket != null ? entry.supermarket.id : 0})}" 
                                         th:alt="${'Logo de ' + entry.supermarket.name}" style="width: 40px; height: 40px  ; object-fit: contain;">
->>>>>>> Stashed changes
                                     <b th:text="${entry.supermarket.name}">Supermercado</b>
                                 </h3>
                                 <p class="text-naranja fw-bold mb-2">Producto no disponible</p>
                                 <p class="text-muted mb-0 small">Ese producto no esta en ese supermercado.</p>
                                 <div>
-                                    <a th:href="@{/user/request}"
+                                    <a th:href="@{/user/request(EAN=${product.EAN},supermarket=${entry.supermarket.name},type=1)}"
                                         th:text="|Añade el producto a ${entry.supermarket.name}|"
                                         class="btn btn-naranja btn-sm rounded-3 w-100 mt-2">Añade el producto a este
                                         supermercado</a>
@@ -137,6 +130,8 @@
                                         <p class="text-muted fw-bold small mb-1">Producto similar:</p>
                                         <p class="text-muted small mb-0" th:text="${entry.product.name}">Nombre del
                                             producto</p>
+                                        <p class="text-muted small mb-0" th:text="${entry.product.brand}">Marca del
+                                            producto</p>
                                     </div>
                                 </div>
                                 <a th:href="@{/product/{productoID}(productoID=${entry.product.id})}"
@@ -144,7 +139,7 @@
                                     Comparar
                                 </a>
                                 <div>
-                                    <a th:href="@{/user/request}"
+                                    <a th:href="@{/user/request(EAN=${product.EAN},supermarket=${entry.supermarket.name},type=1)}"
                                         th:text="|Añade el producto a ${entry.supermarket.name}|"
                                         class="btn btn-naranja btn-sm rounded-3 w-100 mt-2">Añade el producto a este
                                         supermercado</a>
@@ -155,17 +150,9 @@
 
                             <div th:if="${entry != null and entry.product != null and 
                                         product != null and entry.product.id == product.id}">
-<<<<<<< Updated upstream
-                                <h3
-                                    class="fs-5 mb-2 d-flex flex-column flex-md-row align-items-center justify-content-center gap-2">
-                                    <img th:src="|/img/supermarkets/${#strings.toLowerCase(entry.supermarket.name)}.png|"
-                                        th:alt="${'Logo de ' + entry.supermarket.name}"
-                                        style="width: 40px; height: 40px; object-fit: contain;">
-=======
                                 <h3 class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
                                     <img th:src="@{/admin/supermarkets/{supermercadoID}/pic(supermercadoID=${entry.supermarket != null ? entry.supermarket.id : 0})}" 
                                         th:alt="${'Logo de ' + entry.supermarket.name}" style="width: 40px; height: 40px  ; object-fit: contain;">
->>>>>>> Stashed changes
                                     <b th:text="${entry.supermarket.name}">Supermercado</b>
                                 </h3>
                                 <h5 class="mb-2"><span class="text-muted">Precio:</span> <b
@@ -182,7 +169,8 @@
                         <h4 class="mb-3 p-2 text-center text-black mt-5">
                             ¿El precio actual no coincide con el que usted ve en el supermercado?
                         </h4>
-                        <a th:href="@{/user/request}" class="btn btn-naranja btn-sm rounded-3 w-100 mt-2">
+                        <a th:href="@{/user/request(EAN=${product.EAN},type=2)}"
+                            class="btn btn-naranja btn-sm rounded-3 w-100 mt-2">
                             Solicita una actualización de precio
                         </a>
                     </div>
