@@ -118,17 +118,29 @@
                                     product != null and entry.product.id == product.id}"
                             class="rounded-3 p-3 text-start d-flex flex-column border-products"
                             style="min-width: 280px; max-width: 280px;">
-                            <h3 class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
-                                <img th:src="@{/admin/supermarkets/{supermercadoID}/pic(supermercadoID=${entry.supermarket != null ? entry.supermarket.id : 0})}" 
-                                    th:alt="${'Logo de ' + entry.supermarket.name}" style="width: 40px; height: 40px  ; object-fit: contain;">
-                                <b th:text="${entry.supermarket.name}">Supermercado</b>
-                            </h3>
-                            <h5 class="mb-2"><span class="text-muted">Precio:</span> <b
-                                    th:text="${entry.price} + ' €'">0,00 €</b></h5>
-                            <p class="small text-muted mb-0" th:if="${entry.date != null}"
-                                th:text="'Actualizado: ' + ${#temporals.format(entry.date, 'dd/MM/yyyy HH:mm')}">
-                                Actualizado: -</p>
-                            
+                            <form th:action="@{/product/{productoID}/editPrice(productoID=${product.id})}" method="post">
+                                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                                <input type="hidden" name="supermarketID" th:value="${entry.supermarket.id}"/>
+                                <h3 class="fs-5 mb-2 text-center d-flex align-items-center justify-content-center gap-2">
+                                    <img th:src="@{/admin/supermarkets/{supermercadoID}/pic(supermercadoID=${entry.supermarket != null ? entry.supermarket.id : 0})}" 
+                                        th:alt="${'Logo de ' + entry.supermarket.name}" style="width: 40px; height: 40px  ; object-fit: contain;">
+                                    <b th:text="${entry.supermarket.name}">Supermercado</b>
+                                </h3>
+                                <div class="d-flex flex-row text-start align-items-center">
+                                    <h5 class="mb-2 d-flex align-items-center gap-2">
+                                        <span class="text-muted">Precio:</span>
+                                        <input type="number" name="price" step="0.01" min="0" class="form-control form-control-md d-inline-block ms-2"
+                                            th:value="${entry.price}" >
+                                        <b>€</b>
+                                    </h5>
+                                </div>
+                                <p class="small text-muted mb-0" th:if="${entry.date != null}"
+                                    th:text="'Actualizado: ' + ${#temporals.format(entry.date, 'dd/MM/yyyy HH:mm')}">
+                                    Actualizado: -</p>
+                                <button type="submit" class="btn btn-naranja btn-md px-4 py-3 shadow-sm">
+                                    Actualizar Precio
+                                </button>
+                            </form>
                         </div>
                     </li>
                 </ul>

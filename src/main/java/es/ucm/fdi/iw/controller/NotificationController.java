@@ -3,8 +3,6 @@ package es.ucm.fdi.iw.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import es.ucm.fdi.iw.model.User;
 import es.ucm.fdi.iw.model.Notification;
-import es.ucm.fdi.iw.model.Supermarket;
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;

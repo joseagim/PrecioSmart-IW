@@ -7,7 +7,7 @@
 
 <body>
     <div th:fragment="productEdit (product)">
-        <form th:action="@{/admin/product/{productoID}/edit(productoID=${product.id})}" 
+        <form th:action="@{/product/{productoID}/edit(productoID=${product.id})}" 
                 method="post" 
                 enctype="multipart/form-data"
                 class="d-flex flex-column flex-md-row rounded-4 overflow-hidden align-items-center align-items-md-start">
@@ -39,8 +39,8 @@
                                     th:value="${product?.brand}" required>
                         </li>
                         <li class="my-2 pb-2">
-                            <h3><b><label for="cantidad" class="form-label">Cantidad:</label></b></h3>
-                            <input name="cantidad" type="text" class="fs-5 my-2 pb-2 form-control form-control-lg" 
+                            <h3><b><label for="quantity" class="form-label">Cantidad:</label></b></h3>
+                            <input name="quantity" type="text" class="fs-5 my-2 pb-2 form-control form-control-lg" 
                                     placeholder="100ml, 1kg, etc..."
                                     th:value="${product?.quantity}" required>
                         </li>
@@ -49,6 +49,11 @@
                             <input name="EAN" type="text" class="fs-5 my-2 pb-2 form-control form-control-lg" 
                                     placeholder="Código EAN"
                                     th:value="${product?.EAN}" required>
+                        </li>
+                        <li class="my-2 pb-2">
+                            <button type="submit" class="btn btn-naranja btn-md px-4 py-3 shadow-sm">
+                                Guardar información
+                            </button>
                         </li>
                     </ul>
                 </div>

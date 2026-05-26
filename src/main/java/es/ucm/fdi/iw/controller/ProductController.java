@@ -1,11 +1,13 @@
 package es.ucm.fdi.iw.controller;
 
 import es.ucm.fdi.iw.LocalData;
+import es.ucm.fdi.iw.controller.UserController.NoEsTuPerfilException;
 import es.ucm.fdi.iw.model.Cart;
 import es.ucm.fdi.iw.model.Product;
 import es.ucm.fdi.iw.model.ProductSupermarket;
 import es.ucm.fdi.iw.model.Supermarket;
 import es.ucm.fdi.iw.model.User;
+import es.ucm.fdi.iw.model.User.Role;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -17,10 +19,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
@@ -90,6 +94,83 @@ public class ProductController {
         model.addAttribute("result", result);
 
         return "product";
+    }
+
+    @Transactional
+    @PostMapping("/{productoID}/edit")
+    public String editarProducto(
+        @PathVariable long productoID,
+        @RequestParam String name,
+        @RequestParam String brand,
+        @RequestParam String quantity,
+        @RequestParam String EAN,
+        @RequestParam(required = false, defaultValue = "") MultipartFile photo,
+        HttpServletResponse response,
+        HttpSession session,
+        Model model) {
+
+        User requester = (User) session.getAttribute("u");
+        if (!requester.hasRole(Role.ADMIN)) {
+            throw new NoEsTuPerfilException();
+        }
+
+        Product product = entityManager.find(Product.class, productoID);
+
+        product.setName(name.trim());
+        product.setBrand(brand.trim());
+        product.setQuantity(quantity.trim());
+        product.setEAN(EAN.trim());
+        entityManager.persist(product);
+
+        if (photo != null && !photo.isEmpty()) {
+            try {
+                setProductPic(photo, productoID, response, session, model);
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return "redirect:/product/" + productoID;
+    }
+
+    @Transactional
+    @PostMapping("/{productoID}/editPrice")
+    public String editarPrecioProducto(
+        @PathVariable Long productoID,
+        @RequestParam Long supermarketID,
+        @RequestParam float price,
+        HttpSession session,
+        Model model) {
+
+        User requester = (User) session.getAttribute("u");
+        if (!requester.hasRole(Role.ADMIN)) {
+            throw new NoEsTuPerfilException();
+        }
+
+        ProductSupermarket productSupermarket = entityManager.createNamedQuery("ProductSupermarket.findProductSupermarket", ProductSupermarket.class)
+            .setParameter("supermarketId",supermarketID)
+            .setParameter("productId", productoID)
+            .setMaxResults(1)
+            .getResultList()
+            .stream()
+            .findFirst()
+            .orElse(null);
+
+        if (productSupermarket == null) {
+            throw new IllegalArgumentException("ProductSupermarket not found");
+        }
+
+        Product product = productSupermarket.getProduct();
+        Supermarket supermarket = productSupermarket.getSupermarket();
+        ProductSupermarket ps = new ProductSupermarket();
+
+        ps.setProduct(product);
+        ps.setSupermarket(supermarket);
+        ps.setPrice(price);
+        ps.setDate(java.time.LocalDateTime.now());
+        entityManager.persist(ps);
+
+        return "redirect:/product/" + productoID + "/edit";
     }
 
     // dado un producto y un supermercado:
@@ -172,5 +253,29 @@ public class ProductController {
         return os -> FileCopyUtils.copy(in, os);
     }
 
- 
+    public String setProductPic(MultipartFile photo, long productoID,
+        HttpServletResponse response, HttpSession session, Model model) throws IOException {
+
+        Product target = entityManager.find(Product.class, productoID);
+        model.addAttribute("product", target);
+
+        // check permissions
+        User requester = (User) session.getAttribute("u");
+        if (requester.getId() != target.getId() &&
+            !requester.hasRole(Role.ADMIN)) {
+        throw new NoEsTuPerfilException();
+        }
+
+        File f = localData.getFile("product", "" + productoID + ".jpg");
+        if (photo.isEmpty()) {
+        } else {
+        try (BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(f))) {
+            byte[] bytes = photo.getBytes();
+            stream.write(bytes);
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+        }
+        return "{\"status\":\"photo uploaded correctly\"}";
+    }
 }
