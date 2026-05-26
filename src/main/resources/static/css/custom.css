@@ -406,4 +406,19 @@ details[open] .arrow-icon {
 }
 
 
+.input-editado input {
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    width: 100%;
+}
 
+.input-editado input:focus {
+    background-color: var(--naranja-muy-claro);
+    border-radius: 10px;
+    border: 3px solid var(--naranja-oscuro);
+    color: black;
+    outline: none;
+}

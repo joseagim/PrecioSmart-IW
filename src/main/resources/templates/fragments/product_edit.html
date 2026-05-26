@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Request Info - Fragment</title>
+</head>
+
+<body>
+    <div th:fragment="productEdit (product)">
+        <form th:action="@{/admin/product/{productoID}/edit(productoID=${product.id})}" 
+                method="post" 
+                enctype="multipart/form-data"
+                class="d-flex flex-column flex-md-row rounded-4 overflow-hidden align-items-center align-items-md-start">
+
+            <input type="hidden" name="productID" th:value="${product != null ? product.id : 0}">
+
+            <div class="px-4 py-3 px-md-5 py-md-4 flex-shrink-0 bg-light" style="max-width: 400px;">
+                <img class="img-fluid rounded-3 mb-5"
+                    th:src="@{/product/{productoID}/pic(productoID=${product != null ? product.id : 0})}"
+                    alt="foto del producto">
+                
+                <h3><b><label for="photo" class="form-label">Foto del producto:</label></b></h3>
+                <input class="form-control form-control-sm mb-3" type="file" name="photo"
+                        accept="image/jpeg,image/png">
+            </div>
+
+            <div class="card-body text-start px-4 py-3 px-md-5 py-md-4">
+
+                <input name="name" type="text" class="card-title mb-4 fs-2 fw-bold form-control form-control-lg mb-4" 
+                        placeholder="Nombre del producto"
+                        th:value="${product?.name}" required>
+
+                <div class="d-flex flex-column">
+                    <ul class="list-unstyled mb-3">
+                        <li class="my-2 pb-2">
+                            <h3><b><label for="brand" class="form-label">Marca:</label></b></h3>
+                            <input name="brand" type="text" class="fs-5 my-2 pb-2 form-control form-control-lg" 
+                                    placeholder="Marca del producto"
+                                    th:value="${product?.brand}" required>
+                        </li>
+                        <li class="my-2 pb-2">
+                            <h3><b><label for="cantidad" class="form-label">Cantidad:</label></b></h3>
+                            <input name="cantidad" type="text" class="fs-5 my-2 pb-2 form-control form-control-lg" 
+                                    placeholder="100ml, 1kg, etc..."
+                                    th:value="${product?.quantity}" required>
+                        </li>
+                        <li class="my-2 pb-2">
+                            <h3><b><label for="EAN" class="form-label">Código EAN:</label></b></h3>
+                            <input name="EAN" type="text" class="fs-5 my-2 pb-2 form-control form-control-lg" 
+                                    placeholder="Código EAN"
+                                    th:value="${product?.EAN}" required>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
