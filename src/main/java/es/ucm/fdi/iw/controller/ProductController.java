@@ -150,11 +150,7 @@ public class ProductController {
         ProductSupermarket productSupermarket = entityManager.createNamedQuery("ProductSupermarket.findProductSupermarket", ProductSupermarket.class)
             .setParameter("supermarketId",supermarketID)
             .setParameter("productId", productoID)
-            .setMaxResults(1)
-            .getResultList()
-            .stream()
-            .findFirst()
-            .orElse(null);
+            .getSingleResult();
 
         if (productSupermarket == null) {
             throw new IllegalArgumentException("ProductSupermarket not found");

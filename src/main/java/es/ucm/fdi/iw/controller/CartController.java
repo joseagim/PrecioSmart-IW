@@ -157,7 +157,7 @@ public class CartController {
                 ProductSupermarket ps = productController.productBySupermarket(p, s.getId());
 
                 if (ps == null) {
-                    productosNoDisponibles.add(p.getName());
+                    productosNoDisponibles.add(p.getName()+"("+p.getBrand()+")");
                 } else {
                     boolean sugerencia = !p.getEAN().equals(ps.getProduct().getEAN());
 
@@ -165,17 +165,17 @@ public class CartController {
                     totalPrecio += precio;
 
                     if (sugerencia) {
-                        productosNoDisponibles.add(p.getName());
-                        if (!prods.containsKey(ps.getProduct().getName())) {
-                            productosSugeridos.add(ps.getProduct().getName());
+                        productosNoDisponibles.add(p.getName()+"("+p.getBrand()+")");
+                        if (!prods.containsKey(ps.getProduct().getName()+"("+ps.getProduct().getBrand()+")")) {
+                            productosSugeridos.add(ps.getProduct().getName()+"("+ps.getProduct().getBrand()+")");
                         }
                     }
 
-                    prods.put(ps.getProduct().getName(), ps.getPrice());
+                    prods.put(ps.getProduct().getName()+"("+ps.getProduct().getBrand()+")", ps.getPrice());
 
-                    if (productosSugeridos.contains(ps.getProduct().getName())
+                    if (productosSugeridos.contains(ps.getProduct().getName()+"("+ps.getProduct().getBrand()+")")
                             && !sugerencia) {
-                        productosSugeridos.remove(ps.getProduct().getName());
+                        productosSugeridos.remove(ps.getProduct().getName()+"("+ps.getProduct().getBrand()+")");
                     }
                 }
             }
