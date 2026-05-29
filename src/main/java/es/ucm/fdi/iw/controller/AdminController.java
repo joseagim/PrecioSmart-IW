@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -446,6 +448,47 @@ public class AdminController {
     return "redirect:/admin/supermarkets";
   }
 
+  @Transactional
+  @PostMapping("/supermarkets/delete")
+  public String eliminarSupermarket(
+      @RequestParam Long supermarketID,
+      HttpSession session,
+      Model model) {
+
+    // 1. Control de acceso y seguridad: Verificar que sea ADMIN
+    User requester = (User) session.getAttribute("u");
+    if (requester == null || !requester.hasRole(Role.ADMIN)) {
+      throw new NoEsTuPerfilException();
+    }
+
+    if (supermarketID == null || supermarketID <= 0) {
+      return "error";
+    }
+
+    // 2. Evitar fallos de integridad estructural (Clave Foránea)
+    // Eliminamos primero todas las vinculaciones de precios de este supermercado
+    entityManager.createQuery("DELETE FROM ProductSupermarket ps WHERE ps.supermarket.id = :id")
+        .setParameter("id", supermarketID)
+        .executeUpdate();
+
+    // 3. Buscar y eliminar el supermercado de la base de datos
+    Supermarket supermarket = entityManager.find(Supermarket.class, supermarketID);
+    if (supermarket == null) {
+      return "error";
+    }
+
+    entityManager.remove(supermarket);
+
+    // Opcional: Eliminar el archivo de imagen del disco si existe para no dejar basura
+    File foto = localData.getFile("supermarket", "" + supermarketID + ".jpg");
+    if (foto.exists()) {
+        foto.delete();
+    }
+
+    // Redirigir de nuevo a la lista actualizada de supermercados
+    return "redirect:/admin/supermarkets";
+  }
+
   private static InputStream SupermarketDefaultPic() {
     return new BufferedInputStream(Objects.requireNonNull(
         AdminController.class.getClassLoader().getResourceAsStream(
@@ -501,5 +544,81 @@ public class AdminController {
       }
     }
     return "{\"status\":\"photo uploaded correctly\"}";
+  }
+
+  @GetMapping("/users")
+  public String listarUsuarios(
+          @RequestParam(required = false, defaultValue = "all") String filter,
+          HttpSession session, 
+          Model model) {
+      
+      User requester = (User) session.getAttribute("u");
+      if (requester == null || !requester.hasRole(Role.ADMIN)) {
+          log.warn("Intento de acceso no autorizado a la gestión de usuarios por parte de un cliente.");
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado: Se requieren permisos de Administrador.");
+      }
+
+      List<User> listaUsuarios;
+
+      switch (filter) {
+          case "active":
+              listaUsuarios = entityManager
+                  .createQuery("SELECT u FROM User u WHERE u.enabled = true ORDER BY u.username ASC", User.class)
+                  .getResultList();
+              break;
+              
+          case "banned":
+              listaUsuarios = entityManager
+                  .createQuery("SELECT u FROM User u WHERE u.enabled = false ORDER BY u.username ASC", User.class)
+                  .getResultList();
+              break;
+              
+          case "all":
+          default:
+              listaUsuarios = entityManager
+                  .createQuery("SELECT u FROM User u ORDER BY u.username ASC", User.class)
+                  .getResultList();
+              filter = "all";
+              break;
+      }
+
+      model.addAttribute("users", listaUsuarios);
+      model.addAttribute("currentFilter", filter); 
+      model.addAttribute("admin", "users");
+
+      return "admin"; 
+  }
+
+
+  @PostMapping("/users/toggle-ban")
+  @Transactional
+  public String toggleBanUsuario(
+          @RequestParam Long userId,
+          @RequestParam(required = false, defaultValue = "all") String currentFilter,
+          HttpSession session) {
+
+      User requester = (User) session.getAttribute("u");
+      if (requester == null || !requester.hasRole(Role.ADMIN)) {
+          throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No autorizado.");
+      }
+
+      if (requester.getId() == userId) {
+          log.error("El administrador con ID {} intentó banearse a sí mismo.", requester.getId());
+          return "redirect:/admin/users?filter=" + currentFilter + "&error=selfban";
+      }
+
+      User userToMod = entityManager.find(User.class, userId);
+      if (userToMod == null) {
+          throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado.");
+      }
+
+      boolean nuevoEstado = !userToMod.isEnabled();
+      userToMod.setEnabled(nuevoEstado);
+      
+      entityManager.merge(userToMod);
+      log.info("El administrador {} ha cambiado el estado de baneo del usuario {} a: {}", 
+                requester.getUsername(), userToMod.getUsername(), nuevoEstado);
+
+      return "redirect:/admin/users?filter=" + currentFilter;
   }
 }

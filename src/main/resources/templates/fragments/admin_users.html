@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Request Info - Fragment</title>
+</head>
+
+<body>
+    <div th:fragment="adminUsers(users, currentFilter)">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mt-5 mb-5">Administrar usuarios</h1>
+            
+            <div class="btn-group shadow-sm">
+                
+                <a th:href="@{/admin/users(filter='all')}" class="btn btn-naranja"
+                    th:classappend="${currentFilter == 'all' or currentFilter == null} ? '' : 'active'">
+                    Todos
+                </a>
+                
+                <a th:href="@{/admin/users(filter='active')}" class="btn btn-outline-success"
+                    th:classappend="${currentFilter == 'active'} ? 'active' : ''">
+                    No Baneados
+                </a>
+                
+                <a th:href="@{/admin/users(filter='banned')}" class="btn btn-outline-danger"
+                    th:classappend="${currentFilter == 'banned'} ? 'active' : ''">
+                    Baneados
+                </a>
+            </div>
+        </div>
+
+        <div class="table-responsive card border-0 shadow-sm p-3 rounded-3">
+            <table class="table table-hover align-middle m-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Usuario</th>
+                        <th>Email</th>
+                        <th class="text-center">Estado</th>
+                        <th class="text-end pe-3">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="u : ${users}">
+                        <td class="fw-bold ps-3 text-secondary" th:text="${u.username}">username</td>
+                        <td th:text="${u.email}">email@example.com</td>
+                        <td class="text-center">
+                            <span th:unless="${u.enabled}" class="badge bg-danger px-2 py-1.5 rounded-pill">Baneado</span>
+                            <span th:if="${u.enabled}" class="badge bg-success px-2 py-1.5 rounded-pill">Activo</span>
+                        </td>
+                        <td class="text-end pe-3">
+                            <form th:if="${u.id != session.u.id}" th:action="@{/admin/users/toggle-ban}" method="post" class="d-inline">
+                                
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <input type="hidden" name="userId" th:value="${u.id}">
+                                
+                                <input type="hidden" name="currentFilter" th:value="${currentFilter}">
+                                
+                                <button th:unless="${u.enabled}" type="submit" class="btn btn-success btn-sm px-3 text-white fw-bold border-0 rounded-2"
+                                        th:onclick="return confirm('¿Estás seguro de desbanear a este usuario?');">
+                                    Desbanear
+                                </button>
+                                <button th:if="${u.enabled}" type="submit" class="btn btn-danger btn-sm px-3 text-white fw-bold border-0 rounded-2"
+                                        th:onclick="return confirm('¿Estás seguro de banear a este usuario?');">
+                                    Banear
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(users)}">
+                        <td colspan="4" class="text-center text-muted py-4">No hay usuarios que cumplan este criterio de filtrado.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

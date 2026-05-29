@@ -25,6 +25,14 @@
                         <a th:href="@{/admin/supermarkets/{supermarketID}(supermarketID=${s.id})}" class="btn btn-naranja mt-auto btn-comparar">
                             Editar
                         </a>
+                        <form th:action="@{/admin/supermarkets/delete}" method="post" class="flex-grow-1"
+                            th:onsubmit="return confirm('¿Estás completamente seguro de eliminar este supermercado? Se perderán todos los precios de productos asociados a él.');">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <input type="hidden" name="supermarketID" th:value="${s.id}">
+                            <button type="submit" class="btn btn-danger w-100 py-2 rounded-3 text-white fw-bold border-0">
+                                Eliminar
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

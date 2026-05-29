@@ -25,6 +25,9 @@
             <div th:if="${admin=='supermarkets'}">
                 <div th:replace="~{fragments/admin_supers.html :: adminSupers(${supermarkets})}"></div>
             </div>
+            <div th:if="${admin=='users'}">
+                <div th:replace="~{fragments/admin_users.html :: adminUsers(${users}, ${currentFilter})}"></div>
+            </div>
         </div>
 
         <script th:src="@{/js/script-admin.js}"></script>
