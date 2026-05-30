@@ -102,6 +102,9 @@
                         </form>
                     </div>
 
+                    <div id="success-box-hide" class="alert alert-success d-none shadow-sm" role="alert"></div>
+                    <div id="error-box-hide" class="alert alert-danger d-none shadow-sm" role="alert"></div>
+
                     <div class="card  panel-xxl shadow-sm p-4">
                         <h2 class="h5 mb-3">Solicitudes guardadas</h2>
                         <div id="request-list" class="d-grid gap-3">
@@ -111,8 +114,17 @@
                             </div>
 
                             <article th:each="r : ${requests}"
-                                class="rounded-4 border border-secondary-subtle border-opacity-25 bg-white shadow-sm p-3 p-md-4">
+                                class="rounded-4 border border-secondary-subtle border-opacity-25 bg-white shadow-sm p-3 p-md-4 request-item">
                                 <div th:replace="~{fragments/request-info :: requestInfo(${r})}"></div>
+                                <div th:if="${r.status.name == 'APPROVED' or r.status.name == 'REJECTED'}">
+                                    <form th:action="@{/user/request/hide}" method="post" class="form-hide-req">
+                                        <input type="hidden" name="reqId" th:value="${r.id}">
+                                        <input type="hidden" name="userId" th:value="${r.user.id}">
+                                        <button type="submit" class="btn btn-naranja btn-sm">
+                                            <img class="svg-sm" th:src="@{/img/svg/hide.svg}" alt="Ocultar">
+                                        </button>
+                                    </form>
+                                </div>
                             </article>
                         </div>
                     </div>

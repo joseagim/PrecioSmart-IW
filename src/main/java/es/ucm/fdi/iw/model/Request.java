@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @NamedQueries({
         @NamedQuery(name = "Request.findByStatus", query = "SELECT r FROM Request r WHERE r.status = :status ORDER BY r.date DESC"),
-        @NamedQuery(name = "Request.findByUser", query = "SELECT r FROM Request r WHERE r.user.id = :uid ORDER BY r.date DESC")
+        @NamedQuery(name = "Request.findByUser", query = "SELECT r FROM Request r WHERE r.user.id = :uid AND r.hidden = false ORDER BY r.date DESC")
 })
 public class Request {
 
@@ -27,6 +27,8 @@ public class Request {
     private LocalDateTime date;
     private RequestType type;
     private RequestStatus status;
+    
+    private boolean hidden = false;
 
     @ManyToOne
     private User user; // Generará la columna 'user_id' automáticamente

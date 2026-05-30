@@ -102,3 +102,40 @@ form.addEventListener("submit", function (e) {
         });
 
 });
+
+const formsHideRequest = document.querySelectorAll(".form-hide-req");
+
+const errorBoxHide = document.getElementById("error-box-hide");
+const successBoxHide = document.getElementById("success-box-hide");
+
+formsHideRequest.forEach(f => f.addEventListener('click', e => {
+    e.preventDefault();
+
+    go(f.action, "POST", new URLSearchParams(new FormData(f)))
+        .then((response) => {
+            const requestItem = f.closest('.request-item');
+            if (requestItem) {
+                requestItem.remove();
+            }
+
+            successBoxHide.textContent = response?.message;
+            successBoxHide.classList.remove("d-none");
+
+
+        })
+        .catch((error) => {
+            let message = `No se ha podido ocultar la solicitud`;
+            try {
+                const json = JSON.parse(error?.text || "{}"); 
+                if (json.message) {
+                    message = json.message;
+                }
+            } catch (_) {
+                // Mantener mensaje por defecto si no hay JSON valido
+            }
+
+            errorBoxHide.textContent = message;
+            errorBoxHide.classList.remove("d-none");
+
+        })
+}))

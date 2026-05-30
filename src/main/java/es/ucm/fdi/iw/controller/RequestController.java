@@ -288,6 +288,36 @@ public class RequestController {
                 Map.of("message", (msg != null) ? msg : "Solicitud guardada correctamente"));
     }
 
+    @PostMapping("/hide")
+    @Transactional
+    public ResponseEntity<Map<String, String>> hideRequest(
+        @RequestParam Long reqId, @RequestParam Long userId, HttpSession session) {
+
+        // coger el usuario
+        User user = (User) session.getAttribute("u");
+        user = entityManager.find(User.class, user.getId());
+
+        // validar usuario
+        if (user == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "El usuario no existe."));
+        } else if (user.getId() != userId) {
+            return ResponseEntity.badRequest().body(Map.of("message", "El usuario no es válido."));
+        }
+
+        // coger la request
+        Request req = entityManager.find(Request.class, reqId);
+
+        // validar request
+        if (req == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "La solicitud no existe."));
+        }
+
+        // si todo va bien la ocultamos
+        req.setHidden(true);
+
+        return ResponseEntity.ok().body(Map.of("message", "La solicitud ha sido ocultada."));
+    }
+
     private String savePhoto(MultipartFile photo, long id, long IDRequest,
             HttpServletResponse response) throws IOException {
 
