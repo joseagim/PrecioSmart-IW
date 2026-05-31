@@ -60,6 +60,7 @@ public class User implements Transferable<User.Transfer> {
     private int total;
     private int aceptadas;
     private int rechazadas;
+    private int contador;
 
     @OneToMany
     @JoinColumn(name = "sender_id")

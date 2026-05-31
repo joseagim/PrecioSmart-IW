@@ -145,8 +145,8 @@
                                         <img class="svg-sm arrow-icon me-2" th:src="@{/img/svg/arrow-down.svg}" alt="Ampliar">
                                         <h5 class="card-title fw-bold" th:text="${info.supermarket.name}">Supermercado</h5>
                                     </div>
-                                    <small class="text-danger d-block mb-2" th:if="${!info.completo}">
-                                        Algunos de los productos seleccionados no están disponibles.
+                                    <small class="text-danger d-block mb-2" th:if="${info.hayAviso}">
+                                        Algunos de los productos seleccionados no están disponibles o se han sustituido.
                                     </small>
                                     <div class="d-flex align-items-center gap-2">
                                         <p class="card-text fs-5 fw-bold mb-0" 
@@ -157,16 +157,17 @@
                                 </summary>
                                 <div class="text-start">
                                     <ul>
-                                        <li th:each="prod : ${info.productos}">
-                                            <span th:text="${prod.key}">Producto</span>:
-                                            <span class="fw-bold" th:text="${#numbers.formatDecimal(prod.value, 1, 2, 'COMMA')} + ' €'">0,00 €</span>
-                                            <span class="text-danger" th:if="${info.productosSugeridos.contains(prod.key)}"> (Sugerencia)</span>
+                                        <li th:each="prod : ${info.productosDetalle}">
+                                            <span th:if="${prod.sustituido}" th:text="${prod.original + ' -> ' + prod.replacement}">Producto -> Sustituto</span>
+                                            <span th:unless="${prod.sustituido}" th:text="${prod.name}">Producto</span>:
+                                            <span class="fw-bold" th:text="${#numbers.formatDecimal(prod.price, 1, 2, 'COMMA')} + ' €'">0,00 €</span>
+                                            <span class="text-danger" th:if="${prod.sustituido}"> (Sugerencia)</span>
                                         </li>
                                     </ul>
                                     <div th:if="${!info.productosNoDisponibles.isEmpty()}" class="mt-2 p-2 bg-light">
-                                        <small class="text-muted">
-                                            <strong>Faltantes:</strong> 
-                                            <span th:each="faltante, iter : ${info.productosNoDisponibles}" 
+                                        <small class="text-muted d-block">
+                                            <strong>Productos no disponibles:</strong>
+                                            <span th:each="faltante, iter : ${info.productosNoDisponibles}"
                                                 th:text="${faltante} + (${iter.last} ? '' : ', ')"></span>
                                         </small>
                                     </div>

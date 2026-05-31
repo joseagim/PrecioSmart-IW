@@ -132,7 +132,6 @@ public class CartController {
 
         List<Map<String, Object>> totalesPorSuper = calcularTotalesPorSuper(cart);
 
-        model.addAttribute("selectedCart", cart);
         model.addAttribute("totalesPorSuper", totalesPorSuper);
 
         return "cart :: #totalesSupermercados";
@@ -147,9 +146,9 @@ public class CartController {
 
         for (Supermarket s : supermarkets) {
             double totalPrecio = 0.0;
-            Map<String, Float> prods = new HashMap<>();
             List<String> productosNoDisponibles = new ArrayList<>();
-            List<String> productosSugeridos = new ArrayList<>();
+            List<Map<String, Object>> productosDetalle = new ArrayList<>();
+            boolean haySustituciones = false;
 
             for (ProductCart item : cart.getItems()) {
 
@@ -165,17 +164,21 @@ public class CartController {
                     totalPrecio += precio;
 
                     if (sugerencia) {
-                        productosNoDisponibles.add(p.getName()+"("+p.getBrand()+")");
-                        if (!prods.containsKey(ps.getProduct().getName()+"("+ps.getProduct().getBrand()+")")) {
-                            productosSugeridos.add(ps.getProduct().getName()+"("+ps.getProduct().getBrand()+")");
-                        }
-                    }
-
-                    prods.put(ps.getProduct().getName()+"("+ps.getProduct().getBrand()+")", ps.getPrice());
-
-                    if (productosSugeridos.contains(ps.getProduct().getName()+"("+ps.getProduct().getBrand()+")")
-                            && !sugerencia) {
-                        productosSugeridos.remove(ps.getProduct().getName()+"("+ps.getProduct().getBrand()+")");
+                        String original = p.getName()+"("+p.getBrand()+")";
+                        String sustituto = ps.getProduct().getName()+"("+ps.getProduct().getBrand()+")";
+                        Map<String, Object> detalle = new HashMap<>();
+                        detalle.put("sustituido", true);
+                        detalle.put("original", original);
+                        detalle.put("replacement", sustituto);
+                        detalle.put("price", ps.getPrice());
+                        productosDetalle.add(detalle);
+                        haySustituciones = true;
+                    } else {
+                        Map<String, Object> detalle = new HashMap<>();
+                        detalle.put("sustituido", false);
+                        detalle.put("name", p.getName()+"("+p.getBrand()+")");
+                        detalle.put("price", ps.getPrice());
+                        productosDetalle.add(detalle);
                     }
                 }
             }
@@ -184,10 +187,9 @@ public class CartController {
             Map<String, Object> infoSuper = new HashMap<>();
             infoSuper.put("supermarket", s);
             infoSuper.put("total", totalPrecio);
-            infoSuper.put("completo", productosNoDisponibles.isEmpty());
-            infoSuper.put("productos", prods);
+            infoSuper.put("hayAviso", !productosNoDisponibles.isEmpty() || haySustituciones);
+            infoSuper.put("productosDetalle", productosDetalle);
             infoSuper.put("productosNoDisponibles", productosNoDisponibles);
-            infoSuper.put("productosSugeridos", productosSugeridos);
             totalesPorSuper.add(infoSuper);
         }
 
@@ -215,13 +217,6 @@ public class CartController {
             cart.setDate(LocalDateTime.now());
             cart.setItems(new ArrayList<>());
             entityManager.persist(cart);
-            model.addAttribute("selectedCart", cart);
-
-            List<Cart> carts = entityManager
-                    .createNamedQuery("Cart.searchByUserId", Cart.class)
-                    .setParameter("userId", user.getId())
-                    .getResultList();
-            model.addAttribute("carts", carts);
 
             return "redirect:/user/cart/" + cart.getId();
         }

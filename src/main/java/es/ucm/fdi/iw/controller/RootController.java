@@ -106,6 +106,7 @@ public class RootController {
         user.setEnabled(true);
         user.setRoles(User.Role.USER.toString());
         user.setEmail(email);
+        user.setContador(0);
         entityManager.persist(user);
 
         model.addAttribute("registerOk", "Usuario creado, ya puedes iniciar sesión");
