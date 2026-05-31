@@ -278,6 +278,10 @@ public class RequestController {
         // Persistimos primero para obtener el ID autogenerado y usarlo en el nombre de
         // la imagen.
         entityManager.persist(request);
+        
+        requester.setTotal(requester.getTotal() + 1);
+        entityManager.merge(requester);
+        
         entityManager.flush();
 
         if (photo != null && !photo.isEmpty()) {

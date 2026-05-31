@@ -59,7 +59,7 @@ public class SecurityConfig {
 						.requestMatchers("/login", "/register").anonymous()
 
 						.requestMatchers(
-								"/search/**", "/product/*", "/product/*/pic", "/admin/supermarkets/*/pic", "/faq",
+								"/search/**", "/searchTable/**", "/product/*", "/product/*/pic", "/admin/supermarkets/*/pic", "/faq",
 								"/authors", "/css/**", "/js/**", "/img/**", "/", "/error")
 						.permitAll()
 

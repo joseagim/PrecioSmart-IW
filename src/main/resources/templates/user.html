@@ -74,6 +74,20 @@
                     </div>
 
                 </div>
+                
+                <div class="col-12 col-lg-10 mt-4">
+                    <div class="card-naranja">
+                        <div class="card-body p-4">
+                            <h3 class="h5 fw-bold mb-3">Estadísticas de Solicitudes</h3>
+                            <div class="d-flex flex-column">
+                                <span class="fs-5 fw-semibold text-success mb-2">Aceptadas: <span th:text="${aceptadas}"></span></span>
+                                <span class="fs-5 fw-semibold text-danger mb-2">Rechazadas: <span th:text="${rechazadas}"></span></span>
+                                <hr class="text-naranja my-2" style="opacity: 0.5; border-width: 2px;">
+                                <span class="fs-5 fw-semibold text-dark">Total: <span th:text="${total}"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="container">

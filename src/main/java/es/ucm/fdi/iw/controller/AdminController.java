@@ -237,6 +237,10 @@ public class AdminController {
     // ponemos la request como aceptada
     request.setStatus(RequestStatus.APPROVED);
 
+    User reqUser = request.getUser();
+    reqUser.setAceptadas(reqUser.getAceptadas() + 1);
+    entityManager.merge(reqUser);
+
     // guardamos en la bbdd
     entityManager.merge(request);
     entityManager.persist(product);
@@ -281,6 +285,11 @@ public class AdminController {
     }
 
     request.setStatus(RequestStatus.REJECTED);
+    
+    User reqUser = request.getUser();
+    reqUser.setRechazadas(reqUser.getRechazadas() + 1);
+    entityManager.merge(reqUser);
+    
     entityManager.merge(request);
 
     try {

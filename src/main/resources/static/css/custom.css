@@ -307,6 +307,14 @@ details[open] .arrow-icon {
     border-color: var(--naranja-claro) !important;
 }
 
+.table-naranja {
+    background-color: var(--naranja-medio);
+    color: white;
+}
+
+.table-naranja th {
+    border-color: var(--naranja-oscuro);
+}
 
 .btn-scan {
     border: 2px solid #ffb366;
@@ -324,7 +332,7 @@ details[open] .arrow-icon {
 }
 
 
-.border-products{
+.border-products {
     border-radius: 15px;
     border: 2px solid var(--amarillo-naranja);
 }

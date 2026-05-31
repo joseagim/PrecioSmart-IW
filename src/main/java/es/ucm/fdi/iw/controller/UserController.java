@@ -119,6 +119,11 @@ public class UserController {
   public String index(@PathVariable long id, Model model, HttpSession session) {
     User target = entityManager.find(User.class, id);
     model.addAttribute("user", target);
+    
+    model.addAttribute("total", target.getTotal());
+    model.addAttribute("aceptadas", target.getAceptadas());
+    model.addAttribute("rechazadas", target.getRechazadas());
+    
     return "user";
   }
 
