@@ -2584,3 +2584,7 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/gimen/O
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 61 more
+2026-06-03 12:58:35.566208+02:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valor demasiado largo para la columna "TEXT CHARACTER VARYING(255)": "U&'Error 500 Ha pasado algo feo. Mira el log del servidor para saber m\\00e1s det... (14558)"
+Value too long for column "TEXT CHARACTER VARYING(255)": "U&'Error 500 Ha pasado algo feo. Mira el log del servidor para saber m\\00e1s det... (14558)"; SQL statement:
+insert into message (date_read,date_sent,recipient_id,sender_id,text,topic_id,id) values (?,?,?,?,?,?,?) [22001-232]

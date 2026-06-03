@@ -22,7 +22,7 @@
                         <ul class="list-group list-group-flush text-start mb-3">
                             <li class="list-group-item medium">Información: <span th:text="${s.info}"></span></li>
                         </ul>
-                        <a th:href="@{/admin/supermarkets/{supermarketID}(supermarketID=${s.id})}" class="btn btn-naranja mt-auto btn-comparar">
+                        <a th:href="@{/admin/supermarkets/{supermarketID}(supermarketID=${s.id})}" class="btn btn-naranja mt-auto btn-comparar mb-2">
                             Editar
                         </a>
                         <form th:action="@{/admin/supermarkets/delete}" method="post" class="flex-grow-1"

@@ -78,7 +78,7 @@
                 </div>
             </div>
         </div>
-        <div th:if="${u.hasRole('ADMIN') and (edit == null or !edit)}">
+        <div th:if="${u != null and u.hasRole('ADMIN') and (edit == null or !edit)}">
             <a th:href="@{/product/{productoID}/edit(productoID=${product.id})}" 
                 class="btn btn-naranja mt-auto btn-comparar">
                 <img th:src="@{/img/svg/edit.svg}" class="svg-md" alt="Editar">

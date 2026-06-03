@@ -18,6 +18,7 @@ Utiliza el código de barras (EAN) como identificador único para garantizar bú
 * **Carrito inteligente**: Gestión de cestas de la compra que permiten mezclar productos de distintas cadenas para que se pueda ver en qué supermercado sale más barato comprar todo el carrito.
 * **Actualización de datos**: Los usuarios pueden solicitar agregar nuevos productos o modificar los ya existentes con la intención de actualizar el precio si este ha cambiado.
 * **Notificaciones**: Los usuarios reciben notificaciones cuando un administrador les acepta o rechaza una solicitud.
+* **Panel de administración**: Los administradores pueden crear, editar y eliminar supermercados, editar productos y sus precios, y banear o desbanear usuarios desde la interfaz de administración.
 
 ## Credenciales de prueba (base de datos)
 
@@ -50,7 +51,7 @@ La aplicación dispone de las siguientes interfaces de usuario:
 4.  **Vista de carritos**: Gestión de varios carritos con nombres personalizados. Permite comparar cuánto costaría la misma lista de la compra en los distintos supermercados que recoge la aplicación.
 5.  **Vista de solicitudes**: Formulario para que los usuarios o soliciten añadir productos que no están en la base de datos o modificar el precio.
 6.  **Vista de notificaciones**: Panel donde el usuario recibe avisos sobre el estado de sus solicitudes (aceptado o rechazado) por parte de la administración.
-7.  **Vista de administrador**: Panel exclusivo para la gestión de la plataforma, permitiendo validar o rechazar las solicitudes de los usuarios para mantener la base de datos actualizada.
+7.  **Vista de administrador**: Panel exclusivo para la gestión de la plataforma, permitiendo validar o rechazar solicitudes, administrar supermercados, editar productos, ajustar precios y banear o desbanear usuarios para mantener la base de datos actualizada.
 8.  **Vista de registro**: Formulario para crear una nueva cuenta de usuario.
 9.  **Vista de login**: Pantalla de inicio de sesión para acceder a la cuenta.
 10. **Vista de autores**: Página con información del equipo de desarrollo.
