@@ -32,6 +32,12 @@ Los usuarios iniciales se cargan desde `src/main/resources/import.sql`.
 
 - ZXing (com.google.zxing) — lectura de códigos de barras (EAN)
 
+Librerias usadas:
+
+- com.google.zxing.client.j2se.BufferedImageLuminanceSource; Pasa la imagen a escala de grises
+- com.google.zxing.common.HybridBinarizer; Convierte la imagen en binario (blanco/negro)
+- org.springframework.stereotype.Service; Marca la clase como un componente de servicio
+
 ## Uso de IA
 
 - Para realizar partes del frontend, como degradados, cards con estilo, etc
