@@ -16,7 +16,8 @@ Utiliza el código de barras (EAN) como identificador único para garantizar bú
 * **Consulta accesible**: Búsqueda mediante escaneo con la cámara del dispositivo móvil, por introducción manual del código numérico o con el nombre del producto.
 * **Análisis comparativo**: Visualización de precios en distintos supermercados y comparaciones según precio.
 * **Carrito inteligente**: Gestión de cestas de la compra que permiten mezclar productos de distintas cadenas para que se pueda ver en qué supermercado sale más barato comprar todo el carrito.
-* **Actualización de datos**: Los usuarios pueden solicitar agregar nuevos productos o modificar los ya existentes con la intención de actualizar el precio si este ha cambiado.
+* **Actualización de datos**: Los usuarios pueden solicitar agregar nuevos productos o modificar los ya existentes con la intención de actualizar el precio si este ha cambiado, pueden ver su historial de solicitudes realizadas y si lo desean 
+ocultarlas.
 * **Notificaciones**: Los usuarios reciben notificaciones cuando un administrador les acepta o rechaza una solicitud.
 * **Panel de administración**: Los administradores pueden crear, editar y eliminar supermercados, editar productos y sus precios, y banear o desbanear usuarios desde la interfaz de administración.
 
